@@ -9,10 +9,7 @@ import (
 )
 
 func init() {
-	services.CreateDefaultKey()
-	services.AddTempData()
-	services.AddInitUser()
-	services.AddPermissionModelToDB()
+	services.InitServices()
 }
 func main() {
 	// Check if the cert files are available.
