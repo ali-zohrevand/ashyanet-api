@@ -13,5 +13,6 @@ func InitRoutes() *mux.Router {
 	router = Key(router)
 	router = Location(router)
 	router = Emqtt(router)
+	router = Acl(router)
 	return router
 }
