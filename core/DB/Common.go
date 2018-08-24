@@ -6,10 +6,10 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-func CheckExist(fieldToSearch string, ToSearch string, Object interface{}, DbNameString string, ColloctionName string, errorString string, Session *mgo.Session) (err error, Exist bool) {
+func CheckExist(ObjectName string, name string, Object interface{}, DbNameString string, ColloctionName string, errorString string, Session *mgo.Session) (err error, Exist bool) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
-	err = sessionCopy.DB(DbNameString).C(ColloctionName).Find(bson.M{fieldToSearch: ToSearch}).One(&Object)
+	err = sessionCopy.DB(DbNameString).C(ColloctionName).Find(bson.M{ObjectName: name}).One(&Object)
 	if Object != nil && err == nil {
 		err = errors.New(errorString)
 		Exist = true
