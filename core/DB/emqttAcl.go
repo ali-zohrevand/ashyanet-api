@@ -37,7 +37,7 @@ func CreateMqttAcl(acl models.MqttAcl, Session *mgo.Session) (err error) {
 	for i := 0; i < len(acl.Pubsub); i++ {
 		aclInDB.Pubsub = append(aclInDB.Pubsub, acl.Pubsub[i])
 	}
-	err = sessionCopy.DB(ConstKey.EmqttDBName).C(ConstKey.EmqttUserColletionName).Insert()
+	err = sessionCopy.DB(ConstKey.EmqttDBName).C(ConstKey.EmqttAclColectionName).Insert(aclInDB)
 
 	return
 }
