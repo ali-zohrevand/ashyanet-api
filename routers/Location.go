@@ -12,7 +12,7 @@ func Location(router *mux.Router) *mux.Router {
 		negroni.HandlerFunc(services.RequireTokenAuthentication),
 		negroni.HandlerFunc(controllers.CreateLocation),
 	)
-	router.Handle("/location", HandleFuncCreateLocation).Methods("POST")
+	router.Handle("/locations", HandleFuncCreateLocation).Methods("POST")
 	//.......................................................................................................
 	return router
 

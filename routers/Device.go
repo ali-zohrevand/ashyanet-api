@@ -13,14 +13,14 @@ func Device(router *mux.Router) *mux.Router {
 		negroni.HandlerFunc(services.RequireTokenAuthentication),
 		negroni.HandlerFunc(controllers.CreateDevice),
 	)
-	router.Handle("/device", HandleFunc).Methods("POST")
+	router.Handle("/devices", HandleFunc).Methods("POST")
 	//.......................................................................................................
 
 	HandleFuncList := negroni.New(
 		negroni.HandlerFunc(services.RequireTokenAuthentication),
 		negroni.HandlerFunc(controllers.Index),
 	)
-	router.Handle("/device", HandleFuncList).Methods("GET")
+	router.Handle("/devices", HandleFuncList).Methods("GET")
 	//.......................................................................................................
 	HandleFuncAddUserToDevice := negroni.New(
 		negroni.HandlerFunc(services.RequireTokenAuthentication),
@@ -35,10 +35,6 @@ func Device(router *mux.Router) *mux.Router {
 	)
 	router.Handle("/akd", HandleFuncAddKeyToDevice).Methods("POST")
 	//.......................................................................................................
-	HandlenewDevice := negroni.New(
-		negroni.HandlerFunc(controllers.Index),
-	)
-	router.Handle("/device", HandlenewDevice).Methods("GET")
 	//.......................................................................................................
 
 	return router

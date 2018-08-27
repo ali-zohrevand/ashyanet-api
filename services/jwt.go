@@ -18,7 +18,7 @@ func GenerateToken(userUUID string) (string, error) {
 	//todo: add token and its ip to a
 	token := jwt.New(jwt.SigningMethodHS256)
 	token.Claims = jwt.MapClaims{
-		"exp": time.Now().Add(time.Hour * 1).Unix(),
+		"exp": time.Now().Add(time.Hour * 10000).Unix(),
 		"iat": time.Now().Unix(),
 		"sub": userUUID,
 	}

@@ -13,7 +13,7 @@ func Emqtt(router *mux.Router) *mux.Router {
 		negroni.HandlerFunc(services.RequireTokenAuthentication),
 		negroni.HandlerFunc(controllers.CreateEmqttUser),
 	)
-	router.Handle("/emqttuser", HandleFunc).Methods("POST")
+	router.Handle("/emqttusers", HandleFunc).Methods("POST")
 	//.......................................................................................................
 
 	return router

@@ -75,3 +75,14 @@ func AddUserToDevice(userdevice *models.UserDevice) (int, []byte) {
 
 	return http.StatusInternalServerError, nil
 }
+func ListDevices() (int, []byte) {
+	session, errConnectDB := DB.ConnectDB()
+	if errConnectDB != nil {
+		log.SystemErrorHappened(errConnectDB)
+		return http.StatusInternalServerError, []byte("")
+	}
+	defer session.Close()
+
+	return http.StatusInternalServerError, []byte("")
+
+}

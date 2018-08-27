@@ -17,15 +17,6 @@ type MqttUserInDB struct {
 	Created      string        `json:"created" bson:"created"`
 }
 
-/*
-{
-    "username" :"root",
-    "password" : "123456",
-    "is_superuser" : true,
-    "created" : ""
-}
-*/
-
 type MqttAcl struct {
 	Id        string   `json:"id" bson:"_id"`
 	Username  string   `json:"username" bson:"username" valid:"required~Username Could not be empty,runelength(1|30),blacklist~Bad Char"`
@@ -34,16 +25,6 @@ type MqttAcl struct {
 	Subscribe []string `json:"subscribe" bson:"subscribe"`
 	Pubsub    []string `json:"pubsub" bson:"pubsub" `
 }
-
-/*
-{
-    "username": "username",
-    "clientid": "clientid",
-    "publish": ["/a", "/b"],
-    "subscribe": ["/c", "/d"],
-    "pubsub": ["/light/#", "/move/#"]
-}
-*/
 
 type MqttAclIndb struct {
 	Id        bson.ObjectId `json:"id" bson:"_id"`
@@ -58,3 +39,21 @@ type Pubsub struct {
 	Subscribe string `json:"subscribe" bson:"subscribe"`
 	Pubsub    string `json:"pubsub" bson:"pubsub"`
 }
+
+/*
+{
+    "username": "username",
+    "clientid": "clientid",
+    "publish": ["/a", "/b"],
+    "subscribe": ["/c", "/d"],
+    "pubsub": ["/light/#", "/move/#"]
+}
+*/
+/*
+{
+    "username" :"root",
+    "password" : "123456",
+    "is_superuser" : true,
+    "created" : ""
+}
+*/

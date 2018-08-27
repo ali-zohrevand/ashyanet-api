@@ -18,3 +18,8 @@ func CheckExist(ObjectName string, name string, Object interface{}, DbNameString
 	Exist = false
 	return
 }
+
+func addPath(path string, New string) string {
+	path = path + "/" + New
+	return path
+}
