@@ -29,9 +29,9 @@ func UserLoginValidation(user models.User) (Out []byte, err error, IsValid bool)
 }
 func ValidBadChar(input string) (Valid bool) {
 	Valid = true
-	slash:="\"
+	slash := `\`
 	BadCharList := []string{",", "/", "<", ">", "$", "'", "!", ")", "(", "&", "%", "~", "=", "+", "-", "?"}
-	BadCharList= append(BadCharList, slash)
+	BadCharList = append(BadCharList, slash)
 	for _, badChar := range BadCharList {
 		if strings.Contains(input, badChar) {
 			return false
