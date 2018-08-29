@@ -11,9 +11,10 @@ type Device struct {
 	Type        string   `json:"type" bson:"type" valid:"required~Description Could not be empty,runelength(1|30),blacklist~Bad Char"`
 	Key         string   `json:"key" bson:"key" valid:"required~Key Could not be empty,runelength(1|30),blacklist~Bad Char"`
 	Owners      []string `json:"owner" bson:"description"`
-	Location    string   `json:"location" bson:"location" valid:"blacklist~Bad Char" '`
-	Topics      []string `json:"topics" bson:"topics" valid:"blacklist~Bad Char"`
-	MqttPass    string   `json:"mqtt_pass" bson:"mqtt_pass"`
+	Location    string   `json:"location" bson:"location" valid:"blacklist~Bad Char"`
+	Publish     []string `json:"publish" bson:"publish" valid:"runelength(1|30),blacklist~Bad Char"`
+	Subscribe   []string `json:"subscribe" bson:"subscribe" valid:"runelength(1|30),blacklist~Bad Char"`
+	Pubsub      []string `json:"pubsub" bson:"pubsub" valid:"runelength(1|30),blacklist~Bad Char"`
 }
 type DeviceInDB struct {
 	Id          bson.ObjectId `json:"id" bson:"_id"`
