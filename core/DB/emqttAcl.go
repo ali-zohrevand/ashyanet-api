@@ -8,7 +8,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-func CreateMqttAcl(acl models.MqttAcl, Session *mgo.Session) (err error) {
+func CreateMqattAcl(acl models.MqttAcl, Session *mgo.Session) (err error) {
 
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()

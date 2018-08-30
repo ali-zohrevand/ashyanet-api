@@ -24,7 +24,7 @@ func CreateMqttAcl(acl *models.MqttAcl) (int, []byte) {
 	}
 	defer session.Close()
 	//..................................................................
-	errCreateAcl := DB.CreateMqttAcl(*acl, session)
+	errCreateAcl := DB.CreateMqattAcl(*acl, session)
 	if errCreateAcl != nil {
 		switch errCreateAcl.Error() {
 		case ConstKey.UserExist:
