@@ -2,29 +2,27 @@ package Services
 
 import (
 	"fmt"
-	"io"
+	"io/ioutil"
 	"os"
 )
 
-func CreateFile(FilePath string) {
+func CreateFile(FilePath string) (err error) {
 	// check if file exists
-	var _, err = os.Stat(FilePath)
+	_, err = os.Stat(FilePath)
 
 	// create file if not exists
 	if os.IsNotExist(err) {
-		var file, err = os.Create(FilePath)
-		if isError(err) {
-			return
-		}
+		var file, errCreateFile = os.Create(FilePath)
+		return errCreateFile
 		defer file.Close()
 	}
+	return
 
-	fmt.Println("File Created Successfully", FilePath)
 }
 
-func WriteFile(FilePath string, input string) {
+func WriteFile(FilePath string, input string) (err error) {
 	// Open file using READ & WRITE permission.
-	var file, err = os.OpenFile(FilePath, os.O_RDWR|os.O_APPEND, 0660)
+	file, err := os.OpenFile(FilePath, os.O_RDWR|os.O_APPEND, 0660)
 	if isError(err) {
 		return
 	}
@@ -41,12 +39,12 @@ func WriteFile(FilePath string, input string) {
 	if isError(err) {
 		return
 	}
-
+	return
 }
 
-func readFile(FilePath string) (Content string, err error) {
+func ReadFile(FilePath string) (Content string, err error) {
 	// Open file for reading.
-	file, err := os.OpenFile(FilePath, os.O_RDWR, 0660)
+	/*file, err := os.OpenFile(FilePath, os.O_RDWR, 0660)
 	if isError(err) {
 		return
 	}
@@ -68,12 +66,13 @@ func readFile(FilePath string) (Content string, err error) {
 			break
 		}
 	}
-
-	Content = string(text)
+	*/
+	b, err := ioutil.ReadFile(FilePath) // just pass the file name
+	Content = string(b)
 	return
 }
 
-func deleteFile(FilePath string) (err error) {
+func DeleteFile(FilePath string) (err error) {
 	// delete file
 	err = os.Remove(FilePath)
 	if isError(err) {
