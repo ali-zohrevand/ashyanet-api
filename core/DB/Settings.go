@@ -15,3 +15,9 @@ func SaveSettings(settings models.SettingsInDB, Session *mgo.Session) (err error
 
 	return
 }
+func LoadSettings(Session *mgo.Session) (settings models.SettingsInDB, err error) {
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	sessionCopy.DB(ConstKey.DBname).C(ConstKey.SettingsCollectiName).Find(bson.M{}).One(&settings)
+	return
+}

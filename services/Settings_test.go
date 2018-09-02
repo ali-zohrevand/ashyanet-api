@@ -1,6 +1,9 @@
 package services
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestCreateSettingsFile(t *testing.T) {
 	err := CreateSettingsFile()
@@ -14,5 +17,13 @@ func TestSaveSteetinInDB(t *testing.T) {
 	if err != nil {
 		t.Fail()
 		t.Error(err)
+	}
+}
+func TestGetIdentifire(t *testing.T) {
+	i := GetIdentifire()
+	if i == "" {
+		t.Fail()
+	} else {
+		fmt.Println("identifire: ", i)
 	}
 }

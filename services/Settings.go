@@ -53,3 +53,15 @@ func SaveSetingsInDB() (err error) {
 	err = DB.SaveSettings(setting, session)
 	return err
 }
+func GetIdentifire() (identifire string) {
+	session, err := DB.ConnectDB()
+	if err != nil {
+		return
+	}
+	defer session.Close()
+	SettingsObj, err := DB.LoadSettings(session)
+	if err != nil {
+		return
+	}
+	return SettingsObj.Identifier
+}
