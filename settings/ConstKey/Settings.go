@@ -1,3 +1,3 @@
-package settings
+package ConstKey
 
 const SettingPath = "setting.json"

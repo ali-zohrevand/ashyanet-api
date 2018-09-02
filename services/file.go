@@ -26,7 +26,10 @@ func WriteFile(FilePath string, input string) (err error) {
 	// create file if not exists
 	if os.IsNotExist(err) {
 		var file, errCreateFile = os.Create(FilePath)
-		return errCreateFile
+		if errCreateFile != nil {
+			return errCreateFile
+
+		}
 		defer file.Close()
 	}
 	// Open file using READ & WRITE permission.
@@ -49,7 +52,13 @@ func WriteFile(FilePath string, input string) (err error) {
 	}
 	return
 }
-
+func IsFileExist(Path string) bool {
+	_, err := os.Stat(Path)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
 func ReadFile(FilePath string) (Content string, err error) {
 	// Open file for reading.
 	/*file, err := os.OpenFile(FilePath, os.O_RDWR, 0660)
