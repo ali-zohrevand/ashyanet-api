@@ -1,8 +1,8 @@
 package ConstKey
 
-const EmqttDBName = "mqtt"
-const EmqttUserColletionName = "mqtt_user"
-const EmqttAclColectionName = "mqtt_acl"
-const MqttUserName = "username"
-const AclCreated = "Acl Created"
-const MqttUserNotFound = "Mqtt User Not Found, First create User"
+var EmqttDBName = "mqtt"
+var EmqttUserColletionName = "mqtt_user"
+var EmqttAclColectionName = "mqtt_acl"
+var MqttUserName = "username"
+var AclCreated = "Acl Created"
+var MqttUserNotFound = "Mqtt User Not Found, First create User"

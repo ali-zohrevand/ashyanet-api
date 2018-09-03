@@ -15,6 +15,7 @@ type Device struct {
 	Publish     []string `json:"publish" bson:"publish" valid:"runelength(1|30),blacklist~Bad Char"`
 	Subscribe   []string `json:"subscribe" bson:"subscribe" valid:"runelength(1|30),blacklist~Bad Char"`
 	Pubsub      []string `json:"pubsub" bson:"pubsub" valid:"runelength(1|30),blacklist~Bad Char"`
+	Types       []string `json:"types" bson:"types" valid:"runelength(1|30),blacklist~Bad Char"`
 }
 type DeviceInDB struct {
 	Id          bson.ObjectId `json:"id" bson:"_id"`
@@ -24,8 +25,22 @@ type DeviceInDB struct {
 	Key         string        `json:"key" bson:"key"`
 	Owners      []UserInDB    `json:"owner" bson:"owner"`
 	Location    string        `json:"location" bson:"location"`
-	Topics      []string      `json:"topics" bson:"topics"`
-	MqttPass    string        `json:"mqtt_pass" bson:"mqtt_pass"`
+	Publish     []string      `json:"publish" bson:"publish" valid:"runelength(1|30),blacklist~Bad Char"`
+	Subscribe   []string      `json:"subscribe" bson:"subscribe" valid:"runelength(1|30),blacklist~Bad Char"`
+	Pubsub      []string      `json:"pubsub" bson:"pubsub" valid:"runelength(1|30),blacklist~Bad Char"`
+}
+
+type Command struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+	Dsc   string `json:"dsc"`
+	Topic string `json:"topic"`
+}
+type Data struct {
+	Name      string `json:"name"`
+	ValueType string `json:"value_type"`
+	Dsc       string `json:"dsc"`
+	Topic     string `json:"topic"`
 }
 
 /*

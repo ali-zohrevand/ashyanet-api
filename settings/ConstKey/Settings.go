@@ -1,3 +1,3 @@
 package ConstKey
 
-const SettingPath = "setting.json"
+var SettingPath = "setting.json"

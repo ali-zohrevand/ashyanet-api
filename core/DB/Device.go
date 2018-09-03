@@ -45,6 +45,7 @@ func CreateDevice(device models.Device, Session *mgo.Session) (err error) {
 	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Insert(DeviceDB)
 	return
 }
+
 func AddUserToDevice(userToDevice models.UserDevice, Session *mgo.Session) (err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
