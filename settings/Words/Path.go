@@ -1,3 +1,3 @@
-package ConstKey
+package Words
 
 var SettingPath = "setting.json"

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"gitlab.com/hooshyar/ChiChiNi-API/Lab/mosquitto/03_crateTopicBaseLocation/DB"
 	"gitlab.com/hooshyar/ChiChiNi-API/models"
-	"gitlab.com/hooshyar/ChiChiNi-API/settings/ConstKey"
+	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
 	"testing"
 )
 
@@ -54,7 +54,7 @@ func TestSetKeyForDevice(t *testing.T) {
 }
 func TestGenerateKey(t *testing.T) {
 	key := GenerateKey()
-	if len(key) != ConstKey.LengthOfDeviceKey {
+	if len(key) != Words.LengthOfDeviceKey {
 		t.Error("Test Failed: key is ", key)
 	}
 
@@ -66,7 +66,7 @@ func TestGetValidKey(t *testing.T) {
 	}
 	defer session.Close()
 	key := GetValidKey(session)
-	if len(key.Key) != ConstKey.LengthOfDeviceKey || key.Status != ConstKey.StatusValid {
+	if len(key.Key) != Words.LengthOfDeviceKey || key.Status != Words.StatusValid {
 		t.Error("Test Failed: key is ", key)
 	}
 	fmt.Println("key is : ", key)

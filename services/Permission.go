@@ -4,7 +4,7 @@ import (
 	"gitlab.com/hooshyar/ChiChiNi-API/core/DB"
 	"gitlab.com/hooshyar/ChiChiNi-API/models"
 	"gitlab.com/hooshyar/ChiChiNi-API/services/log"
-	"gitlab.com/hooshyar/ChiChiNi-API/settings/ConstKey"
+	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -17,7 +17,7 @@ func AddPermissionModelToDB() {
 	}
 	defer session.Close()
 
-	perm := models.CasbinPermision{bson.NewObjectId(), ConstKey.PermissionModel, ConstKey.PermissionPolicy}
+	perm := models.CasbinPermision{bson.NewObjectId(), Words.PermissionModel, Words.PermissionPolicy}
 	PerMDB := DB.PermissionDataStore{}
 	err := PerMDB.CreatePermissionInDB(perm, session)
 	if err != nil {

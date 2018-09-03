@@ -1,4 +1,4 @@
-package ConstKey
+package Words
 
 var KeyForEncription = "dkfl4(kdlfndlfdl"
 var PermissionModel = `

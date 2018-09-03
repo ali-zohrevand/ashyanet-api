@@ -3,7 +3,7 @@ package DB
 import (
 	"github.com/pkg/errors"
 	"gitlab.com/hooshyar/ChiChiNi-API/models"
-	"gitlab.com/hooshyar/ChiChiNi-API/settings/ConstKey"
+	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -24,7 +24,7 @@ func CreateLocation(Location models.Location, Session *mgo.Session) (err error) 
 		if deviceFound.Name == Location.Devices[i] {
 			LocationDB.Devices = append(LocationDB.Devices, Location.Devices[i])
 		} else {
-			err = errors.New(ConstKey.DeviceNotExist)
+			err = errors.New(Words.DeviceNotExist)
 			return
 		}
 	}
@@ -34,20 +34,20 @@ func CreateLocation(Location models.Location, Session *mgo.Session) (err error) 
 			LocationDB.Parent = Location.Parent
 
 		} else {
-			err = errors.New(ConstKey.LocationNotFound)
+			err = errors.New(Words.LocationNotFound)
 			return
 		}
 	}
-	err = sessionCopy.DB(ConstKey.DBname).C(ConstKey.LocationCollectionName).Insert(LocationDB)
+	err = sessionCopy.DB(Words.DBname).C(Words.LocationCollectionName).Insert(LocationDB)
 	return
 }
 func CheckLocationExist(name string, Session *mgo.Session) (err error, Exist bool) {
 	var Location models.LocationInDB
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
-	err = sessionCopy.DB(ConstKey.DBname).C(ConstKey.LocationCollectionName).Find(bson.M{"locationname": name}).One(&Location)
+	err = sessionCopy.DB(Words.DBname).C(Words.LocationCollectionName).Find(bson.M{"locationname": name}).One(&Location)
 	if Location.Name != "" && err == nil {
-		err = errors.New(ConstKey.LocationExist)
+		err = errors.New(Words.LocationExist)
 		Exist = true
 		return
 	}
@@ -57,7 +57,7 @@ func CheckLocationExist(name string, Session *mgo.Session) (err error, Exist boo
 func GetLocationByName(name string, Session *mgo.Session) (location models.LocationInDB, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
-	err = sessionCopy.DB(ConstKey.DBname).C(ConstKey.LocationCollectionName).Find(bson.M{"locationname": name}).One(&location)
+	err = sessionCopy.DB(Words.DBname).C(Words.LocationCollectionName).Find(bson.M{"locationname": name}).One(&location)
 	return
 }
 func AddDeviceToLocation() {

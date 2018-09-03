@@ -1,4 +1,4 @@
-package ConstKey
+package Words
 
 var DeafualtAdmminUserName = "admin"
 var DeafualtAdmminFirstName = "admin"

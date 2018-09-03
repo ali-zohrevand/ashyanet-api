@@ -35,7 +35,7 @@ for _, test := range tests {
 	}
 	defer session.Close()
 	ValidUser:=models.Device{"","test_"+string(rand.Intn(100)),"dsc","light","jhjdhfjskdfhjksdf",nil}
-	errExisted:=errors.New(ConstKey.DeviceExist)
+	errExisted:=errors.New(Words.DeviceExist)
 	var tests = []struct {
 		input    models.Device
 		expected error

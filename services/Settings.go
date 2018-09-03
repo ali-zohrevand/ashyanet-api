@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"gitlab.com/hooshyar/ChiChiNi-API/core/DB"
 	"gitlab.com/hooshyar/ChiChiNi-API/models"
-	"gitlab.com/hooshyar/ChiChiNi-API/settings/ConstKey"
+	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
 )
 
 func CreateSettingsFile() (err error) {
-	if IsFileExist(ConstKey.SettingPath) {
+	if IsFileExist(Words.SettingPath) {
 		return
 	}
 	setting := models.SettingsInDB{}
@@ -26,7 +26,7 @@ func CreateSettingsFile() (err error) {
 	if err != nil {
 		return
 	}
-	err = WriteFile(ConstKey.SettingPath, string(settingJsonByte))
+	err = WriteFile(Words.SettingPath, string(settingJsonByte))
 	return
 
 }
@@ -37,11 +37,11 @@ func SaveSetingsInDB() (err error) {
 		return
 	}
 	defer session.Close()
-	Is := DB.IsCollectionEmptty(ConstKey.DBname, ConstKey.SettingsCollectiName, session)
+	Is := DB.IsCollectionEmptty(Words.DBname, Words.SettingsCollectiName, session)
 	if !Is {
 		return
 	}
-	content, er := ReadFile(ConstKey.SettingPath)
+	content, er := ReadFile(Words.SettingPath)
 	if er != nil {
 		return
 	}

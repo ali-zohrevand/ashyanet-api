@@ -1,3 +1,0 @@
-package ConstKey
-
-var TokenKey = "42isThdjfhjkhfjksdhfkjsdfhkjkhjkhkjhjkhkhkhkjhjkhkhkjhkjjkheAnswer"

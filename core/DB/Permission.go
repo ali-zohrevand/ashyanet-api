@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"gitlab.com/hooshyar/ChiChiNi-API/models"
 	"gitlab.com/hooshyar/ChiChiNi-API/services/log"
-	"gitlab.com/hooshyar/ChiChiNi-API/settings/ConstKey"
+	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -16,7 +16,7 @@ func (per *PermissionDataStore) CreatePermissionInDB(casbin models.CasbinPermisi
 	sessionCopy := dbSession.Copy()
 	defer sessionCopy.Close()
 	if !per.IsThereAnyModelSet(dbSession) {
-		err = sessionCopy.DB(ConstKey.DBname).C(ConstKey.PermissionCollectionName).Insert(casbin)
+		err = sessionCopy.DB(Words.DBname).C(Words.PermissionCollectionName).Insert(casbin)
 		return err
 	} else {
 		return
@@ -27,7 +27,7 @@ func (per *PermissionDataStore) IsThereAnyModelSet(Session *mgo.Session) (Is boo
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	var CasbinModel []models.CasbinPermision
-	err := sessionCopy.DB(ConstKey.DBname).C(ConstKey.PermissionCollectionName).Find(bson.M{}).All(&CasbinModel)
+	err := sessionCopy.DB(Words.DBname).C(Words.PermissionCollectionName).Find(bson.M{}).All(&CasbinModel)
 
 	if len(CasbinModel) == 0 {
 		return false
@@ -41,7 +41,7 @@ func GetPermision(Session *mgo.Session) (CasbinModel models.CasbinPermision) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 
-	sessionCopy.DB(ConstKey.DBname).C(ConstKey.PermissionCollectionName).Find(bson.M{}).One(&CasbinModel)
+	sessionCopy.DB(Words.DBname).C(Words.PermissionCollectionName).Find(bson.M{}).One(&CasbinModel)
 	return
 
 }

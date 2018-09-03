@@ -7,7 +7,7 @@ import (
 	"gitlab.com/hooshyar/ChiChiNi-API/models"
 	"gitlab.com/hooshyar/ChiChiNi-API/services/log"
 	"gitlab.com/hooshyar/ChiChiNi-API/services/validation"
-	"gitlab.com/hooshyar/ChiChiNi-API/settings/ConstKey"
+	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
 	"net/http"
 )
 
@@ -27,14 +27,14 @@ func CreateMqttAcl(acl *models.MqttAcl) (int, []byte) {
 	errCreateAcl := DB.CreateMqttAcl(*acl, session)
 	if errCreateAcl != nil {
 		switch errCreateAcl.Error() {
-		case ConstKey.UserExist:
+		case Words.UserExist:
 			message := OutputAPI.Message{}
-			message.Error = ConstKey.UserExist
+			message.Error = Words.UserExist
 			json, _ := json.Marshal(message)
 			return http.StatusOK, json
-		case ConstKey.MqttUserNotFound:
+		case Words.MqttUserNotFound:
 			message := OutputAPI.Message{}
-			message.Error = ConstKey.MqttUserNotFound
+			message.Error = Words.MqttUserNotFound
 			json, _ := json.Marshal(message)
 			return http.StatusOK, json
 		default:
@@ -44,7 +44,7 @@ func CreateMqttAcl(acl *models.MqttAcl) (int, []byte) {
 
 	} else {
 		message := OutputAPI.Message{}
-		message.Info = ConstKey.AclCreated
+		message.Info = Words.AclCreated
 		json, _ := json.Marshal(message)
 		return http.StatusCreated, json
 	}

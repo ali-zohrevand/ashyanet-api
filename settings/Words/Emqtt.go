@@ -1,4 +1,4 @@
-package ConstKey
+package Words
 
 var EmqttDBName = "mqtt"
 var EmqttUserColletionName = "mqtt_user"

@@ -7,7 +7,7 @@ import (
 	"gitlab.com/hooshyar/ChiChiNi-API/models"
 	"gitlab.com/hooshyar/ChiChiNi-API/services/log"
 	"gitlab.com/hooshyar/ChiChiNi-API/services/validation"
-	"gitlab.com/hooshyar/ChiChiNi-API/settings/ConstKey"
+	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
 	"net/http"
 )
 
@@ -25,16 +25,16 @@ func CreateLocation(Location *models.Location) (int, []byte) {
 	}
 	errCreateLocation := DB.CreateLocation(*Location, session)
 	if errCreateLocation != nil {
-		if errCreateLocation.Error() == ConstKey.LocationExist {
+		if errCreateLocation.Error() == Words.LocationExist {
 			//User Exist
 			message := OutputAPI.Message{}
-			message.Error = ConstKey.LocationExist
+			message.Error = Words.LocationExist
 			json, _ := json.Marshal(message)
 			return http.StatusOK, json
 		}
-		if errCreateLocation.Error() == ConstKey.LocationNotFound {
+		if errCreateLocation.Error() == Words.LocationNotFound {
 			message := OutputAPI.Message{}
-			message.Error = ConstKey.LocationNotFound
+			message.Error = Words.LocationNotFound
 			json, _ := json.Marshal(message)
 			return http.StatusOK, json
 		}
@@ -42,7 +42,7 @@ func CreateLocation(Location *models.Location) (int, []byte) {
 		return http.StatusInternalServerError, []byte("")
 	} else {
 		message := OutputAPI.Message{}
-		message.Info = ConstKey.LocationCreated
+		message.Info = Words.LocationCreated
 		json, _ := json.Marshal(message)
 		return http.StatusCreated, json
 	}

@@ -3,7 +3,7 @@ package DB
 import (
 	"errors"
 	"gitlab.com/hooshyar/ChiChiNi-API/models"
-	"gitlab.com/hooshyar/ChiChiNi-API/settings/ConstKey"
+	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -13,14 +13,14 @@ func CreateMqttAcl(acl models.MqttAcl, Session *mgo.Session) (err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	//...............
-	_, exist := CheckExist(ConstKey.MqttUserName, acl.Username, models.MqttAclIndb{}, ConstKey.EmqttDBName, ConstKey.EmqttAclColectionName, ConstKey.UserNotExist, sessionCopy)
+	_, exist := CheckExist(Words.MqttUserName, acl.Username, models.MqttAclIndb{}, Words.EmqttDBName, Words.EmqttAclColectionName, Words.UserNotExist, sessionCopy)
 	if exist {
-		err = errors.New(ConstKey.UserExist)
+		err = errors.New(Words.UserExist)
 		return
 	}
-	_, MqttuserExist := CheckExist(ConstKey.MqttUserName, acl.Username, models.MqttUserInDB{}, ConstKey.EmqttDBName, ConstKey.EmqttUserColletionName, ConstKey.UserNotExist, sessionCopy)
+	_, MqttuserExist := CheckExist(Words.MqttUserName, acl.Username, models.MqttUserInDB{}, Words.EmqttDBName, Words.EmqttUserColletionName, Words.UserNotExist, sessionCopy)
 	if !MqttuserExist {
-		err = errors.New(ConstKey.MqttUserNotFound)
+		err = errors.New(Words.MqttUserNotFound)
 		return
 	}
 	//...............
@@ -37,7 +37,7 @@ func CreateMqttAcl(acl models.MqttAcl, Session *mgo.Session) (err error) {
 	for i := 0; i < len(acl.Pubsub); i++ {
 		aclInDB.Pubsub = append(aclInDB.Pubsub, acl.Pubsub[i])
 	}
-	err = sessionCopy.DB(ConstKey.EmqttDBName).C(ConstKey.EmqttAclColectionName).Insert(aclInDB)
+	err = sessionCopy.DB(Words.EmqttDBName).C(Words.EmqttAclColectionName).Insert(aclInDB)
 
 	return
 }

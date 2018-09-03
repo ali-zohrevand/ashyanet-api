@@ -4,7 +4,7 @@ import (
 	"github.com/pkg/errors"
 	"gitlab.com/hooshyar/ChiChiNi-API/OutputAPI"
 	"gitlab.com/hooshyar/ChiChiNi-API/models"
-	. "gitlab.com/hooshyar/ChiChiNi-API/settings/ConstKey"
+	. "gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )

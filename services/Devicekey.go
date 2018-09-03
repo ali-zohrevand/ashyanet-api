@@ -7,7 +7,7 @@ import (
 	"gitlab.com/hooshyar/ChiChiNi-API/models"
 	"gitlab.com/hooshyar/ChiChiNi-API/services/log"
 	"gitlab.com/hooshyar/ChiChiNi-API/services/validation"
-	"gitlab.com/hooshyar/ChiChiNi-API/settings/ConstKey"
+	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
 	"net/http"
 )
 
@@ -42,7 +42,7 @@ func CreatValidKey() (int, []byte) {
 		log.SystemErrorHappened(errConnectDB)
 	}
 	key := DB.GetValidKey(session)
-	if len(key.Key) != ConstKey.LengthOfDeviceKey {
+	if len(key.Key) != Words.LengthOfDeviceKey {
 		return http.StatusInternalServerError, []byte("")
 
 	} else {
@@ -68,12 +68,12 @@ func AddKeyToDevice(deviceKey *models.DeviceKey) (int, []byte) {
 	err := DB.AddKeyToDevice(*deviceKey, session)
 	if err != nil {
 		message := OutputAPI.Message{}
-		message.Error = ConstKey.KeyIsNotValid
+		message.Error = Words.KeyIsNotValid
 		json, _ := json.Marshal(message)
 		return http.StatusBadRequest, json
 	} else {
 		message := OutputAPI.Message{}
-		message.Info = ConstKey.KeyAddedTodevice
+		message.Info = Words.KeyAddedTodevice
 		json, _ := json.Marshal(message)
 		return http.StatusOK, json
 	}

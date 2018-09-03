@@ -2,7 +2,7 @@ package DB
 
 import (
 	"gitlab.com/hooshyar/ChiChiNi-API/models"
-	"gitlab.com/hooshyar/ChiChiNi-API/settings/ConstKey"
+	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -14,7 +14,7 @@ func (ds *JwtSessionDataStore) CreateJwtSession(Session models.JwtSession, dbSes
 	sessionCopy := dbSession.Copy()
 	defer sessionCopy.Close()
 
-	err = sessionCopy.DB(ConstKey.DBname).C(ConstKey.JwtColletionName).Insert(Session)
+	err = sessionCopy.DB(Words.DBname).C(Words.JwtColletionName).Insert(Session)
 	return
 }
 
@@ -23,7 +23,7 @@ func IsUserSession(username string, token string, Ip string, dbSession *mgo.Sess
 	sessionCopy := dbSession.Copy()
 	defer sessionCopy.Close()
 	var JwtSession = models.JwtSession{}
-	err := sessionCopy.DB(ConstKey.DBname).C(ConstKey.JwtColletionName).Find(bson.M{"token": token}).One(&JwtSession)
+	err := sessionCopy.DB(Words.DBname).C(Words.JwtColletionName).Find(bson.M{"token": token}).One(&JwtSession)
 	if err != nil {
 		return
 	}
@@ -36,7 +36,7 @@ func GetUserOfSession(token string, dbSession *mgo.Session) string {
 	sessionCopy := dbSession.Copy()
 	defer sessionCopy.Close()
 	var JwtSession = models.JwtSession{}
-	sessionCopy.DB(ConstKey.DBname).C(ConstKey.JwtColletionName).Find(bson.M{"token": token}).One(&JwtSession)
+	sessionCopy.DB(Words.DBname).C(Words.JwtColletionName).Find(bson.M{"token": token}).One(&JwtSession)
 	user, _ := FindUserByUsername(JwtSession.OwnerUsername, sessionCopy)
 	return user.Role
 }
