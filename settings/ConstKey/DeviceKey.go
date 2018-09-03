@@ -1,9 +1,9 @@
 package ConstKey
 
-const RuneCharInKey string = "123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-const LengthOfDeviceKey int = 20
-const KeyExist = "key Exist"
-const StatusActivated = "Acticated"
-const StatusValid = "Valid"
-const KeyIsNotValid = "Key is not Valid"
-const KeyAddedTodevice = "Key added to Device."
+var RuneCharInKey string = "123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+var LengthOfDeviceKey int = 20
+var KeyExist = "key Exist"
+var StatusActivated = "Acticated"
+var StatusValid = "Valid"
+var KeyIsNotValid = "Key is not Valid"
+var KeyAddedTodevice = "Key added to Device."

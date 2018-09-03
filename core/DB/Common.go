@@ -23,3 +23,20 @@ func addPath(path string, New string) string {
 	path = path + "/" + New
 	return path
 }
+func ConnectDB() (session *mgo.Session, err error) {
+	// Connect to our local mongo
+	s, err := mgo.Dial("mongodb://localhost")
+	return s, err
+}
+func IsCollectionEmptty(DbName string, CollName string, Session *mgo.Session) (Is bool) {
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	var OBJ []interface{}
+	sessionCopy.DB(DbName).C(CollName).Find(bson.M{}).All(&OBJ)
+
+	if len(OBJ) == 0 {
+		return true
+	}
+	return false
+
+}

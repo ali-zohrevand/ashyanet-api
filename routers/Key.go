@@ -12,6 +12,6 @@ func Key(router *mux.Router) *mux.Router {
 		negroni.HandlerFunc(services.RequireTokenAuthentication),
 		negroni.HandlerFunc(controllers.CreatKey),
 	)
-	router.Handle("/key", HandleFunc).Methods("GET")
+	router.Handle("/admin/key", HandleFunc).Methods("GET")
 	return router
 }

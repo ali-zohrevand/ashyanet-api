@@ -43,7 +43,6 @@ func CreateMqttAcl(acl *models.MqttAcl) (int, []byte) {
 		}
 
 	} else {
-
 		message := OutputAPI.Message{}
 		message.Info = ConstKey.AclCreated
 		json, _ := json.Marshal(message)
