@@ -3,6 +3,7 @@ package services
 import "errors"
 
 func IsInArray(Target interface{}, Array []interface{}) (Found bool) {
+
 	i := FindInArray(Target, Array)
 	if i == -1 {
 		return false
