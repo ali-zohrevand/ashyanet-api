@@ -28,11 +28,11 @@ func CheckMqttTopic(device *models.Device, user models.UserInDB) (OutputDevice *
 	}
 	for i, topicPath := range device.Subscribe {
 		topicPath = AddRootTopic(root, topicPath)
-		device.Publish[i] = topicPath
+		device.Subscribe[i] = topicPath
 	}
 	for i, topicPath := range device.Pubsub {
 		topicPath = AddRootTopic(root, topicPath)
-		device.Publish[i] = topicPath
+		device.Pubsub[i] = topicPath
 	}
 	for i, command := range device.Command {
 		command.Topic = AddRootTopic(root, command.Topic)
@@ -40,9 +40,9 @@ func CheckMqttTopic(device *models.Device, user models.UserInDB) (OutputDevice *
 	}
 	for i, data := range device.Data {
 		data.Topic = AddRootTopic(root, data.Topic)
-		device.Command[i].Topic = data.Topic
+		device.Data[i].Topic = data.Topic
 	}
-	return
+	return device, nil
 }
 func AddRootTopic(rootPath string, TopicPath string) (UpdatedPath string) {
 	PathArray := strings.Split(TopicPath, "/")
@@ -64,7 +64,6 @@ func AddRootTopic(rootPath string, TopicPath string) (UpdatedPath string) {
 			UpdatedPath = UpdatedPath + "/" + v
 		}
 	}
-	fmt.Println(UpdatedPath)
 	UpdatedPath = strings.Replace(UpdatedPath, "//", "/", -1)
 	return
 }

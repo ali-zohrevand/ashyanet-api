@@ -48,11 +48,49 @@ type Data struct {
 
 /*
 {
-  "Id": "",
-  "DeviceName": "lamp",
-  "Description": "lamp of hall",
-  "Type": "light",
-  "Key": "afhdkjfhsdkjfhksdjfhk",
-  "Owners": []
+  "id": "",
+  "devicename": "lamp",
+  "description": "لامپ داخل اتاقل ",
+  "type": "light",
+  "key": "pFLsgUHtnFG65WhO2nDD",
+  "owner": null,
+  "location": "room",
+  "publish": [
+    "/Nf4KsSiAYJf2D7HReikI/sdsd/sdsad/545465/sdfsdf",
+    "/Nf4KsSiAYJf2D7HReikI/sddfdfsd/sdsad",
+    "/Nf4KsSiAYJf2D7HReikI/sdsd/sdsad/sdfsdf"
+  ],
+  "subscribe": [
+    "/Nf4KsSiAYJf2D7HReikI/dfsdfsdsd/sdsad/545465/sdfsdf",
+    "/Nf4KsSiAYJf2D7HReikI/sddfdfdfdfdf5456456465dfsd/sdsad",
+    "/Nf4KsSiAYJf2D7HReikI/",
+    "/Nf4KsSiAYJf2D7HReikI/"
+  ],
+  "pubsub": [
+    "/Nf4KsSiAYJf2D7HReikI/d",
+    "/Nf4KsSiAYJf2D7HReikI/sd656456465dfsd/sdsad"
+  ],
+  "data": [
+    {
+      "name": "Status",
+      "value_type": "int",
+      "dsc": "status",
+      "topic": "/Nf4KsSiAYJf2D7HReikI/sds"
+    }
+  ],
+  "command": [
+    {
+      "name": "On",
+      "value": "on",
+      "dsc": "Turn Light On",
+      "topic": "/Nf4KsSiAYJf2D7HReikI/home/root"
+    },
+    {
+      "name": "Of",
+      "value": "off",
+      "dsc": "Turn Light On",
+      "topic": "/Nf4KsSiAYJf2D7HReikI/home/dffd/dfsdf"
+    }
+  ]
 }
 */
