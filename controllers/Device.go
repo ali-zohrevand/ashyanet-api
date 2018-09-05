@@ -16,7 +16,9 @@ func CreateDevice(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 	w.Header().Set("Content-Type", "application/json")
-	responseStatus, token := services.CreateDevice(device)
+	//................................
+	userInDB := GetUserFromHeader(r)
+	responseStatus, token := services.CreateDevice(device, userInDB)
 	w.WriteHeader(responseStatus)
 	w.Write(token)
 }

@@ -22,6 +22,7 @@ func CreateSettingsFile() (err error) {
 	setting.Key = key.Key
 	setting.Password = "123456"
 	setting.Identifier = DB.GenerateKey()
+	setting.Type = "gateway"
 	settingJsonByte, err := json.Marshal(setting)
 	if err != nil {
 		return
@@ -53,15 +54,15 @@ func SaveSetingsInDB() (err error) {
 	err = DB.SaveSettings(setting, session)
 	return err
 }
-func GetIdentifire() (identifire string) {
+func GetServerSettings() (settings models.SettingsInDB, err error) {
 	session, err := DB.ConnectDB()
 	if err != nil {
 		return
 	}
 	defer session.Close()
-	SettingsObj, err := DB.LoadSettings(session)
+	settings, err = DB.LoadSettings(session)
 	if err != nil {
 		return
 	}
-	return SettingsObj.Identifier
+	return
 }

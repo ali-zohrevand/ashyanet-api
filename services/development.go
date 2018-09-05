@@ -45,8 +45,8 @@ func AddTempData() (err error) {
 	MovementSensor.Type = "movement"
 	MovementSensor.Owners = append(Lamp.Owners, Ali.UserName)
 	Lamp.Location = "room"
-	err = DB.CreateDevice(Lamp, session)
-	err = DB.CreateDevice(MovementSensor, session)
+	err = DB.CreateDeviceWithOutUser(Lamp, session)
+	err = DB.CreateDeviceWithOutUser(MovementSensor, session)
 
 	//............................Location...........................
 

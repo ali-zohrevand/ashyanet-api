@@ -20,8 +20,8 @@ func TestSaveSteetinInDB(t *testing.T) {
 	}
 }
 func TestGetIdentifire(t *testing.T) {
-	i := GetIdentifire()
-	if i == "" {
+	i, _ := GetServerSettings()
+	if i.Identifier == "" {
 		t.Fail()
 	} else {
 		fmt.Println("identifire: ", i)

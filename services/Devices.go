@@ -11,7 +11,7 @@ import (
 	"net/http"
 )
 
-func CreateDevice(device *models.Device) (int, []byte) {
+func CreateDevice(device *models.Device, user models.UserInDB) (int, []byte) {
 	session, errConnectDB := DB.ConnectDB()
 	if errConnectDB != nil {
 		log.SystemErrorHappened(errConnectDB)
@@ -22,7 +22,8 @@ func CreateDevice(device *models.Device) (int, []byte) {
 	if errValidation != nil || !IsValid {
 		return http.StatusBadRequest, out
 	}
-	errCreateUser := DB.CreateDevice(*device, session)
+
+	errCreateUser := DB.CreateDevice(*device, user, session)
 	if errCreateUser != nil {
 		if errCreateUser.Error() == Words.DeviceExist {
 			//User Exist

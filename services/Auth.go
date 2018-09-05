@@ -86,7 +86,8 @@ func RequireTokenAuthentication(rw http.ResponseWriter, req *http.Request, next 
 		} else {
 			Action := req.Method
 			Route := req.URL.Path
-			role := DB.GetUserOfSession(jwtToken, session)
+			user := DB.GetUserOfSession(jwtToken, session)
+			role := user.Role
 			if role == "" {
 				role = "user"
 			}

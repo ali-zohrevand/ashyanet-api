@@ -9,7 +9,43 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-func CreateDevice(device models.Device, Session *mgo.Session) (err error) {
+func CreateDevice(device models.Device, user models.UserInDB, Session *mgo.Session) (err error) {
+	//err,exist:=FindDeviceByName(device.Name,Session)
+	err, exist := CheckExist("devicename", device.Name, models.DeviceInDB{}, DBname, DeviceCollectionName, DeviceExist, Session)
+	if exist {
+		return
+	}
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	var DeviceDB = models.DeviceInDB{}
+	DeviceDB.Id = bson.NewObjectId()
+	DeviceDB.Name = device.Name
+	DeviceDB.Description = device.Description
+	if device.Key != "" {
+		IsValid := CheckKeyIsValid(device.Key, sessionCopy)
+		if !IsValid {
+			errKeyIsnotValid := errors.New(KeyIsNotValid)
+			return errKeyIsnotValid
+		}
+	}
+	DeviceDB.Key = device.Key
+	if len(device.Owners) > 0 {
+		for _, user := range device.Owners {
+			userFetchedFromDB, err := FindUserByUsername(user, sessionCopy)
+			if err != nil {
+				err = errors.New(user + ": " + UserNotExist)
+				return err
+			}
+			DeviceDB.Owners = append(DeviceDB.Owners, userFetchedFromDB)
+		}
+	}
+	userFetchedFromDB, err := FindUserByUsername(DeafualtAdmminUserName, sessionCopy)
+	DeviceDB.Owners = append(DeviceDB.Owners, userFetchedFromDB)
+	DeviceDB.Type = device.Type
+	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Insert(DeviceDB)
+	return
+}
+func CreateDeviceWithOutUser(device models.Device, Session *mgo.Session) (err error) {
 	//err,exist:=FindDeviceByName(device.Name,Session)
 	err, exist := CheckExist("devicename", device.Name, models.DeviceInDB{}, DBname, DeviceCollectionName, DeviceExist, Session)
 	if exist {

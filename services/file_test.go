@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -19,6 +20,11 @@ func TestWriteFile(t *testing.T) {
 		t.Error(err)
 		t.Fail()
 	}
+	err = DeleteFile(path)
+	if err != nil {
+		t.Error(err)
+		t.Fail()
+	}
 }
 func TestReadFile(t *testing.T) {
 	path := "test.txt"
@@ -26,6 +32,12 @@ func TestReadFile(t *testing.T) {
 	err = WriteFile(path, "Salam")
 	m, err := ReadFile(path)
 	if m != "Salam" {
+		fmt.Println(m)
+		t.Error(err)
+		t.Fail()
+	}
+	err = DeleteFile(path)
+	if err != nil {
 		t.Error(err)
 		t.Fail()
 	}
