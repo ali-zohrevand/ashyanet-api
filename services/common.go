@@ -6,16 +6,41 @@ import (
 	"strings"
 )
 
-func CheckMqttTopic(device *models.Device, user models.UserInDB) (err error) {
+func CheckMqttTopic(device *models.Device, user models.UserInDB) (OutputDevice *models.Device, err error) {
+	root := ""
+	fmt.Println(root)
 	settings, err := GetServerSettings()
 	if err != nil {
 		return
 	}
-	switch settings.Type {
-	case "gateway":
 
-	default:
+	if settings.Type == "server" {
+		root = user.UserName
+	} else if settings.Type == "gateway" {
+		root = settings.Identifier
 
+	} else {
+		root = settings.Identifier
+	}
+	for i, topicPath := range device.Publish {
+		topicPath = AddRootTopic(root, topicPath)
+		device.Publish[i] = topicPath
+	}
+	for i, topicPath := range device.Subscribe {
+		topicPath = AddRootTopic(root, topicPath)
+		device.Publish[i] = topicPath
+	}
+	for i, topicPath := range device.Pubsub {
+		topicPath = AddRootTopic(root, topicPath)
+		device.Publish[i] = topicPath
+	}
+	for i, command := range device.Command {
+		command.Topic = AddRootTopic(root, command.Topic)
+		device.Command[i].Topic = command.Topic
+	}
+	for i, data := range device.Data {
+		data.Topic = AddRootTopic(root, data.Topic)
+		device.Command[i].Topic = data.Topic
 	}
 	return
 }
