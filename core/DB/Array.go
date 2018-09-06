@@ -63,9 +63,11 @@ func DeleteRepetedCell(array []string) (out []string, err error) {
 	for i, v := range array {
 		count := NumberInArray(v, out)
 		if count > 1 {
+
 			for j, a := range out {
 				if a == v && i != j {
 					out, err = DeleteSliceByIndex(j, out)
+					count = NumberInArray(v, out)
 					if err != nil {
 						return
 					}

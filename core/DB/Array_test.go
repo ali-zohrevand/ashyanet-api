@@ -49,7 +49,7 @@ func TestDeleteSliceByObject(t *testing.T) {
 }
 func TestDeleteRepetedCell(t *testing.T) {
 	var arr []string
-	arr = append(arr, "a", "a", "c", "c", "d", "a", "f")
+	arr = append(arr, "a", "a", "c", "c", "c", "c", "c", "d", "a", "f", "c", "c", "c", "c")
 
 	a, e := DeleteRepetedCell(arr)
 	fmt.Println(a, e)
