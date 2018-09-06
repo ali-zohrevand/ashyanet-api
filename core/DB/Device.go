@@ -74,6 +74,7 @@ func CreateDevice(device models.Device, user models.UserInDB, Session *mgo.Sessi
 	acl = addTopicInArraToMqttACL(device.Subscribe, acl, "s")
 	acl = addTopicInArraToMqttACL(device.Publish, acl, "p")
 	acl = addTopicInArraToMqttACL(device.Pubsub, acl, "ps")
+
 	for _, c := range device.Command {
 		acl.Subscribe = append(acl.Subscribe, c.Topic)
 	}
