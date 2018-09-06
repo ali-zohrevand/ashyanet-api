@@ -25,7 +25,7 @@ func TestCreateDevice(t *testing.T) {
 	DaTa.ValueType = "int"
 	Lamp := models.Device{}
 	//.........................................
-	Lamp.Name = "lamp12"
+	Lamp.Name = "lampdssddsd1s2"
 	Lamp.Description = "لامپ داخل اتاقل "
 	Lamp.Key = getValidKey()
 	Lamp.Type = "light"

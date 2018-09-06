@@ -75,33 +75,15 @@ func CreateDevice(device models.Device, user models.UserInDB, Session *mgo.Sessi
 	acl = addTopicInArraToMqttACL(device.Publish, acl, "p")
 	acl = addTopicInArraToMqttACL(device.Pubsub, acl, "ps")
 	//Delete Repeated
-	s, _ := DeleteRepetedCell(acl.Subscribe)
-	p, _ := DeleteRepetedCell(acl.Publish)
-	ps, _ := DeleteRepetedCell(acl.Pubsub)
-	for k := range acl.Pubsub {
-		acl.Pubsub, _ = DeleteSliceByIndex(k, acl.Pubsub)
-	}
-	for k := range acl.Publish {
-		acl.Publish, _ = DeleteSliceByIndex(k, acl.Publish)
-	}
-	for k := range acl.Subscribe {
-		acl.Subscribe, _ = DeleteSliceByIndex(k, acl.Subscribe)
-	}
-	for _, v := range s {
-		acl.Subscribe = append(acl.Subscribe, v)
-	}
-	for _, v := range p {
-		acl.Publish = append(acl.Publish, v)
-	}
-	for _, v := range ps {
-		acl.Pubsub = append(acl.Pubsub, v)
-	}
 	for _, c := range device.Command {
 		acl.Subscribe = append(acl.Subscribe, c.Topic)
 	}
 	for _, c := range device.Command {
 		acl.Publish = append(acl.Publish, c.Topic)
 	}
+	acl.Subscribe, _ = DeleteRepetedCell(acl.Subscribe)
+	acl.Publish, _ = DeleteRepetedCell(acl.Publish)
+	acl.Pubsub, _ = DeleteRepetedCell(acl.Pubsub)
 	errCreatACL := CreateMqttAcl(acl, sessionCopy)
 	if errCreatACL != nil {
 		return errors.New("INTERNAL ERROR")
