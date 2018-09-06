@@ -7,6 +7,7 @@ import (
 	. "gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"time"
 )
 
 func CreateDevice(device models.Device, user models.UserInDB, Session *mgo.Session) (err error) {
@@ -57,7 +58,32 @@ func CreateDevice(device models.Device, user models.UserInDB, Session *mgo.Sessi
 	for _, p := range device.Data {
 		DeviceDB.Data = append(DeviceDB.Data, p)
 	}
-
+	//..........................................ADD mqtt user ...............................
+	var mqttUser models.MqttUser
+	mqttUser.Username = device.Name
+	mqttUser.Password = device.MqttPassword
+	mqttUser.Is_superuser = false
+	mqttUser.Created = time.Now().String()
+	errCreateMqttUser := CreateMqttUser(mqttUser, sessionCopy)
+	if errCreateMqttUser != nil && errCreateMqttUser.Error() != UserExist {
+		return errors.New("INTERNAL ERROR")
+	}
+	//..........................................ADD mqtt acl ...............................
+	var acl models.MqttAcl
+	acl.Username = device.Name
+	acl = addTopicInArraToMqttACL(device.Subscribe, acl, "s")
+	acl = addTopicInArraToMqttACL(device.Publish, acl, "p")
+	acl = addTopicInArraToMqttACL(device.Pubsub, acl, "ps")
+	for _, c := range device.Command {
+		acl.Subscribe = append(acl.Subscribe, c.Topic)
+	}
+	for _, c := range device.Command {
+		acl.Publish = append(acl.Publish, c.Topic)
+	}
+	errCreatACL := CreateMqttAcl(acl, sessionCopy)
+	if errCreatACL != nil {
+		return errors.New("INTERNAL ERROR")
+	}
 	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Insert(DeviceDB)
 	return
 }
@@ -150,4 +176,27 @@ func GetAllDevices(Session *mgo.Session) (err error, Device []OutputAPI.Device) 
 		//Todo Complete it
 	}
 	return
+}
+func addTopicInArraToMqttACL(array []string, acl models.MqttAcl, TopicType string) models.MqttAcl {
+
+	switch TopicType {
+	case "p":
+		for _, a := range array {
+			acl.Publish = append(acl.Publish, a)
+		}
+	case "ps":
+		for _, a := range array {
+			acl.Pubsub = append(acl.Pubsub, a)
+		}
+	case "s":
+		for _, a := range array {
+			acl.Subscribe = append(acl.Subscribe, a)
+		}
+
+	default:
+		for _, a := range array {
+			acl.Publish = append(acl.Publish, a)
+		}
+	}
+	return acl
 }

@@ -1,14 +1,12 @@
 package services
 
 import (
-	"fmt"
 	"gitlab.com/hooshyar/ChiChiNi-API/models"
 	"strings"
 )
 
 func CheckMqttTopic(device *models.Device, user models.UserInDB) (OutputDevice *models.Device, err error) {
 	root := ""
-	fmt.Println(root)
 	settings, err := GetServerSettings()
 	if err != nil {
 		return
@@ -46,7 +44,6 @@ func CheckMqttTopic(device *models.Device, user models.UserInDB) (OutputDevice *
 }
 func AddRootTopic(rootPath string, TopicPath string) (UpdatedPath string) {
 	PathArray := strings.Split(TopicPath, "/")
-	fmt.Println(len(PathArray))
 	if len(PathArray) == 0 {
 		return
 	}
