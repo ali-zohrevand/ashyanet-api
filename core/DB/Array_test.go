@@ -8,11 +8,8 @@ import (
 func TestFindInArray(t *testing.T) {
 	var arr []string
 	arr = append(arr, "apple", "orange", "Good")
-	s := make([]interface{}, len(arr))
-	for i, v := range arr {
-		s[i] = v
-	}
-	i := FindInArray("apple", s)
+
+	i := FindInArray("apple", arr)
 	if i != 0 {
 		t.Error(i)
 		t.Fail()
@@ -22,11 +19,8 @@ func TestFindInArray(t *testing.T) {
 func TestIsInArray(t *testing.T) {
 	var arr []string
 	arr = append(arr, "apple", "orange", "Good")
-	s := make([]interface{}, len(arr))
-	for i, v := range arr {
-		s[i] = v
-	}
-	f := IsInArray("apple", s)
+
+	f := IsInArray("apple", arr)
 	if !f {
 		t.Fail()
 	}
@@ -34,11 +28,8 @@ func TestIsInArray(t *testing.T) {
 func TestDeleteSliceByIndex(t *testing.T) {
 	var arr []string
 	arr = append(arr, "apple", "orange", "Good")
-	s := make([]interface{}, len(arr))
-	for i, v := range arr {
-		s[i] = v
-	}
-	a, err := DeleteSliceByIndex(1, s)
+
+	a, err := DeleteSliceByIndex(1, arr)
 	fmt.Println(a)
 	if err != nil {
 		t.Fail()
@@ -48,11 +39,8 @@ func TestDeleteSliceByIndex(t *testing.T) {
 func TestDeleteSliceByObject(t *testing.T) {
 	var arr []string
 	arr = append(arr, "apple", "orange", "Good")
-	s := make([]interface{}, len(arr))
-	for i, v := range arr {
-		s[i] = v
-	}
-	a, err := DeleteSliceByObject("apple", s)
+
+	a, err := DeleteSliceByObject("apple", arr)
 	fmt.Println(a)
 	if err != nil {
 		t.Fail()
@@ -62,11 +50,8 @@ func TestDeleteSliceByObject(t *testing.T) {
 func TestDeleteRepetedCell(t *testing.T) {
 	var arr []string
 	arr = append(arr, "a", "a", "c", "c", "d", "a", "f")
-	s := make([]interface{}, len(arr))
-	for i, v := range arr {
-		s[i] = v
-	}
-	a, e := DeleteRepetedCell(s)
+
+	a, e := DeleteRepetedCell(arr)
 	fmt.Println(a, e)
 	if e != nil {
 		t.Fail()

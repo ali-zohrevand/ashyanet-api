@@ -25,7 +25,7 @@ func TestCreateDevice(t *testing.T) {
 	DaTa.ValueType = "int"
 	Lamp := models.Device{}
 	//.........................................
-	Lamp.Name = "lamp10"
+	Lamp.Name = "lamp12"
 	Lamp.Description = "لامپ داخل اتاقل "
 	Lamp.Key = getValidKey()
 	Lamp.Type = "light"
@@ -37,6 +37,12 @@ func TestCreateDevice(t *testing.T) {
 	Lamp.Subscribe = append(Lamp.Subscribe, "sddfdfdfdfdf5456456465dfsd/sdsad")
 	Lamp.Subscribe = append(Lamp.Subscribe, "")
 	Lamp.Subscribe = append(Lamp.Subscribe, "/")
+	Lamp.Subscribe = append(Lamp.Subscribe, "/")
+	Lamp.Subscribe = append(Lamp.Subscribe, "/")
+	Lamp.Subscribe = append(Lamp.Subscribe, "/")
+	Lamp.Subscribe = append(Lamp.Subscribe, "/")
+	Lamp.Subscribe = append(Lamp.Subscribe, "/")
+
 	Lamp.Command = append(Lamp.Command, TrunOnCommand)
 	Lamp.Command = append(Lamp.Command, TrunoffCommand)
 	Lamp.Pubsub = append(Lamp.Pubsub, "/d")

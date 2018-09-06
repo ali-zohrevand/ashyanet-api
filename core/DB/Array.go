@@ -2,7 +2,7 @@ package DB
 
 import "errors"
 
-func IsInArray(Target interface{}, Array []interface{}) (Found bool) {
+func IsInArray(Target string, Array []string) (Found bool) {
 
 	i := FindInArray(Target, Array)
 	if i == -1 {
@@ -12,7 +12,7 @@ func IsInArray(Target interface{}, Array []interface{}) (Found bool) {
 	}
 	return
 }
-func DeleteSliceByIndex(i int, slice []interface{}) (output []interface{}, err error) {
+func DeleteSliceByIndex(i int, slice []string) (output []string, err error) {
 	tempLenght := len(slice)
 	if i > len(slice) || i < 0 {
 		err = errors.New("OUT OF RANGE")
@@ -29,7 +29,7 @@ func DeleteSliceByIndex(i int, slice []interface{}) (output []interface{}, err e
 		return slice, errors.New("OUT OF RANGE")
 	}
 }
-func DeleteSliceByObject(Target interface{}, slice []interface{}) (output []interface{}, err error) {
+func DeleteSliceByObject(Target string, slice []string) (output []string, err error) {
 	i := FindInArray(Target, slice)
 	if i == -1 {
 		return nil, errors.New("OBJECT NOT FOUND")
@@ -39,7 +39,7 @@ func DeleteSliceByObject(Target interface{}, slice []interface{}) (output []inte
 	return
 
 }
-func FindInArray(Target interface{}, Array []interface{}) (Index int) {
+func FindInArray(Target string, Array []string) (Index int) {
 	for i, a := range Array {
 		if a == Target {
 			return i
@@ -47,7 +47,7 @@ func FindInArray(Target interface{}, Array []interface{}) (Index int) {
 	}
 	return -1
 }
-func NumberInArray(Target interface{}, Array []interface{}) (count int) {
+func NumberInArray(Target string, Array []string) (count int) {
 	count = 0
 	for _, a := range Array {
 		if a == Target {
@@ -56,7 +56,7 @@ func NumberInArray(Target interface{}, Array []interface{}) (count int) {
 	}
 	return count
 }
-func DeleteRepetedCell(array []interface{}) (out []interface{}, err error) {
+func DeleteRepetedCell(array []string) (out []string, err error) {
 	for _, b := range array {
 		out = append(out, b)
 	}
