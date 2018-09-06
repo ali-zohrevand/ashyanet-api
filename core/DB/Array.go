@@ -47,6 +47,14 @@ func FindInArray(Target string, Array []string) (Index int) {
 	}
 	return -1
 }
+func FindAllInArra(Target string, Array []string) (Index []int) {
+	for i, a := range Array {
+		if a == Target {
+			Index = append(Index, i)
+		}
+	}
+	return Index
+}
 func NumberInArray(Target string, Array []string) (count int) {
 	count = 0
 	for _, a := range Array {
@@ -63,8 +71,11 @@ func DeleteRepetedCell(array []string) (out []string, err error) {
 	for i, v := range array {
 		count := NumberInArray(v, out)
 		if count > 1 {
+			index := FindAllInArra(v, out)
+			for z := 1; z < len(index); z++ {
 
-			for j, a := range out {
+			}
+			/*	for j, a := range out {
 				if a == v && i != j {
 					out, err = DeleteSliceByIndex(j, out)
 					count = NumberInArray(v, out)
@@ -72,7 +83,7 @@ func DeleteRepetedCell(array []string) (out []string, err error) {
 						return
 					}
 				}
-			}
+			}*/
 		}
 	}
 	return
