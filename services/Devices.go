@@ -9,6 +9,7 @@ import (
 	"gitlab.com/hooshyar/ChiChiNi-API/services/validation"
 	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
 	"net/http"
+	"strings"
 )
 
 func CreateDevice(device *models.Device, user models.UserInDB) (int, []byte) {
@@ -22,8 +23,22 @@ func CreateDevice(device *models.Device, user models.UserInDB) (int, []byte) {
 	if errValidation != nil || !IsValid {
 		return http.StatusBadRequest, out
 	}
-
-	errCreateUser := DB.CreateDevice(*device, user, session)
+	//.......................We add locattionPath/DeviceType to pubsub slice..........................
+	LocationPath, err := DB.GetLocationPath(device.Location, session)
+	if err != nil {
+		log.SystemErrorHappened(errConnectDB)
+		return http.StatusInternalServerError, []byte("")
+	}
+	LocationAndType := LocationPath + "/" + device.Type
+	LocationAndType = strings.Replace(LocationAndType, "//", "/", -1)
+	device.Pubsub = append(device.Pubsub, LocationAndType)
+	//.................................................
+	deviceWithCorrectTopic, err := CheckMqttTopic(device, user)
+	if err != nil {
+		log.SystemErrorHappened(errConnectDB)
+		return http.StatusInternalServerError, []byte("")
+	}
+	errCreateUser := DB.CreateDevice(*deviceWithCorrectTopic, user, session)
 	if errCreateUser != nil {
 		if errCreateUser.Error() == Words.DeviceExist {
 			//User Exist

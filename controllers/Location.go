@@ -2,10 +2,9 @@ package controllers
 
 import (
 	"encoding/json"
-	"net/http"
-
 	"gitlab.com/hooshyar/ChiChiNi-API/models"
 	"gitlab.com/hooshyar/ChiChiNi-API/services"
+	"net/http"
 )
 
 func CreateLocation(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {

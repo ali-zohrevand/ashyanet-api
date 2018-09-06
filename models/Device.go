@@ -5,45 +5,47 @@ import (
 )
 
 type Device struct {
-	Id          string    `json:"id" bson:"_id"`
-	Name        string    `json:"devicename" bson:"devicename" valid:"required~Device Name Could not be empty,runelength(1|30),blacklist~Bad Char"`
-	Description string    `json:"description" bson:"description"`
-	Type        string    `json:"type" bson:"type" valid:"required~Description Could not be empty,runelength(1|30),blacklist~Bad Char"`
-	Key         string    `json:"key" bson:"key" valid:"required~Key Could not be empty,runelength(1|30),blacklist~Bad Char"`
-	Owners      []string  `json:"owner" bson:"description"`
-	Location    string    `json:"location" bson:"location" valid:"blacklist~Bad Char"`
-	Publish     []string  `json:"publish" bson:"publish" valid:"runelength(1|30),blacklist~Bad Char"`
-	Subscribe   []string  `json:"subscribe" bson:"subscribe" valid:"runelength(1|30),blacklist~Bad Char"`
-	Pubsub      []string  `json:"pubsub" bson:"pubsub" valid:"runelength(1|30),blacklist~Bad Char"`
-	Data        []Data    `json:"data" bson:"data" valid:"runelength(1|30),blacklist~Bad Char"`
-	Command     []Command `json:"command" bson:"command" valid:"runelength(1|30),blacklist~Bad Char"`
+	Id           string    `json:"id" bson:"_id"`
+	Name         string    `json:"devicename" bson:"devicename" valid:"required~Device Name Could not be empty,runelength(1|30),blacklist~Bad Char"`
+	Description  string    `json:"description" bson:"description"`
+	Type         string    `json:"type" bson:"type" valid:"required~Description Could not be empty,runelength(1|30),blacklist~Bad Char"`
+	Key          string    `json:"key" bson:"key" valid:"required~Key Could not be empty,runelength(1|30),blacklist~Bad Char"`
+	Owners       []string  `json:"owner" bson:"description"`
+	Location     string    `json:"location" bson:"location" valid:"blacklist~Bad Char"`
+	Publish      []string  `json:"publish" bson:"publish" valid:"runelength(1|30),blacklist~Bad Char"`
+	Subscribe    []string  `json:"subscribe" bson:"subscribe" valid:"runelength(1|30),blacklist~Bad Char"`
+	Pubsub       []string  `json:"pubsub" bson:"pubsub" valid:"runelength(1|30),blacklist~Bad Char"`
+	Data         []Data    `json:"data" bson:"data" `
+	Command      []Command `json:"command" bson:"command" `
+	MqttPassword string    `json:"mqtt_password" bson:"mqtt_password" valid:"required~Device Name Could not be empty,runelength(1|30)"`
 }
 type DeviceInDB struct {
-	Id          bson.ObjectId `json:"id" bson:"_id"`
-	Name        string        `json:"devicename" bson:"devicename"`
-	Description string        `json:"description" bson:"description"`
-	Type        string        `json:"type" bson:"type"`
-	Key         string        `json:"key" bson:"key"`
-	Owners      []UserInDB    `json:"owner" bson:"owner"`
-	Location    string        `json:"location" bson:"location"`
-	Publish     []string      `json:"publish" bson:"publish" valid:"runelength(1|30),blacklist~Bad Char"`
-	Subscribe   []string      `json:"subscribe" bson:"subscribe" valid:"runelength(1|30),blacklist~Bad Char"`
-	Pubsub      []string      `json:"pubsub" bson:"pubsub" valid:"runelength(1|30),blacklist~Bad Char"`
-	Data        []Data        `json:"data" bson:"data" valid:"runelength(1|30),blacklist~Bad Char"`
-	Command     []Command     `json:"command" bson:"command" valid:"runelength(1|30),blacklist~Bad Char"`
+	Id           bson.ObjectId `json:"id" bson:"_id"`
+	Name         string        `json:"devicename" bson:"devicename"`
+	Description  string        `json:"description" bson:"description"`
+	Type         string        `json:"type" bson:"type"`
+	Key          string        `json:"key" bson:"key"`
+	Owners       []UserInDB    `json:"owner" bson:"owner"`
+	Location     string        `json:"location" bson:"location"`
+	Publish      []string      `json:"publish" bson:"publish" valid:"runelength(1|30),blacklist~Bad Char"`
+	Subscribe    []string      `json:"subscribe" bson:"subscribe" valid:"runelength(1|30),blacklist~Bad Char"`
+	Pubsub       []string      `json:"pubsub" bson:"pubsub" valid:"runelength(1|30),blacklist~Bad Char"`
+	Data         []Data        `json:"data" bson:"data" `
+	Command      []Command     `json:"command" bson:"command"`
+	MqttPassword string        `json:"mqtt_password" bson:"mqtt_password" valid:"runelength(6|30)"`
 }
 
 type Command struct {
-	Name  string `json:"name"`
-	Value string `json:"value"`
+	Name  string `json:"name" valid:"runelength(1|30),blacklist~Bad Char"`
+	Value string `json:"value" valid:"runelength(1|30),blacklist~Bad Char"`
 	Dsc   string `json:"dsc"`
-	Topic string `json:"topic"`
+	Topic string `json:"topic" valid:"runelength(1|30),blacklist~Bad Char"`
 }
 type Data struct {
-	Name      string `json:"name"`
-	ValueType string `json:"value_type"`
+	Name      string `json:"name" valid:"runelength(1|30),blacklist~Bad Char"`
+	ValueType string `json:"value_type" valid:"runelength(1|30),blacklist~Bad Char"`
 	Dsc       string `json:"dsc"`
-	Topic     string `json:"topic"`
+	Topic     string `json:"topic" valid:"runelength(1|30),blacklist~Bad Char"`
 }
 
 /*

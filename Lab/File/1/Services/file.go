@@ -22,6 +22,17 @@ func CreateFile(FilePath string) (err error) {
 
 func WriteFile(FilePath string, input string) (err error) {
 	// Open file using READ & WRITE permission.
+	// check if file exists
+	_, err = os.Stat(FilePath)
+
+	// create file if not exists
+	if os.IsNotExist(err) {
+		var file, errCreateFile = os.Create(FilePath)
+		if isError(errCreateFile) {
+			return
+		}
+		defer file.Close()
+	}
 	file, err := os.OpenFile(FilePath, os.O_RDWR|os.O_APPEND, 0660)
 	if isError(err) {
 		return

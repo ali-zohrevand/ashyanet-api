@@ -42,6 +42,22 @@ func CreateDevice(device models.Device, user models.UserInDB, Session *mgo.Sessi
 	userFetchedFromDB, err := FindUserByUsername(DeafualtAdmminUserName, sessionCopy)
 	DeviceDB.Owners = append(DeviceDB.Owners, userFetchedFromDB)
 	DeviceDB.Type = device.Type
+	for _, p := range device.Pubsub {
+		DeviceDB.Pubsub = append(DeviceDB.Pubsub, p)
+	}
+	for _, p := range device.Publish {
+		DeviceDB.Publish = append(DeviceDB.Publish, p)
+	}
+	for _, p := range device.Subscribe {
+		DeviceDB.Subscribe = append(DeviceDB.Subscribe, p)
+	}
+	for _, p := range device.Command {
+		DeviceDB.Command = append(DeviceDB.Command, p)
+	}
+	for _, p := range device.Data {
+		DeviceDB.Data = append(DeviceDB.Data, p)
+	}
+
 	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Insert(DeviceDB)
 	return
 }
