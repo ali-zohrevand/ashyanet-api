@@ -5,9 +5,11 @@ import (
 	"gitlab.com/hooshyar/ChiChiNi-API/core/DB"
 	"gitlab.com/hooshyar/ChiChiNi-API/models"
 	"testing"
+	"time"
 )
 
 func TestCreateDevice(t *testing.T) {
+	fmt.Println(time.Now())
 	var TrunOnCommand models.Command
 	TrunOnCommand.Name = "On"
 	TrunOnCommand.Topic = "/home/root"
@@ -25,7 +27,7 @@ func TestCreateDevice(t *testing.T) {
 	DaTa.ValueType = "int"
 	Lamp := models.Device{}
 	//.........................................
-	Lamp.Name = "lampdssddsd1s2"
+	Lamp.Name = "testddr"
 	Lamp.Description = "لامپ داخل اتاقل "
 	Lamp.Key = getValidKey()
 	Lamp.Type = "light"
@@ -54,4 +56,6 @@ func TestCreateDevice(t *testing.T) {
 	err, meesgat := CreateDevice(&Lamp, user)
 
 	fmt.Println(string(meesgat), err)
+	fmt.Println(time.Now())
+
 }
