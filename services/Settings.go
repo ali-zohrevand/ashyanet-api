@@ -18,7 +18,10 @@ func CreateSettingsFile() (err error) {
 		return
 	}
 	defer session.Close()
-	key := DB.GetValidKey(session)
+	key, err := DB.GetValidKey(session)
+	if err != nil {
+		return
+	}
 	setting.Key = key.Key
 	setting.Password = "123456"
 	setting.Identifier = DB.GenerateKey()

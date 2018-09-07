@@ -37,7 +37,7 @@ func TestSetKeyForDevice(t *testing.T) {
 	defer session.Close()
 	keydevice := models.DeviceKey{}
 	keydevice.Device = "lamp"
-	newKey := GetValidKey(session)
+	newKey, _ := GetValidKey(session)
 	keydevice.Key = newKey.Key
 	var tests = []struct {
 		input    models.DeviceKey
@@ -57,6 +57,7 @@ func TestGenerateKey(t *testing.T) {
 	if len(key) != Words.LengthOfDeviceKey {
 		t.Error("Test Failed: key is ", key)
 	}
+	fmt.Println(key)
 
 }
 func TestGetValidKey(t *testing.T) {
@@ -65,8 +66,8 @@ func TestGetValidKey(t *testing.T) {
 		t.Fail()
 	}
 	defer session.Close()
-	key := GetValidKey(session)
-	if len(key.Key) != Words.LengthOfDeviceKey || key.Status != Words.StatusValid {
+	key, _ := GetValidKey(session)
+	if len(key.Key) != Words.LengthOfDeviceKey {
 		t.Error("Test Failed: key is ", key)
 	}
 	fmt.Println("key is : ", key)
@@ -78,7 +79,7 @@ func TestCheckKeyIsValid(t *testing.T) {
 	}
 	defer session.Close()
 	CheckKeyIsValid("", session)
-	key := GetValidKey(session)
+	key, _ := GetValidKey(session)
 	var tests = []struct {
 		input    string
 		expected bool

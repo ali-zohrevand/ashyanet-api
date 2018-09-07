@@ -41,8 +41,8 @@ func CreatValidKey() (int, []byte) {
 		return http.StatusInternalServerError, []byte("")
 		log.SystemErrorHappened(errConnectDB)
 	}
-	key := DB.GetValidKey(session)
-	if len(key.Key) != Words.LengthOfDeviceKey {
+	key, err := DB.GetValidKey(session)
+	if len(key.Key) != Words.LengthOfDeviceKey || err != nil {
 		return http.StatusInternalServerError, []byte("")
 
 	} else {

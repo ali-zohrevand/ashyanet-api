@@ -7,6 +7,7 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"math/rand"
+	"time"
 )
 
 func CreateDeviceKey(Session *mgo.Session) (err error) {
@@ -29,11 +30,14 @@ func CreateDeviceKey(Session *mgo.Session) (err error) {
 	err = sessionCopy.DB(Words.DBname).C(Words.DeviceKeyLocationName).Insert(DeviceKeyDB)
 	return
 }
-func GetValidKey(Session *mgo.Session) (deviceKey models.DeviceKey) {
+func GetValidKey(Session *mgo.Session) (deviceKey models.DeviceKeyInDB, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	sessionCopy.DB(Words.DBname).C(Words.DeviceKeyLocationName).Find(bson.M{"status": Words.StatusValid}).One(&deviceKey)
-	return deviceKey
+	deviceKey.Status = Words.StatusActivated
+	err = sessionCopy.DB(Words.DBname).C(Words.DeviceKeyLocationName).UpdateId(deviceKey.Id, deviceKey)
+	err = CreateDeviceKey(sessionCopy)
+	return
 }
 func AddKeyToDevice(deviceKey models.DeviceKey, Session *mgo.Session) (err error) {
 	sessionCopy := Session.Copy()
@@ -63,7 +67,7 @@ func AddKeyToDevice(deviceKey models.DeviceKey, Session *mgo.Session) (err error
 	CreateDeviceKey(sessionCopy)
 	return err
 }
-func GenerateKey() (key string) {
+func GenerateKey2() (key string) {
 	var letterRunes = []rune(Words.RuneCharInKey)
 	b := make([]rune, Words.LengthOfDeviceKey)
 	for i := range b {
@@ -71,6 +75,20 @@ func GenerateKey() (key string) {
 	}
 	return string(b)
 }
+
+var seededRand *rand.Rand = rand.New(
+	rand.NewSource(time.Now().UnixNano()))
+
+func GenerateKey() string {
+	var charset string
+	charset = Words.RuneCharInKey
+	b := make([]byte, Words.LengthOfDeviceKey)
+	for i := range b {
+		b[i] = charset[seededRand.Intn(len(charset))]
+	}
+	return string(b)
+}
+
 func CheckKeyIsValid(key string, Session *mgo.Session) (IsValid bool) {
 	IsValid = false
 	sessionCopy := Session.Copy()

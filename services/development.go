@@ -69,6 +69,6 @@ func getValidKey() string {
 	if errConnectDB != nil {
 		log.SystemErrorHappened(errConnectDB)
 	}
-	key := DB.GetValidKey(session)
+	key, _ := DB.GetValidKey(session)
 	return key.Key
 }
