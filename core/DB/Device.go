@@ -29,6 +29,10 @@ func CreateDevice(device models.Device, user models.UserInDB, Session *mgo.Sessi
 			return errKeyIsnotValid
 		}
 	}
+	err = ActiveKey(device.Key, sessionCopy)
+	if err != nil {
+		return
+	}
 	DeviceDB.Key = device.Key
 	if len(device.Owners) > 0 {
 		for _, user := range device.Owners {
@@ -58,6 +62,10 @@ func CreateDevice(device models.Device, user models.UserInDB, Session *mgo.Sessi
 	for _, p := range device.Data {
 		DeviceDB.Data = append(DeviceDB.Data, p)
 	}
+	DeviceDB.Pubsub, _ = DeleteRepetedCell(DeviceDB.Pubsub)
+	DeviceDB.Publish, _ = DeleteRepetedCell(DeviceDB.Publish)
+	DeviceDB.Subscribe, _ = DeleteRepetedCell(DeviceDB.Subscribe)
+
 	//..........................................ADD mqtt user ...............................
 	var mqttUser models.MqttUser
 	mqttUser.Username = device.Name

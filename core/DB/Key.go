@@ -34,8 +34,6 @@ func GetValidKey(Session *mgo.Session) (deviceKey models.DeviceKeyInDB, err erro
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	sessionCopy.DB(Words.DBname).C(Words.DeviceKeyLocationName).Find(bson.M{"status": Words.StatusValid}).One(&deviceKey)
-	deviceKey.Status = Words.StatusActivated
-	err = sessionCopy.DB(Words.DBname).C(Words.DeviceKeyLocationName).UpdateId(deviceKey.Id, deviceKey)
 	err = CreateDeviceKey(sessionCopy)
 	return
 }
@@ -99,5 +97,17 @@ func CheckKeyIsValid(key string, Session *mgo.Session) (IsValid bool) {
 		IsValid = true
 		return
 	}
+	return
+}
+func ActiveKey(key string, Session *mgo.Session) (err error) {
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	var keyFound models.DeviceKeyInDB
+	err = sessionCopy.DB(Words.DBname).C(Words.DeviceKeyLocationName).Find(bson.M{"key": key}).One(&keyFound)
+	if err != nil {
+		return
+	}
+	keyFound.Status = Words.StatusActivated
+	err = sessionCopy.DB(Words.DBname).C(Words.DeviceKeyLocationName).UpdateId(keyFound.Id, keyFound)
 	return
 }

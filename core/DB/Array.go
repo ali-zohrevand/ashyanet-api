@@ -81,3 +81,11 @@ func DeleteRepetedCell(array []string) (out []string, err error) {
 	}
 	return array, nil
 }
+func AddToArrayUnique(object string, Array []string) []string {
+	All := FindAllInArra(object, Array)
+	if len(All) > 1 {
+		return Array
+	}
+	Array = append(Array, object)
+	return Array
+}
