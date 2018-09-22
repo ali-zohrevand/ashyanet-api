@@ -1,6 +1,9 @@
 package services
 
 import (
+	"fmt"
+	"github.com/casbin/casbin"
+	"github.com/casbin/mongodb-adapter"
 	"gitlab.com/hooshyar/ChiChiNi-API/core/DB"
 	"gitlab.com/hooshyar/ChiChiNi-API/models"
 	"gitlab.com/hooshyar/ChiChiNi-API/services/log"
@@ -25,5 +28,12 @@ func AddPermissionModelToDB() {
 		panic(err)
 		return
 	}
+
+}
+func AddDefaultModelConfToDB() {
+	a := mongodbadapter.NewAdapter("127.0.0.1:27017/" + Words.DBname) // Your MongoDB URL.
+	e := casbin.NewEnforcer("auth_model.conf", a)
+	b := e.IsFiltered()
+	fmt.Println(b)
 
 }

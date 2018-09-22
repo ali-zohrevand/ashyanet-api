@@ -2,6 +2,7 @@ package DB
 
 import (
 	"errors"
+	"fmt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -39,4 +40,18 @@ func IsCollectionEmptty(DbName string, CollName string, Session *mgo.Session) (I
 	}
 	return false
 
+}
+
+func IsMongoUp() (Valid bool) {
+	s, err := mgo.Dial("mongodb://localhost")
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	err = s.Ping()
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	return true
 }
