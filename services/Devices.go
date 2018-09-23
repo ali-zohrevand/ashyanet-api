@@ -65,32 +65,6 @@ func CreateDevice(device *models.Device, user models.UserInDB) (int, []byte) {
 	}
 	return http.StatusInternalServerError, nil
 }
-func AddUserToDevice(userdevice *models.UserDevice) (int, []byte) {
-	session, errConnectDB := DB.ConnectDB()
-	if errConnectDB != nil {
-		log.SystemErrorHappened(errConnectDB)
-		return http.StatusInternalServerError, []byte("")
-	}
-	defer session.Close()
-	out, errValidation, IsValid := validation.ObjectValidation(*userdevice)
-	if errValidation != nil || !IsValid {
-		return http.StatusBadRequest, out
-	}
-	err := DB.AddUserDevice(*userdevice, session)
-	if err != nil {
-		message := OutputAPI.Message{}
-		message.Error = Words.DeviceOrUserNotFound
-		json, _ := json.Marshal(message)
-		return http.StatusBadRequest, json
-	} else {
-		message := OutputAPI.Message{}
-		message.Info = Words.UserAddedToDevice
-		json, _ := json.Marshal(message)
-		return http.StatusOK, json
-	}
-
-	return http.StatusInternalServerError, nil
-}
 func ListDevices() (int, []byte) {
 	session, errConnectDB := DB.ConnectDB()
 	if errConnectDB != nil {

@@ -11,19 +11,23 @@ var DeviceCreated = "Device Created"
 var LocationCreated = "Location Created"
 var DeviceOrUserNotFound = "Device Or User Not Found"
 var UserAddedToDevice = "User Added To Device"
+var UserAddedToLocation = "User Added To Location"
 var LocationNotFound = "Location Not Found"
+var UserOrLocationNotFound = "user Or Location Not Found"
 
 type WordsValidation struct {
-	FirstNameNeeded      string
-	UserExist            string
-	UserCreated          string
-	UserNotExist         string
-	DeviceNotExist       string
-	DeviceExist          string
-	LocationExist        string
-	DeviceCreated        string
-	LocationCreated      string
-	DeviceOrUserNotFound string
-	UserAddedToDevice    string
-	LocationNotFound     string
+	FirstNameNeeded        string
+	UserExist              string
+	UserCreated            string
+	UserNotExist           string
+	DeviceNotExist         string
+	DeviceExist            string
+	LocationExist          string
+	DeviceCreated          string
+	LocationCreated        string
+	DeviceOrUserNotFound   string
+	UserAddedToDevice      string
+	LocationNotFound       string
+	UserOrLocationNotFound string
+	UserAddedToLocation    string
 }
