@@ -1,11 +1,5 @@
 package DB
 
-import (
-	"gitlab.com/hooshyar/ChiChiNi-API/Lab/mosquitto/03_crateTopicBaseLocation/DB"
-	"gitlab.com/hooshyar/ChiChiNi-API/models"
-	"testing"
-)
-
 /*func TestCreateDevice(t *testing.T) {
 session, errConnectDB := DB.ConnectDB()
 if errConnectDB != nil {
@@ -50,25 +44,3 @@ for _, test := range tests {
 		}
 	}
 }*/
-
-func TestAddUserToDevice(t *testing.T) {
-	session, errConnectDB := DB.ConnectDB()
-	if errConnectDB != nil {
-		t.Fail()
-	}
-	defer session.Close()
-	ValidaUserTodevice := models.UserDevice{"ali", "lamp"}
-	var tests = []struct {
-		input    models.UserDevice
-		expected error
-	}{
-		{ValidaUserTodevice, nil},
-	}
-	for _, test := range tests {
-		output := AddUserToDevice(test.input, session)
-		if output != test.expected {
-			t.Error("Test Failed: {} inputted, {} expected, recieved: {}", test.input, test.expected, output)
-			//t.Fail()
-		}
-	}
-}

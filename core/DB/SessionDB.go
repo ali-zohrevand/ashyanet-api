@@ -37,6 +37,6 @@ func GetUserOfSession(token string, dbSession *mgo.Session) (user models.UserInD
 	defer sessionCopy.Close()
 	var JwtSession = models.JwtSession{}
 	sessionCopy.DB(Words.DBname).C(Words.JwtColletionName).Find(bson.M{"token": token}).One(&JwtSession)
-	user, _ = FindUserByUsername(JwtSession.OwnerUsername, sessionCopy)
+	user, _ = UserGetByUsername(JwtSession.OwnerUsername, sessionCopy)
 	return user
 }

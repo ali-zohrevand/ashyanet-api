@@ -54,7 +54,7 @@ func CheckLocationExist(name string, Session *mgo.Session) (err error, Exist boo
 	Exist = false
 	return
 }
-func GetLocationByName(name string, Session *mgo.Session) (location models.LocationInDB, err error) {
+func LocationGetByName(name string, Session *mgo.Session) (location models.LocationInDB, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	err = sessionCopy.DB(Words.DBname).C(Words.LocationCollectionName).Find(bson.M{"locationname": name}).One(&location)
@@ -69,7 +69,7 @@ func GetLocationPath(locationName string, Session *mgo.Session) (path string, er
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	for {
-		Location, err := GetLocationByName(name, sessionCopy)
+		Location, err := LocationGetByName(name, sessionCopy)
 		if err != nil {
 			break
 		}

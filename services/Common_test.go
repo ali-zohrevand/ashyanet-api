@@ -47,7 +47,7 @@ func TestCheckMqttTopic(t *testing.T) {
 	Lamp.Pubsub = append(Lamp.Pubsub, "sd656456465dfsd/sdsad")
 	Lamp.Data = append(Lamp.Data, DaTa)
 	s, _ := DB.ConnectDB()
-	user, _ := DB.FindUserByUsername("admin", s)
+	user, _ := DB.UserGetByUsername("admin", s)
 	fmt.Println(user)
 	newUser, _ := CheckMqttTopic(&Lamp, user)
 	j, _ := json.Marshal(newUser)

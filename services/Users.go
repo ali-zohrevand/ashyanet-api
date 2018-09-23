@@ -16,10 +16,10 @@ func AddInitUser() {
 		panic(errConnectDB)
 	}
 	// چک میکنیم ببینیم آیا قبلا کاربر ادمین ثبت نام شده یا خیر
-	user, _ := DB.FindUserByUsername(Words.DeafualtAdmminUserName, session)
+	user, _ := DB.UserGetByUsername(Words.DeafualtAdmminUserName, session)
 	if user.Role != Words.DeafualtAdmminRole {
 		//کاربر ادمین را ایجاد می نماییم.
-		DefaultAdmin := models.User{"", Words.DeafualtAdmminUserName, Words.DeafualtAdmminFirstName, Words.DeafualtAdmminLastName, Words.DeafualtAdmminEmail, Words.DeafualtAdmminPassword, Words.DeafualtAdmminRole}
+		DefaultAdmin := models.User{"", Words.DeafualtAdmminUserName, Words.DeafualtAdmminFirstName, Words.DeafualtAdmminLastName, Words.DeafualtAdmminEmail, Words.DeafualtAdmminPassword, Words.DeafualtAdmminRole, nil, nil}
 		// کاربر ادمیت را به سمت پایگاه داده ارسال میکنیم.
 		errCreateUser := UserDatastore.CreateUser(DefaultAdmin, session)
 		if errCreateUser != nil && errCreateUser.Error() != Words.UserExist {

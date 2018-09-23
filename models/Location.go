@@ -8,8 +8,9 @@ type Location struct {
 	Parent      string   `json:"parent" bson:"parent" valid:"runelength(1|30),blacklist~Bad Char"`
 	Devices     []string `json:"devices" bson:"devices"`
 	Description string   `json:"dsc" bson:"dsc"`
-	Latitude    string   `json:"latitude",bson="lat" valid:"IsLatitude"`
-	Longitude   string   `json:"longitude",bson="long" valid:"IsLongitude"`
+	Latitude    string   `json:"latitude" bson:"lat" valid:"IsLatitude"`
+	Longitude   string   `json:"longitude" bson:"long" valid:"IsLongitude"`
+	Users       []string `json:"users" bson:"users"`
 }
 type LocationInDB struct {
 	Id          bson.ObjectId `json:"id" bson:"_id"`
@@ -17,8 +18,9 @@ type LocationInDB struct {
 	Parent      string        `json:"parent" bson:"parent"`
 	Devices     []string      `json:"devices" bson:"devices"`
 	Description string        `json:"dsc" bson:"dsc"`
-	Latitude    string        `json:"latitude",bson="lat" valid:"IsLatitude"`
-	Longitude   string        `json:"longitude",bson="long" valid:"IsLongitude"`
+	Latitude    string        `json:"latitude" bson:"lat" valid:"IsLatitude"`
+	Longitude   string        `json:"longitude" bson:"long" valid:"IsLongitude"`
+	Users       []string      `json:"users" bson:"users"`
 }
 
 /*

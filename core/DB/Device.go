@@ -18,10 +18,16 @@ func CreateDevice(device models.Device, user models.UserInDB, Session *mgo.Sessi
 	}
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
+	err, Is := CheckLocationExist(device.Location, sessionCopy)
+	if !Is {
+		return errors.New(LocationNotFound)
+	}
 	var DeviceDB = models.DeviceInDB{}
 	DeviceDB.Id = bson.NewObjectId()
+	DeviceDB.Location = device.Location
 	DeviceDB.Name = device.Name
 	DeviceDB.Description = device.Description
+
 	if device.Key != "" {
 		IsValid := CheckKeyIsValid(device.Key, sessionCopy)
 		if !IsValid {
@@ -36,16 +42,16 @@ func CreateDevice(device models.Device, user models.UserInDB, Session *mgo.Sessi
 	DeviceDB.Key = device.Key
 	if len(device.Owners) > 0 {
 		for _, user := range device.Owners {
-			userFetchedFromDB, err := FindUserByUsername(user, sessionCopy)
+			userFetchedFromDB, err := UserGetByUsername(user, sessionCopy)
 			if err != nil {
 				err = errors.New(user + ": " + UserNotExist)
 				return err
 			}
-			DeviceDB.Owners = append(DeviceDB.Owners, userFetchedFromDB)
+			DeviceDB.Owners = append(DeviceDB.Owners, userFetchedFromDB.UserName)
 		}
 	}
-	userFetchedFromDB, err := FindUserByUsername(DeafualtAdmminUserName, sessionCopy)
-	DeviceDB.Owners = append(DeviceDB.Owners, userFetchedFromDB)
+	userFetchedFromDB, err := UserGetByUsername(DeafualtAdmminUserName, sessionCopy)
+	DeviceDB.Owners = append(DeviceDB.Owners, userFetchedFromDB.UserName)
 	DeviceDB.Type = device.Type
 	for _, p := range device.Pubsub {
 		DeviceDB.Pubsub = append(DeviceDB.Pubsub, p)
@@ -121,44 +127,18 @@ func CreateDeviceWithOutUser(device models.Device, Session *mgo.Session) (err er
 	DeviceDB.Key = device.Key
 	if len(device.Owners) > 0 {
 		for _, user := range device.Owners {
-			userFetchedFromDB, err := FindUserByUsername(user, sessionCopy)
+			userFetchedFromDB, err := UserGetByUsername(user, sessionCopy)
 			if err != nil {
 				err = errors.New(user + ": " + UserNotExist)
 				return err
 			}
-			DeviceDB.Owners = append(DeviceDB.Owners, userFetchedFromDB)
+			DeviceDB.Owners = append(DeviceDB.Owners, userFetchedFromDB.UserName)
 		}
 	}
-	userFetchedFromDB, err := FindUserByUsername(DeafualtAdmminUserName, sessionCopy)
-	DeviceDB.Owners = append(DeviceDB.Owners, userFetchedFromDB)
+	userFetchedFromDB, err := UserGetByUsername(DeafualtAdmminUserName, sessionCopy)
+	DeviceDB.Owners = append(DeviceDB.Owners, userFetchedFromDB.UserName)
 	DeviceDB.Type = device.Type
 	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Insert(DeviceDB)
-	return
-}
-
-func AddUserToDevice(userToDevice models.UserDevice, Session *mgo.Session) (err error) {
-	sessionCopy := Session.Copy()
-	defer sessionCopy.Close()
-	var user models.UserInDB
-	err = sessionCopy.DB(DBname).C(UserCollectionName).Find(bson.M{"username": userToDevice.UserName}).One(&user)
-	if err != nil {
-		err = errors.New(UserNotExist)
-		return
-	}
-	var deviceToAdd models.DeviceInDB
-	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Find(bson.M{"devicename": userToDevice.DeviceName}).One(&deviceToAdd)
-	if err != nil {
-		err = errors.New(DeviceNotExist)
-
-		return
-	}
-	for _, u := range deviceToAdd.Owners {
-		if u.UserName == userToDevice.UserName {
-			return
-		}
-	}
-	deviceToAdd.Owners = append(deviceToAdd.Owners, user)
-	err = sessionCopy.DB(DBname).C(DeviceCollectionName).UpdateId(deviceToAdd.Id, deviceToAdd)
 	return
 }
 

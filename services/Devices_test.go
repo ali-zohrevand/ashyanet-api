@@ -28,7 +28,7 @@ func TestCreateDevice(t *testing.T) {
 	Lamp := models.Device{}
 	//FSROUPwjOKbGJjYQs5TI
 	//.........................................
-	Lamp.Name = "asbfgdd"
+	Lamp.Name = "111ddddddddd"
 	Lamp.Description = "لامپ داخل اتاقل "
 	Lamp.Key = getValidKey()
 	Lamp.Type = "light"
@@ -38,12 +38,6 @@ func TestCreateDevice(t *testing.T) {
 	Lamp.Publish = append(Lamp.Publish, "sdsd/sdsad/sdfsdf")
 	Lamp.Subscribe = append(Lamp.Subscribe, "/dfsdfsdsd/sdsad/545465/sdfsdf")
 	Lamp.Subscribe = append(Lamp.Subscribe, "sddfdfdfdfdf5456456465dfsd/sdsad")
-	Lamp.Subscribe = append(Lamp.Subscribe, "")
-	Lamp.Subscribe = append(Lamp.Subscribe, "/")
-	Lamp.Subscribe = append(Lamp.Subscribe, "/")
-	Lamp.Subscribe = append(Lamp.Subscribe, "/")
-	Lamp.Subscribe = append(Lamp.Subscribe, "/")
-	Lamp.Subscribe = append(Lamp.Subscribe, "/")
 	Lamp.Subscribe = append(Lamp.Subscribe, "/")
 
 	Lamp.Command = append(Lamp.Command, TrunOnCommand)
@@ -53,7 +47,7 @@ func TestCreateDevice(t *testing.T) {
 	Lamp.MqttPassword = "123456789"
 	Lamp.Data = append(Lamp.Data, DaTa)
 	s, _ := DB.ConnectDB()
-	user, _ := DB.FindUserByUsername("admin", s)
+	user, _ := DB.UserGetByUsername("admin", s)
 	err, meesgat := CreateDevice(&Lamp, user)
 
 	fmt.Println(string(meesgat), err)

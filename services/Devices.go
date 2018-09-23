@@ -76,7 +76,7 @@ func AddUserToDevice(userdevice *models.UserDevice) (int, []byte) {
 	if errValidation != nil || !IsValid {
 		return http.StatusBadRequest, out
 	}
-	err := DB.AddUserToDevice(*userdevice, session)
+	err := DB.AddUserDevice(*userdevice, session)
 	if err != nil {
 		message := OutputAPI.Message{}
 		message.Error = Words.DeviceOrUserNotFound

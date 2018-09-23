@@ -12,9 +12,6 @@ import (
 type UserDataStore struct {
 }
 
-func (ds *UserDataStore) FindUser(userId string) (user models.User, err error) {
-	return
-}
 func (ds *UserDataStore) CheckUserPassCorrect(user models.User, Session *mgo.Session) (IsUserPassValid bool) {
 	IsUserPassValid = false
 	sessionCopy := Session.Copy()
@@ -36,7 +33,7 @@ func (ds *UserDataStore) CreateUser(userToCreate models.User, Session *mgo.Sessi
 		err = errors.New(Words.UserExist)
 		return
 	}
-	userBack, err = FindUserByUsername(userToCreate.UserName, Session)
+	userBack, err = UserGetByUsername(userToCreate.UserName, Session)
 	if userBack.Email != "" {
 		err = errors.New(Words.UserExist)
 		return
@@ -63,9 +60,12 @@ func FindUserByEmail(email string, Session *mgo.Session) (userToCreate models.Us
 	err = sessionCopy.DB(Words.DBname).C(Words.UserCollectionName).Find(bson.M{"email": email}).One(&userToCreate)
 	return
 }
-func FindUserByUsername(username string, Session *mgo.Session) (userToCreate models.UserInDB, err error) {
+func UserGetByUsername(username string, Session *mgo.Session) (userToCreate models.UserInDB, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	err = sessionCopy.DB(Words.DBname).C(Words.UserCollectionName).Find(bson.M{"username": username}).One(&userToCreate)
 	return
+}
+func AddLocationToUser() {
+
 }
