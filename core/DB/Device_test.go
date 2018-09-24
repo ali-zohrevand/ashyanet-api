@@ -1,5 +1,7 @@
 package DB
 
+import "testing"
+
 /*func TestCreateDevice(t *testing.T) {
 session, errConnectDB := DB.ConnectDB()
 if errConnectDB != nil {
@@ -15,7 +17,7 @@ var tests = []struct {
 
 }
 for _, test := range tests {
-	if output := CreateDevice(test.input,session); output != test.expected {
+	if output := DeviceCreate(test.input,session); output != test.expected {
 		t.Error("Test Failed: {} inputted, {} expected, recieved: {}", test.input, test.expected, output)
 		//t.Fail()
 	}
@@ -38,9 +40,12 @@ for _, test := range tests {
 
 	}
 	for _, test := range tests {
-		if output := CreateDevice(test.input,session); output != test.expected {
+		if output := DeviceCreate(test.input,session); output != test.expected {
 			t.Error("Test Failed: {} inputted, {} expected, recieved: {}", test.input, test.expected, output)
 			//t.Fail()
 		}
 	}
 }*/
+func TestDeviceGetAllTopic(t *testing.T) {
+
+}

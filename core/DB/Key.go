@@ -51,7 +51,7 @@ func AddKeyToDevice(deviceKey models.DeviceKey, Session *mgo.Session) (err error
 		return errKeyIsNotValid
 	}
 	//...........................Check if Device is available ....................................
-	errDevice, deviceToAdd := FindDeviceByName(deviceKey.Device, sessionCopy)
+	errDevice, deviceToAdd := DeviceGetByName(deviceKey.Device, sessionCopy)
 	if errDevice != nil {
 		errDeviceNotFound := errors.New(Words.DeviceNotExist)
 		return errDeviceNotFound

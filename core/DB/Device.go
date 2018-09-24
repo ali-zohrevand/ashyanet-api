@@ -10,8 +10,8 @@ import (
 	"time"
 )
 
-func CreateDevice(device models.Device, user models.UserInDB, Session *mgo.Session) (err error) {
-	//err,exist:=FindDeviceByName(device.Name,Session)
+func DeviceCreate(device models.Device, user models.UserInDB, Session *mgo.Session) (err error) {
+	//err,exist:=DeviceGetByName(device.Name,Session)
 	err, exist := CheckExist("devicename", device.Name, models.DeviceInDB{}, DBname, DeviceCollectionName, DeviceExist, Session)
 	if exist {
 		return
@@ -105,8 +105,20 @@ func CreateDevice(device models.Device, user models.UserInDB, Session *mgo.Sessi
 	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Insert(DeviceDB)
 	return
 }
+func IsOwnerOfDevice(username string, deviceName string, Session *mgo.Session) (Is bool, err error) {
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	Is = false
+	err, device := DeviceGetByName(deviceName, sessionCopy)
+	for _, user := range device.Owners {
+		if user == username {
+			Is = true
+		}
+	}
+	return
+}
 func CreateDeviceWithOutUser(device models.Device, Session *mgo.Session) (err error) {
-	//err,exist:=FindDeviceByName(device.Name,Session)
+	//err,exist:=DeviceGetByName(device.Name,Session)
 	err, exist := CheckExist("devicename", device.Name, models.DeviceInDB{}, DBname, DeviceCollectionName, DeviceExist, Session)
 	if exist {
 		return
@@ -142,7 +154,7 @@ func CreateDeviceWithOutUser(device models.Device, Session *mgo.Session) (err er
 	return
 }
 
-func FindDeviceByName(name string, Session *mgo.Session) (err error, Device models.DeviceInDB) {
+func DeviceGetByName(name string, Session *mgo.Session) (err error, Device models.DeviceInDB) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Find(bson.M{"devicename": name}).One(&Device)
@@ -169,6 +181,43 @@ func GetAllDevices(Session *mgo.Session) (err error, Device []OutputAPI.Device) 
 	}
 	return
 }
+func DeviceGetAllTopic(deviceName string, Type string, Session *mgo.Session) (TopicList []string, err error) {
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	err, device := DeviceGetByName(deviceName, sessionCopy)
+	if err != nil {
+		return
+	}
+	for _, topic := range device.Pubsub {
+		TopicList = append(TopicList, topic)
+	}
+	switch Type {
+	case "sub":
+		for _, topic := range device.Subscribe {
+			TopicList = append(TopicList, topic)
+		}
+	case "pub":
+		for _, topic := range device.Publish {
+			TopicList = append(TopicList, topic)
+		}
+	case "pubsub":
+		for _, topic := range device.Subscribe {
+			TopicList = append(TopicList, topic)
+		}
+		for _, topic := range device.Publish {
+			TopicList = append(TopicList, topic)
+		}
+	default:
+		for _, topic := range device.Subscribe {
+			TopicList = append(TopicList, topic)
+		}
+		for _, topic := range device.Publish {
+			TopicList = append(TopicList, topic)
+		}
+	}
+	return
+}
+
 func addTopicInArraToMqttACL(array []string, acl models.MqttAcl, TopicType string) models.MqttAcl {
 
 	switch TopicType {

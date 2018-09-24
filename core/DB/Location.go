@@ -20,7 +20,7 @@ func CreateLocation(Location models.Location, Session *mgo.Session) (err error) 
 	LocationDB.Description = Location.Description
 	LocationDB.Name = Location.Name
 	for i := 0; i < len(Location.Devices); i++ {
-		_, deviceFound := FindDeviceByName(Location.Devices[i], sessionCopy)
+		_, deviceFound := DeviceGetByName(Location.Devices[i], sessionCopy)
 		if deviceFound.Name == Location.Devices[i] {
 			LocationDB.Devices = append(LocationDB.Devices, Location.Devices[i])
 		} else {

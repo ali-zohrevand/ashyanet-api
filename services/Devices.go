@@ -38,7 +38,7 @@ func CreateDevice(device *models.Device, user models.UserInDB) (int, []byte) {
 		log.SystemErrorHappened(errConnectDB)
 		return http.StatusInternalServerError, []byte("")
 	}
-	errCreateUser := DB.CreateDevice(*deviceWithCorrectTopic, user, session)
+	errCreateUser := DB.DeviceCreate(*deviceWithCorrectTopic, user, session)
 	if errCreateUser != nil {
 		if errCreateUser.Error() == Words.DeviceExist {
 			//User Exist

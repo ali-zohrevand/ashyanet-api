@@ -66,6 +66,68 @@ func UserGetByUsername(username string, Session *mgo.Session) (userToCreate mode
 	err = sessionCopy.DB(Words.DBname).C(Words.UserCollectionName).Find(bson.M{"username": username}).One(&userToCreate)
 	return
 }
-func AddLocationToUser() {
 
+func UserGetAllTopic(username string, Type string, Session *mgo.Session) (TopicList []string, err error) {
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	user, err := UserGetByUsername(username, sessionCopy)
+	if err != nil {
+		return
+	}
+	for _, device := range user.Devices {
+		TopicListTemp, errGetTopic := DeviceGetAllTopic(device, Type, sessionCopy)
+		if errGetTopic != nil {
+			return nil, errGetTopic
+		}
+		TopicList = append(TopicList, TopicListTemp...)
+	}
+	return
+}
+func UserGetAllCommand(username string, Session *mgo.Session) (CommandList []models.Command, err error) {
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	user, err := UserGetByUsername(username, sessionCopy)
+	if err != nil {
+		return
+	}
+	for _, deviceName := range user.Devices {
+		errGetDevice, device := DeviceGetByName(deviceName, sessionCopy)
+		if errGetDevice != nil {
+			return nil, errGetDevice
+		}
+		CommandList = append(CommandList, device.Command...)
+	}
+	return
+}
+func UserGetAllData(username string, Type string, Session *mgo.Session) (CommandList []models.Data, err error) {
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	user, err := UserGetByUsername(username, sessionCopy)
+	if err != nil {
+		return
+	}
+	for _, deviceName := range user.Devices {
+		errGetDevice, device := DeviceGetByName(deviceName, sessionCopy)
+		if errGetDevice != nil {
+			return nil, errGetDevice
+		}
+		CommandList = append(CommandList, device.Data...)
+	}
+	return
+}
+func UserGetAllDevice(username string, Session *mgo.Session) (Devices []models.DeviceInDB, err error) {
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	UserIndb, err := UserGetByUsername(username, sessionCopy)
+	if err != nil {
+		return
+	}
+	for _, deviceName := range UserIndb.Devices {
+		errGetdevice, deviceIndb := DeviceGetByName(deviceName, sessionCopy)
+		if errGetdevice != nil {
+			return nil, errGetdevice
+		}
+		Devices = append(Devices, deviceIndb)
+	}
+	return
 }
