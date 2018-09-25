@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func GetUserFromHeader(req *http.Request) (User models.UserInDB) {
+func GetUserFromHeader(req *http.Request) (User models.UserInDB, err error) {
 	session, errConnectDB := DB.ConnectDB()
 	if errConnectDB != nil {
 		return
@@ -18,8 +18,8 @@ func GetUserFromHeader(req *http.Request) (User models.UserInDB) {
 		return
 	} else {
 		jwtToken := authArr[1]
-		user := DB.GetUserOfSession(jwtToken, session)
-		return user
+		user, err := DB.GetUserOfSession(jwtToken, session)
+		return user, err
 	}
 	return
 }

@@ -29,7 +29,7 @@ func TestUserGetAllCommand(t *testing.T) {
 		t.Fail()
 	}
 	defer session.Close()
-	command, _ := UserGetAllCommand("ali", session)
+	command, _ := UserGetAllMqttCommand("ali", session)
 	fmt.Println(command)
 }
 func TestUserGetAllDevice(t *testing.T) {

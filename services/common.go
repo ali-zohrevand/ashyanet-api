@@ -32,13 +32,13 @@ func CheckMqttTopic(device *models.Device, user models.UserInDB) (OutputDevice *
 		topicPath = AddRootTopic(root, topicPath)
 		device.Pubsub[i] = topicPath
 	}
-	for i, command := range device.Command {
+	for i, command := range device.MqttCommand {
 		command.Topic = AddRootTopic(root, command.Topic)
-		device.Command[i].Topic = command.Topic
+		device.MqttCommand[i].Topic = command.Topic
 	}
-	for i, data := range device.Data {
+	for i, data := range device.MqttData {
 		data.Topic = AddRootTopic(root, data.Topic)
-		device.Data[i].Topic = data.Topic
+		device.MqttData[i].Topic = data.Topic
 	}
 	return device, nil
 }
@@ -77,8 +77,8 @@ type Device struct {
 	Publish     []string `json:"publish" bson:"publish" valid:"runelength(1|30),blacklist~Bad Char"`
 	Subscribe   []string `json:"subscribe" bson:"subscribe" valid:"runelength(1|30),blacklist~Bad Char"`
 	Pubsub      []string `json:"pubsub" bson:"pubsub" valid:"runelength(1|30),blacklist~Bad Char"`
-	Data        []Data	 `json:"data" bson:"data" valid:"runelength(1|30),blacklist~Bad Char"`
-	Command     []Command `json:"command" bson:"command" valid:"runelength(1|30),blacklist~Bad Char"`
+	MqttData        []MqttData	 `json:"data" bson:"data" valid:"runelength(1|30),blacklist~Bad Char"`
+	MqttCommand     []MqttCommand `json:"command" bson:"command" valid:"runelength(1|30),blacklist~Bad Char"`
 }
 
 */

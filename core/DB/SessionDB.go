@@ -32,11 +32,11 @@ func IsUserSession(username string, token string, Ip string, dbSession *mgo.Sess
 	}
 	return
 }
-func GetUserOfSession(token string, dbSession *mgo.Session) (user models.UserInDB) {
+func GetUserOfSession(token string, dbSession *mgo.Session) (user models.UserInDB, err error) {
 	sessionCopy := dbSession.Copy()
 	defer sessionCopy.Close()
 	var JwtSession = models.JwtSession{}
 	sessionCopy.DB(Words.DBname).C(Words.JwtColletionName).Find(bson.M{"token": token}).One(&JwtSession)
-	user, _ = UserGetByUsername(JwtSession.OwnerUsername, sessionCopy)
-	return user
+	user, err = UserGetByUsername(JwtSession.OwnerUsername, sessionCopy)
+	return user, err
 }

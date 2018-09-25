@@ -10,17 +10,17 @@ import (
 
 func TestCreateDevice(t *testing.T) {
 	fmt.Println(time.Now())
-	var TrunOnCommand models.Command
+	var TrunOnCommand models.MqttCommand
 	TrunOnCommand.Name = "On"
 	TrunOnCommand.Topic = "/home/root"
 	TrunOnCommand.Dsc = "Turn Light On"
 	TrunOnCommand.Value = "on"
-	var TrunoffCommand models.Command
+	var TrunoffCommand models.MqttCommand
 	TrunoffCommand.Name = "Of"
 	TrunoffCommand.Topic = "/home/dffd/dfsdf"
 	TrunoffCommand.Dsc = "Turn Light On"
 	TrunoffCommand.Value = "off"
-	var DaTa models.Data
+	var DaTa models.MqttData
 	DaTa.Dsc = "status"
 	DaTa.Topic = "/sds"
 	DaTa.Name = "Status"
@@ -40,12 +40,12 @@ func TestCreateDevice(t *testing.T) {
 	Lamp.Subscribe = append(Lamp.Subscribe, "sddfdfdfdfdf5456456465dfsd/sdsad")
 	Lamp.Subscribe = append(Lamp.Subscribe, "/")
 
-	Lamp.Command = append(Lamp.Command, TrunOnCommand)
-	Lamp.Command = append(Lamp.Command, TrunoffCommand)
+	Lamp.MqttCommand = append(Lamp.MqttCommand, TrunOnCommand)
+	Lamp.MqttCommand = append(Lamp.MqttCommand, TrunoffCommand)
 	Lamp.Pubsub = append(Lamp.Pubsub, "/d")
 	Lamp.Pubsub = append(Lamp.Pubsub, "sd656456465dfsd/sdsad")
 	Lamp.MqttPassword = "123456789"
-	Lamp.Data = append(Lamp.Data, DaTa)
+	Lamp.MqttData = append(Lamp.MqttData, DaTa)
 	s, _ := DB.ConnectDB()
 	user, _ := DB.UserGetByUsername("admin", s)
 	err, meesgat := CreateDevice(&Lamp, user)

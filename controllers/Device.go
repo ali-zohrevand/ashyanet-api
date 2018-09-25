@@ -17,7 +17,11 @@ func CreateDevice(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)
 	}
 	w.Header().Set("Content-Type", "application/json")
 	//................................
-	userInDB := GetUserFromHeader(r)
+	userInDB, err := GetUserFromHeader(r)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+
 	responseStatus, token := services.CreateDevice(device, userInDB)
 	w.WriteHeader(responseStatus)
 	w.Write(token)

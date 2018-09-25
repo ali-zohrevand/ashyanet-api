@@ -62,11 +62,11 @@ func DeviceCreate(device models.Device, user models.UserInDB, Session *mgo.Sessi
 	for _, p := range device.Subscribe {
 		DeviceDB.Subscribe = append(DeviceDB.Subscribe, p)
 	}
-	for _, p := range device.Command {
-		DeviceDB.Command = append(DeviceDB.Command, p)
+	for _, p := range device.MqttCommand {
+		DeviceDB.Mqttcommand = append(DeviceDB.Mqttcommand, p)
 	}
-	for _, p := range device.Data {
-		DeviceDB.Data = append(DeviceDB.Data, p)
+	for _, p := range device.MqttData {
+		DeviceDB.Mqttdata = append(DeviceDB.Mqttdata, p)
 	}
 	DeviceDB.Pubsub, _ = DeleteRepetedCell(DeviceDB.Pubsub)
 	DeviceDB.Publish, _ = DeleteRepetedCell(DeviceDB.Publish)
@@ -89,10 +89,10 @@ func DeviceCreate(device models.Device, user models.UserInDB, Session *mgo.Sessi
 	acl = addTopicInArraToMqttACL(device.Publish, acl, "p")
 	acl = addTopicInArraToMqttACL(device.Pubsub, acl, "ps")
 	//Delete Repeated
-	for _, c := range device.Command {
+	for _, c := range device.MqttCommand {
 		acl.Subscribe = append(acl.Subscribe, c.Topic)
 	}
-	for _, c := range device.Command {
+	for _, c := range device.MqttCommand {
 		acl.Publish = append(acl.Publish, c.Topic)
 	}
 	acl.Subscribe, _ = DeleteRepetedCell(acl.Subscribe)
