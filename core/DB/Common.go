@@ -3,6 +3,7 @@ package DB
 import (
 	"errors"
 	"fmt"
+	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -54,4 +55,13 @@ func IsMongoUp() (Valid bool) {
 		return false
 	}
 	return true
+}
+func GenerateRandomString(length int) string {
+	var charset string
+	charset = Words.RuneCharInKey
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[seededRand.Intn(len(charset))]
+	}
+	return string(b)
 }

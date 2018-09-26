@@ -1,72 +1,15 @@
 package services
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/casbin/casbin"
 	scas "github.com/qiangmzsx/string-adapter"
-	"gitlab.com/hooshyar/ChiChiNi-API/OutputAPI"
 	"gitlab.com/hooshyar/ChiChiNi-API/core/DB"
-	"gitlab.com/hooshyar/ChiChiNi-API/models"
 	"gitlab.com/hooshyar/ChiChiNi-API/services/log"
-	"gitlab.com/hooshyar/ChiChiNi-API/services/validation"
-	"gopkg.in/mgo.v2/bson"
 	"net/http"
 	"strings"
-	"time"
 )
 
-func Login(requestUser *models.User, request *http.Request) (int, []byte) {
-	session, errConnectDB := DB.ConnectDB()
-	if errConnectDB != nil {
-		log.SystemErrorHappened(errConnectDB)
-		return http.StatusInternalServerError, []byte("")
-	}
-	defer session.Close()
-	out, errValidation, IsValid := validation.UserLoginValidation(*requestUser)
-	if errValidation != nil || !IsValid {
-		return http.StatusBadRequest, out
-	}
-	UserDatastore := DB.UserDataStore{}
-	session, errConDB := DB.ConnectDB()
-	if errConDB != nil {
-		log.SystemErrorHappened(errConDB)
-		return http.StatusUnauthorized, []byte("")
-	}
-	defer session.Close()
-	if UserDatastore.CheckUserPassCorrect(*requestUser, session) {
-		token, err := GenerateToken(requestUser.UserName)
-		if err != nil {
-			log.SystemErrorHappened(err)
-			return http.StatusUnauthorized, []byte("")
-		} else {
-			//................................. Main Action is Hear .................................
-			response, err := json.Marshal(OutputAPI.TokenAuthentication{token})
-			if err != nil {
-				log.SystemErrorHappened(err)
-				return http.StatusUnauthorized, []byte("")
-			}
-			sessionObj := models.JwtSession{
-				Id:            bson.NewObjectId(),
-				JwtToken:      token,
-				OwnerUsername: requestUser.UserName,
-				TimeCreated:   time.Now(),
-				Ip:            GetIpOfRequest(request),
-			}
-			var jwtSessionDataStore = DB.JwtSessionDataStore{}
-			errAddToSessionDB := jwtSessionDataStore.CreateJwtSession(sessionObj, session)
-			if errAddToSessionDB != nil {
-				log.SystemErrorHappened(errConnectDB)
-				return http.StatusInternalServerError, []byte("")
-			}
-			return http.StatusOK, response
-			//..................................................................
-		}
-	} else {
-		//todo: security log Happened beacuse user and password not match
-	}
-	return http.StatusUnauthorized, []byte("")
-}
 func RequireTokenAuthentication(rw http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	session, errConnectDB := DB.ConnectDB()
 	if errConnectDB != nil {
@@ -86,7 +29,10 @@ func RequireTokenAuthentication(rw http.ResponseWriter, req *http.Request, next 
 		} else {
 			Action := req.Method
 			Route := req.URL.Path
-			user := DB.GetUserOfSession(jwtToken, session)
+			user, errGetUser := DB.GetUserOfSession(jwtToken, session)
+			if errGetUser != nil {
+				rw.WriteHeader(http.StatusUnauthorized)
+			}
 			role := user.Role
 			if role == "" {
 				role = "user"
@@ -94,7 +40,6 @@ func RequireTokenAuthentication(rw http.ResponseWriter, req *http.Request, next 
 			fmt.Println(role, " ", Action, " ", Route)
 			if CheckAccess(role, Route, Action) {
 				next(rw, req)
-
 			} else {
 				rw.WriteHeader(http.StatusUnauthorized)
 

@@ -2,7 +2,10 @@ package services
 
 import (
 	"gitlab.com/hooshyar/ChiChiNi-API/models"
+	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
+	"math/rand"
 	"strings"
+	"time"
 )
 
 func CheckMqttTopic(device *models.Device, user models.UserInDB) (OutputDevice *models.Device, err error) {
@@ -42,6 +45,19 @@ func CheckMqttTopic(device *models.Device, user models.UserInDB) (OutputDevice *
 	}
 	return device, nil
 }
+func GenerateRandomString(length int) string {
+	var charset string
+	charset = Words.RuneCharInKey
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[seededRand.Intn(len(charset))]
+	}
+	return string(b)
+}
+
+var seededRand *rand.Rand = rand.New(
+	rand.NewSource(time.Now().UnixNano()))
+
 func AddRootTopic(rootPath string, TopicPath string) (UpdatedPath string) {
 	PathArray := strings.Split(TopicPath, "/")
 	if len(PathArray) == 0 {
@@ -78,7 +94,7 @@ type Device struct {
 	Subscribe   []string `json:"subscribe" bson:"subscribe" valid:"runelength(1|30),blacklist~Bad Char"`
 	Pubsub      []string `json:"pubsub" bson:"pubsub" valid:"runelength(1|30),blacklist~Bad Char"`
 	MqttData        []MqttData	 `json:"data" bson:"data" valid:"runelength(1|30),blacklist~Bad Char"`
-	MqttCommand     []MqttCommand `json:"command" bson:"command" valid:"runelength(1|30),blacklist~Bad Char"`
+	MqttHttpCommand     []MqttHttpCommand `json:"command" bson:"command" valid:"runelength(1|30),blacklist~Bad Char"`
 }
 
 */

@@ -18,7 +18,7 @@ func MqttCommand(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
-	responseStatus, token := services.MqttCommand(*command, userInDB)
+	responseStatus, token := services.MqttHttpCommand(*command, userInDB)
 	w.WriteHeader(responseStatus)
 	w.Write(token)
 }

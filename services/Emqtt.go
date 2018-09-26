@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func HttpCreateEmqttAcl(acl *models.MqttAcl) (int, []byte) {
+func EmqttHttpCreateAcl(acl *models.MqttAcl) (int, []byte) {
 
 	out, errValidation, IsValid := validation.ObjectValidation(*acl)
 	if errValidation != nil || !IsValid {
@@ -53,7 +53,7 @@ func HttpCreateEmqttAcl(acl *models.MqttAcl) (int, []byte) {
 
 	return http.StatusInternalServerError, []byte("")
 }
-func CreateTempAdminMqttUser() (UserName string, Passwoard string, err error) {
+func EmqttCreateTempAdminMqttUser() (UserName string, Passwoard string, err error) {
 	session, errConnectDB := DB.ConnectDB()
 	if errConnectDB != nil {
 		log.SystemErrorHappened(errConnectDB)
@@ -73,11 +73,16 @@ func CreateTempAdminMqttUser() (UserName string, Passwoard string, err error) {
 	Passwoard = user.Password
 	return
 }
-func DeleteEmqttUser(userName string) (err error) {
-
+func EmqttDeleteUser(userName string) (err error) {
+	session, errConnectDB := DB.ConnectDB()
+	if errConnectDB != nil {
+		log.SystemErrorHappened(errConnectDB)
+		return errors.New("DB IS NOT OK")
+	}
+	err = DB.EmqttDeleteUser(userName, session)
 	return
 }
-func HttpCreateEmqttUser(user *models.MqttUser) (int, []byte) {
+func EmqttHttpCreatUser(user *models.MqttUser) (int, []byte) {
 
 	out, errValidation, IsValid := validation.ObjectValidation(*user)
 	if errValidation != nil || !IsValid {
