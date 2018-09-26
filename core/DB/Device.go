@@ -78,7 +78,7 @@ func DeviceCreate(device models.Device, user models.UserInDB, Session *mgo.Sessi
 	mqttUser.Password = device.MqttPassword
 	mqttUser.Is_superuser = false
 	mqttUser.Created = time.Now().String()
-	errCreateMqttUser := CreateMqttUser(mqttUser, sessionCopy)
+	errCreateMqttUser := EmqttCreateUser(mqttUser, sessionCopy)
 	if errCreateMqttUser != nil && errCreateMqttUser.Error() != UserExist {
 		return errors.New("INTERNAL ERROR")
 	}
@@ -98,7 +98,7 @@ func DeviceCreate(device models.Device, user models.UserInDB, Session *mgo.Sessi
 	acl.Subscribe, _ = DeleteRepetedCell(acl.Subscribe)
 	acl.Publish, _ = DeleteRepetedCell(acl.Publish)
 	acl.Pubsub, _ = DeleteRepetedCell(acl.Pubsub)
-	errCreatACL := CreateMqttAcl(acl, sessionCopy)
+	errCreatACL := EmqttCreateAcl(acl, sessionCopy)
 	if errCreatACL != nil {
 		return errors.New("INTERNAL ERROR")
 	}

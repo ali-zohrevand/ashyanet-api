@@ -11,14 +11,15 @@ var a mqtt.MessageHandler
 func main() {
 	done := make(chan bool)
 	opts := mqtt.NewClientOptions().AddBroker("tcp://127.0.0.1:1883").SetClientID("sample")
-	opts.SetUsername("root")
+	opts.SetUsername("bob")
 	opts.SetPassword("123456")
 	c := mqtt.NewClient(opts)
 	if token := c.Connect(); token.Wait() && token.Error() != nil {
 		panic(token.Error())
 	}
 	//Send Message
-	c.Publish("test/topic", 1, true, "Example Payload")
+	c.Publish("test/topic", 1, true, "Example Payloadd")
+
 	var f mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 		fmt.Printf("TOPIC: %s\n", msg.Topic())
 		fmt.Printf("MSG: %s\n", msg.Payload())

@@ -26,6 +26,7 @@ func MqttCommand(command models.MqttCommand, User models.UserInDB) (int, []byte)
 	if !Is {
 		return http.StatusUnauthorized, []byte("")
 	}
+
 	return http.StatusInternalServerError, []byte("")
 
 }

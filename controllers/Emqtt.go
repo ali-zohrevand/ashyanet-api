@@ -16,7 +16,7 @@ func CreateEmqttUser(w http.ResponseWriter, r *http.Request, next http.HandlerFu
 
 	}
 	w.Header().Set("Content-Type", "application/json")
-	responseStatus, token := services.CreateEmqttUser(requestUser)
+	responseStatus, token := services.HttpCreateEmqttUser(requestUser)
 	w.WriteHeader(responseStatus)
 	w.Write(token)
 
