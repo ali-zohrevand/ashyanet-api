@@ -6,6 +6,7 @@ import (
 	"gitlab.com/hooshyar/ChiChiNi-API/models"
 	"gitlab.com/hooshyar/ChiChiNi-API/services/log"
 	"gitlab.com/hooshyar/ChiChiNi-API/services/validation"
+	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
 	"net/http"
 )
 
@@ -66,7 +67,27 @@ func MqttHttpCommand(command models.MqttCommand, User models.UserInDB) (int, []b
 	if !Is {
 		return http.StatusUnauthorized, []byte("")
 	}
+	errPublish := MqttCommandTempAdmin(command)
+	if errPublish != nil {
+		return http.StatusInternalServerError, []byte("")
+	} else {
+		return http.StatusOK, []byte("")
 
+	}
 	return http.StatusInternalServerError, []byte("")
 
+}
+
+func MqttCommandTempAdmin(command models.MqttCommand) (err error) {
+	TempUserAdminUserName, TempAdminPassword, errCreateTempAdmin := EmqttCreateTempAdminMqttUser()
+	if errCreateTempAdmin != nil {
+		return errCreateTempAdmin
+	}
+	defer EmqttDeleteUser(TempUserAdminUserName)
+	mqttObj, errCreateMqttUser := NewMqtt(Words.MqttBrokerIp, TempUserAdminUserName, TempAdminPassword, "TempAdmin")
+	if errCreateMqttUser != nil {
+		return errCreateMqttUser
+	}
+	errPublish := mqttObj.Publish(command.Topic, false, command.Value, 2)
+	return errPublish
 }
