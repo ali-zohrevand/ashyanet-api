@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 	"github.com/eclipse/paho.mqtt.golang"
+	"gitlab.com/hooshyar/ChiChiNi-API/models"
 	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
 )
 
@@ -22,6 +23,8 @@ func MqttSubcribeRootTopic() (err error) {
 	}
 	var eventFunc mqtt.MessageHandler = func(client mqtt.Client, message mqtt.Message) {
 		fmt.Println(message.Topic(), "  ", string(message.Payload()))
+		var mqttmeesage models.MqttMessage
+		mqttmeesage.Message = string(message.Payload())
 	}
 	errSubscribe := mqttObj.Subscribe("#", 2, eventFunc)
 	if errSubscribe != nil {

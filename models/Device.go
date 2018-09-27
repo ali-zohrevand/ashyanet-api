@@ -35,19 +35,6 @@ type DeviceInDB struct {
 	MqttPassword string        `json:"mqtt_password" bson:"mqtt_password" valid:"runelength(6|30)"`
 }
 
-type MqttCommand struct {
-	Name  string `json:"name" valid:"runelength(1|60),blacklist~Bad Char"`
-	Value string `json:"value" valid:"runelength(1|60),blacklist~Bad Char"`
-	Dsc   string `json:"dsc"`
-	Topic string `json:"topic" valid:"runelength(1|60),blacklist~Bad Char"`
-}
-type MqttData struct {
-	Name      string `json:"name" valid:"runelength(1|30),blacklist~Bad Char"`
-	ValueType string `json:"value_type" valid:"runelength(1|60),blacklist~Bad Char"`
-	Dsc       string `json:"dsc"`
-	Topic     string `json:"topic" valid:"runelength(1|30),blacklist~Bad Char"`
-}
-
 /*
 {
   "id": "",
