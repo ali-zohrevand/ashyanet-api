@@ -92,3 +92,22 @@ func MqttCommandTempAdmin(command models.MqttCommand) (err error) {
 	errPublish := mqttObj.Publish(command.Topic, false, command.Value, 2)
 	return errPublish
 }
+func MqttAddMessage(message models.MqttMessage) (err error) {
+	session, errConnectDB := DB.ConnectDB()
+	if errConnectDB != nil {
+		log.SystemErrorHappened(errConnectDB)
+		return
+	}
+	defer session.Close()
+	err = DB.MqttAddMessage(message, session)
+	return
+}
+func MqttGetAllMessageByTopicName(topic string) (MessageList []models.MqttMessage, err error) {
+	session, errConnectDB := DB.ConnectDB()
+	if errConnectDB != nil {
+		log.SystemErrorHappened(errConnectDB)
+		return
+	}
+	MessageList, err = DB.MqttGetMessagesByTopic(topic, session)
+	return
+}

@@ -7,7 +7,7 @@ type MqttMessage struct {
 	Topic     string        `json:"topic" bson:"topic"`
 	Message   string        `json:"message" bson:"message"`
 	MessageId string        `json:"message_id" bson:"message_id"`
-	Qos       string        `json:"qos,string" bson:"qos"`
+	Qos       byte          `json:"qos,string" bson:"qos"`
 	Retained  bool          `json:"retained,string" bson:"retained"`
 	Time      string        `json:"time" bson:"time"`
 }

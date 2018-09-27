@@ -11,7 +11,14 @@ func MqttAddMessage(message models.MqttMessage, Session *mgo.Session) (err error
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	message.Id = bson.NewObjectId()
-	err = sessionCopy.DB(Words.DBname).C(Words.MqttCollectionName).Insert(message)
 
+	err = sessionCopy.DB(Words.DBname).C(Words.MqttMessageCollectionName).Insert(message)
+
+	return
+}
+func MqttGetMessagesByTopic(topic string, Session *mgo.Session) (MessageList []models.MqttMessage, err error) {
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	err = sessionCopy.DB(Words.DBname).C(Words.MqttMessageCollectionName).Find(bson.M{"topic": topic}).All(&MessageList)
 	return
 }
