@@ -4,7 +4,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-type Device struct {
+/*type Device struct {
 	Id           string        `json:"id" bson:"_id"`
 	Name         string        `json:"devicename" bson:"devicename" valid:"required~Device Name Could not be empty,runelength(1|30),blacklist~Bad Char"`
 	Description  string        `json:"description" bson:"description"`
@@ -18,21 +18,21 @@ type Device struct {
 	MqttData     []MqttData    `json:"data" bson:"data" `
 	MqttCommand  []MqttCommand `json:"command" bson:"command" `
 	MqttPassword string        `json:"mqtt_password" bson:"mqtt_password"`
-}
+}*/
 type DeviceInDB struct {
-	Id           bson.ObjectId `json:"id" bson:"_id"`
+	Id           bson.ObjectId `json:"id,string" bson:"_id"`
 	Name         string        `json:"devicename" bson:"devicename"`
 	Description  string        `json:"description" bson:"description"`
 	Type         string        `json:"type" bson:"type"`
 	Key          string        `json:"key" bson:"key"`
 	Owners       []string      `json:"owner" bson:"owner"`
 	Location     string        `json:"location" bson:"location"`
-	Publish      []string      `json:"publish" bson:"publish" valid:"runelength(1|30),blacklist~Bad Char"`
-	Subscribe    []string      `json:"subscribe" bson:"subscribe" valid:"runelength(1|30),blacklist~Bad Char"`
-	Pubsub       []string      `json:"pubsub" bson:"pubsub" valid:"runelength(1|30),blacklist~Bad Char"`
-	Mqttdata     []MqttData    `json:"data" bson:"data" `
-	Mqttcommand  []MqttCommand `json:"command" bson:"command"`
-	MqttPassword string        `json:"mqtt_password" bson:"mqtt_password" valid:"runelength(6|30)"`
+	Publish      []string      `json:"publish" bson:"publish" valid:"runelength(1|200),blacklist~Bad Char"`
+	Subscribe    []string      `json:"subscribe" bson:"subscribe" valid:"runelength(1|200),blacklist~Bad Char"`
+	Pubsub       []string      `json:"pubsub" bson:"pubsub" valid:"runelength(1|200),blacklist~Bad Char"`
+	MqttData     []MqttData    `json:"data" bson:"data" `
+	MqttCommand  []MqttCommand `json:"command" bson:"command"`
+	MqttPassword string        `json:"mqtt_password" bson:"mqtt_password" valid:"required,runelength(6|30)" `
 }
 
 /*

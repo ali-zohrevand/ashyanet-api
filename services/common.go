@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func CheckMqttTopic(device *models.Device, user models.UserInDB) (OutputDevice *models.Device, err error) {
+func CheckMqttTopic(device *models.DeviceInDB, user models.UserInDB) (OutputDevice *models.DeviceInDB, err error) {
 	root := ""
 	settings, err := GetServerSettings()
 	if err != nil {

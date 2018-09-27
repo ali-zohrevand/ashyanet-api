@@ -1,6 +1,53 @@
 package DB
 
-import "testing"
+import (
+	"fmt"
+	"gitlab.com/hooshyar/ChiChiNi-API/models"
+	"testing"
+)
+
+func TestDeviceCreate(t *testing.T) {
+	session, errConnectDB := ConnectDB()
+	if errConnectDB != nil {
+		t.Fail()
+	}
+	defer session.Close()
+	var D models.DeviceInDB
+	var MqttCommand models.MqttCommand
+	var MqttData models.MqttData
+	MqttCommand.Topic = "/test"
+	MqttCommand.Dsc = "Test"
+	MqttCommand.Name = "on"
+	MqttCommand.Value = "ON"
+	MqttData.Name = "OF"
+	MqttData.Dsc = "tst"
+	MqttData.ValueType = "int"
+	D.MqttCommand = append(D.MqttCommand, MqttCommand)
+	D.MqttData = append(D.MqttData, MqttData)
+	D.MqttPassword = "123456"
+	D.Name = "testD" + GenerateKey()
+	D.Description = "test device"
+	D.Location = "room"
+	D.Owners = append(D.Owners, "admin")
+	D.Publish = append(D.Publish, "test")
+	D.Subscribe = append(D.Publish, "test")
+	D.Pubsub = append(D.Publish, "test")
+	D.Type = "light"
+	k, er := GetValidKey(session)
+	if er != nil {
+		t.Error(er)
+		t.Fail()
+	}
+	D.Key = k.Key
+	var u models.UserInDB
+	e := DeviceCreate(D, u, session)
+	fmt.Print(e)
+	if e != nil {
+		t.Error(e)
+		t.Fail()
+	}
+
+}
 
 /*func TestCreateDevice(t *testing.T) {
 session, errConnectDB := DB.ConnectDB()

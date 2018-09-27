@@ -13,7 +13,7 @@ func Device(router *mux.Router) *mux.Router {
 		negroni.HandlerFunc(services.RequireTokenAuthentication),
 		negroni.HandlerFunc(controllers.CreateDevice),
 	)
-	router.Handle("/user/devvices", HandleFunc).Methods("POST")
+	router.Handle("/user/devices", HandleFunc).Methods("POST")
 	//.......................................................................................................
 
 	HandleFuncList := negroni.New(

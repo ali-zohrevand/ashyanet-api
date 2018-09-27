@@ -31,14 +31,14 @@ func AddTempData() (err error) {
 	err = userDb.CreateUser(Ali, session)
 	err = userDb.CreateUser(Hasan, session)
 	//...........................Device............................
-	Lamp := models.Device{}
+	Lamp := models.DeviceInDB{}
 	Lamp.Name = "lamp"
 	Lamp.Description = "لامپ داخل اتاقل "
 	Lamp.Key = getValidKey()
 	Lamp.Type = "light"
 	Lamp.Owners = append(Lamp.Owners, Ali.UserName)
 	Lamp.Location = "room"
-	MovementSensor := models.Device{}
+	MovementSensor := models.DeviceInDB{}
 	MovementSensor.Name = "MovementSensor"
 	MovementSensor.Description = " سنسور حرکتی"
 	MovementSensor.Key = getValidKey()

@@ -1,6 +1,8 @@
 package DB
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"github.com/pkg/errors"
 	"gitlab.com/hooshyar/ChiChiNi-API/OutputAPI"
 	"gitlab.com/hooshyar/ChiChiNi-API/models"
@@ -10,7 +12,7 @@ import (
 	"time"
 )
 
-func DeviceCreate(device models.Device, user models.UserInDB, Session *mgo.Session) (err error) {
+func DeviceCreate(device models.DeviceInDB, user models.UserInDB, Session *mgo.Session) (err error) {
 	//err,exist:=DeviceGetByName(device.Name,Session)
 	err, exist := CheckExist("devicename", device.Name, models.DeviceInDB{}, DBname, DeviceCollectionName, DeviceExist, Session)
 	if exist {
@@ -22,60 +24,47 @@ func DeviceCreate(device models.Device, user models.UserInDB, Session *mgo.Sessi
 	if !Is {
 		return errors.New(LocationNotFound)
 	}
-	var DeviceDB = models.DeviceInDB{}
-	DeviceDB.Id = bson.NewObjectId()
-	DeviceDB.Location = device.Location
-	DeviceDB.Name = device.Name
-	DeviceDB.Description = device.Description
 
-	if device.Key != "" {
-		IsValid := CheckKeyIsValid(device.Key, sessionCopy)
-		if !IsValid {
-			errKeyIsnotValid := errors.New(KeyIsNotValid)
-			return errKeyIsnotValid
-		}
+	device.Id = bson.NewObjectId()
+
+	IsValid := CheckKeyIsValid(device.Key, sessionCopy)
+	if !IsValid {
+		errKeyIsnotValid := errors.New(KeyIsNotValid)
+		return errKeyIsnotValid
 	}
 	err = ActiveKey(device.Key, sessionCopy)
 	if err != nil {
 		return
 	}
-	DeviceDB.Key = device.Key
 	if len(device.Owners) > 0 {
 		for _, user := range device.Owners {
-			userFetchedFromDB, err := UserGetByUsername(user, sessionCopy)
+			_, err := UserGetByUsername(user, sessionCopy)
 			if err != nil {
 				err = errors.New(user + ": " + UserNotExist)
 				return err
 			}
-			DeviceDB.Owners = append(DeviceDB.Owners, userFetchedFromDB.UserName)
 		}
 	}
 	userFetchedFromDB, err := UserGetByUsername(DeafualtAdmminUserName, sessionCopy)
-	DeviceDB.Owners = append(DeviceDB.Owners, userFetchedFromDB.UserName)
-	DeviceDB.Type = device.Type
-	for _, p := range device.Pubsub {
-		DeviceDB.Pubsub = append(DeviceDB.Pubsub, p)
-	}
-	for _, p := range device.Publish {
-		DeviceDB.Publish = append(DeviceDB.Publish, p)
-	}
-	for _, p := range device.Subscribe {
-		DeviceDB.Subscribe = append(DeviceDB.Subscribe, p)
-	}
-	for _, p := range device.MqttCommand {
-		DeviceDB.Mqttcommand = append(DeviceDB.Mqttcommand, p)
-	}
-	for _, p := range device.MqttData {
-		DeviceDB.Mqttdata = append(DeviceDB.Mqttdata, p)
-	}
-	DeviceDB.Pubsub, _ = DeleteRepetedCell(DeviceDB.Pubsub)
-	DeviceDB.Publish, _ = DeleteRepetedCell(DeviceDB.Publish)
-	DeviceDB.Subscribe, _ = DeleteRepetedCell(DeviceDB.Subscribe)
+	if err != nil {
+		err = errors.New(UserNotExist)
 
+	}
+	device.Owners = append(device.Owners, userFetchedFromDB.UserName)
+	device.Owners = append(device.Owners, user.UserName)
+	device.Owners, _ = DeleteRepetedCell(device.Owners)
+	device.Pubsub, _ = DeleteRepetedCell(device.Pubsub)
+	device.Publish, _ = DeleteRepetedCell(device.Publish)
+	device.Subscribe, _ = DeleteRepetedCell(device.Subscribe)
 	//..........................................ADD mqtt user ...............................
 	var mqttUser models.MqttUser
 	mqttUser.Username = device.Name
 	mqttUser.Password = device.MqttPassword
+	sha := sha256.New()
+	sha.Write([]byte(device.MqttPassword))
+	passByte := sha.Sum(nil)
+	passStr := hex.EncodeToString(passByte)
+	device.MqttPassword = passStr
 	mqttUser.Is_superuser = false
 	mqttUser.Created = time.Now().String()
 	errCreateMqttUser := EmqttCreateUser(mqttUser, sessionCopy)
@@ -92,7 +81,7 @@ func DeviceCreate(device models.Device, user models.UserInDB, Session *mgo.Sessi
 	for _, c := range device.MqttCommand {
 		acl.Subscribe = append(acl.Subscribe, c.Topic)
 	}
-	for _, c := range device.MqttCommand {
+	for _, c := range device.MqttData {
 		acl.Publish = append(acl.Publish, c.Topic)
 	}
 	acl.Subscribe, _ = DeleteRepetedCell(acl.Subscribe)
@@ -102,7 +91,7 @@ func DeviceCreate(device models.Device, user models.UserInDB, Session *mgo.Sessi
 	if errCreatACL != nil {
 		return errors.New("INTERNAL ERROR")
 	}
-	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Insert(DeviceDB)
+	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Insert(device)
 	return
 }
 func IsOwnerOfDevice(username string, deviceName string, Session *mgo.Session) (Is bool, err error) {
@@ -117,7 +106,7 @@ func IsOwnerOfDevice(username string, deviceName string, Session *mgo.Session) (
 	}
 	return
 }
-func CreateDeviceWithOutUser(device models.Device, Session *mgo.Session) (err error) {
+func CreateDeviceWithOutUser(device models.DeviceInDB, Session *mgo.Session) (err error) {
 	//err,exist:=DeviceGetByName(device.Name,Session)
 	err, exist := CheckExist("devicename", device.Name, models.DeviceInDB{}, DBname, DeviceCollectionName, DeviceExist, Session)
 	if exist {

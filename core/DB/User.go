@@ -95,7 +95,7 @@ func UserGetAllMqttCommand(username string, Session *mgo.Session) (CommandList [
 		if errGetDevice != nil {
 			return nil, errGetDevice
 		}
-		CommandList = append(CommandList, device.Mqttcommand...)
+		CommandList = append(CommandList, device.MqttCommand...)
 	}
 	return
 }
@@ -111,7 +111,7 @@ func UserGetAllMqttData(username string, Type string, Session *mgo.Session) (Com
 		if errGetDevice != nil {
 			return nil, errGetDevice
 		}
-		CommandList = append(CommandList, device.Mqttdata...)
+		CommandList = append(CommandList, device.MqttData...)
 	}
 	return
 }

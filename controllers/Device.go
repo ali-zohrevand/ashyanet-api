@@ -9,12 +9,12 @@ import (
 )
 
 func CreateDevice(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-	device := new(models.Device)
+	device := new(models.DeviceInDB)
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&device)
-	if err != nil {
+	/*	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-	}
+	}*/
 	w.Header().Set("Content-Type", "application/json")
 	//................................
 	userInDB, err := GetUserFromHeader(r)

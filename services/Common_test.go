@@ -28,7 +28,7 @@ func TestCheckMqttTopic(t *testing.T) {
 	DaTa.Topic = "/sds"
 	DaTa.Name = "Status"
 	DaTa.ValueType = "int"
-	Lamp := models.Device{}
+	Lamp := models.DeviceInDB{}
 	Lamp.Name = "lamp"
 	Lamp.Description = "لامپ داخل اتاقل "
 	Lamp.Key = getValidKey()
@@ -47,8 +47,9 @@ func TestCheckMqttTopic(t *testing.T) {
 	Lamp.Pubsub = append(Lamp.Pubsub, "sd656456465dfsd/sdsad")
 	Lamp.MqttData = append(Lamp.MqttData, DaTa)
 	s, _ := DB.ConnectDB()
-	user, _ := DB.UserGetByUsername("admin", s)
-	fmt.Println(user)
+	user, e := DB.UserGetByUsername("ali", s)
+	fmt.Println(e)
+	fmt.Println("=========\n", user)
 	newUser, _ := CheckMqttTopic(&Lamp, user)
 	j, _ := json.Marshal(newUser)
 	fmt.Println(string(j))

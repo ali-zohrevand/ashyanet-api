@@ -25,10 +25,10 @@ func TestCreateDevice(t *testing.T) {
 	DaTa.Topic = "/sds"
 	DaTa.Name = "Status"
 	DaTa.ValueType = "int"
-	Lamp := models.Device{}
+	Lamp := models.DeviceInDB{}
 	//FSROUPwjOKbGJjYQs5TI
 	//.........................................
-	Lamp.Name = "111ddddddddd"
+	Lamp.Name = "testDevice-" + GenerateRandomString(5)
 	Lamp.Description = "لامپ داخل اتاقل "
 	Lamp.Key = getValidKey()
 	Lamp.Type = "light"
@@ -47,7 +47,7 @@ func TestCreateDevice(t *testing.T) {
 	Lamp.MqttPassword = "123456789"
 	Lamp.MqttData = append(Lamp.MqttData, DaTa)
 	s, _ := DB.ConnectDB()
-	user, _ := DB.UserGetByUsername("admin", s)
+	user, _ := DB.UserGetByUsername("ali", s)
 	err, meesgat := CreateDevice(&Lamp, user)
 
 	fmt.Println(string(meesgat), err)
