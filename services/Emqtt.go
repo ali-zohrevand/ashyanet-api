@@ -53,6 +53,35 @@ func EmqttHttpCreateAcl(acl *models.MqttAcl) (int, []byte) {
 
 	return http.StatusInternalServerError, []byte("")
 }
+func EmqttCreateTempAdminMqttUserWithDwefaultAdmin() (UserName string, Passwoard string, err error) {
+	session, errConnectDB := DB.ConnectDB()
+	if errConnectDB != nil {
+		log.SystemErrorHappened(errConnectDB)
+		return "", "", errors.New("DB IS NOT OK")
+	}
+	var user models.MqttUser
+	user.Username = Words.MqttDefaultAdmin
+	user.Password = GenerateRandomString(16)
+	user.Is_superuser = true
+	user.Created = time.Now().String()
+	errCreateUser := DB.EmqttCreateUser(user, session)
+	if errCreateUser != nil {
+		return "", "", errCreateUser
+
+	}
+	UserName = user.Username
+	Passwoard = user.Password
+	return
+}
+func EmqttDeleteMqttDefaultAdmin() (err error) {
+	session, errConnectDB := DB.ConnectDB()
+	if errConnectDB != nil {
+		log.SystemErrorHappened(errConnectDB)
+		return errors.New("DB IS NOT OK")
+	}
+	err = DB.EmqttDeleteUser(Words.MqttDefaultAdmin, session)
+	return
+}
 func EmqttCreateTempAdminMqttUser() (UserName string, Passwoard string, err error) {
 	session, errConnectDB := DB.ConnectDB()
 	if errConnectDB != nil {

@@ -74,6 +74,7 @@ func MqttHttpCommand(command models.MqttCommand, User models.UserInDB) (int, []b
 		return http.StatusOK, []byte("")
 
 	}
+
 	return http.StatusInternalServerError, []byte("")
 
 }
