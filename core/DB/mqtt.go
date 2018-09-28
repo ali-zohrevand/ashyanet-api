@@ -16,7 +16,7 @@ func MqttAddMessage(message models.MqttMessage, Session *mgo.Session) (err error
 
 	return
 }
-func MqttGetMessagesByTopic(topic string, Session *mgo.Session) (MessageList []models.MqttMessage, err error) {
+func MqttGetAllMessagesByTopic(topic string, Session *mgo.Session) (MessageList []models.MqttMessage, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	err = sessionCopy.DB(Words.DBname).C(Words.MqttMessageCollectionName).Find(bson.M{"topic": topic}).All(&MessageList)

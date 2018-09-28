@@ -8,6 +8,7 @@ import (
 	"gitlab.com/hooshyar/ChiChiNi-API/services/validation"
 	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
 	"net/http"
+	"time"
 )
 
 type mqttStruct struct {
@@ -108,6 +109,42 @@ func MqttGetAllMessageByTopicName(topic string) (MessageList []models.MqttMessag
 		log.SystemErrorHappened(errConnectDB)
 		return
 	}
-	MessageList, err = DB.MqttGetMessagesByTopic(topic, session)
+	MessageList, err = DB.MqttGetAllMessagesByTopic(topic, session)
+	return
+}
+
+func MqttSubcribeRootTopic() (err error) {
+	EmqttDeleteMqttDefaultAdmin()
+	TempUserAdminUserName, TempAdminPassword, errCreateTempAdmin := EmqttCreateTempAdminMqttUserWithDwefaultAdmin()
+	if errCreateTempAdmin != nil {
+		panic(err)
+		return errCreateTempAdmin
+	}
+	defer EmqttDeleteUser(TempUserAdminUserName)
+	done := make(chan bool)
+	mqttObj, errCreateMqttUser := NewMqtt(Words.MqttBrokerIp, TempUserAdminUserName, TempAdminPassword, "TempAdmin")
+	if errCreateMqttUser != nil {
+		panic(err)
+		return errCreateMqttUser
+	}
+	var eventFunc mqtt.MessageHandler = func(client mqtt.Client, message mqtt.Message) {
+		var mqttmeesage models.MqttMessage
+		mqttmeesage.Message = string(message.Payload())
+		mqttmeesage.Topic = message.Topic()
+		mqttmeesage.Time = time.Now().String()
+		mqttmeesage.Retained = message.Retained()
+		mqttmeesage.Qos = message.Qos()
+		mqttmeesage.MessageId = string(message.MessageID())
+		errAddMessage := MqttAddMessage(mqttmeesage)
+		if errAddMessage != nil {
+			log.ErrorHappened(errAddMessage)
+		}
+	}
+	errSubscribe := mqttObj.Subscribe("#", 2, eventFunc)
+	if errSubscribe != nil {
+		panic(err)
+		return errSubscribe
+	}
+	<-done
 	return
 }
