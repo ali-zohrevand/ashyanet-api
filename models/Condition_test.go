@@ -7,10 +7,11 @@ import (
 
 func TestCondition_Happened(t *testing.T) {
 	var c Condition
-	var d []string
-	d = append(d, "s", "sd")
-	c.InData = d
-	s, e := c.Happened()
+
+	c.InData = `{"some":4}`
+	c.JsonAttributeName = "some"
+	c.ConditionType = GraterThan
+	s, e := c.Happened(1)
 	fmt.Println(s, e)
 
 }
