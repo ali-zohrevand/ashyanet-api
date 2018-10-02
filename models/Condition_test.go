@@ -1,17 +1,33 @@
 package models
 
 import (
-	"fmt"
 	"testing"
 )
 
 func TestCondition_Happened(t *testing.T) {
-	var c Condition
+	var EqualeJsonString Condition
 
-	c.InData = `{"some":4}`
-	c.JsonAttributeName = "some"
-	c.ConditionType = GraterThan
-	s, e := c.Happened(1)
-	fmt.Println(s, e)
-
+	EqualeJsonString.InData = `{"some":"sc"}`
+	EqualeJsonString.JsonAttributeName = "some"
+	EqualeJsonString.ConditionType = EqualeTo
+	var EqualJsonInt Condition
+	EqualeJsonString.JsonAttributeName = "some"
+	EqualeJsonString.ConditionType = EqualeTo
+	EqualJsonInt.InData = `{"some":1}`
+	var tests = []struct {
+		input     Condition
+		Boundries interface{}
+		Is        bool
+		err       error
+	}{
+		{EqualeJsonString, "sc", true, nil},
+		{EqualJsonInt, 1, true, nil},
+	}
+	for _, test := range tests {
+		ok, err := EqualeJsonString.Happened(test.Boundries)
+		if ok != test.Is && err != test.err {
+			t.Error("Test Failed: {} inputted, {} expected, recieved: {}", test.input, test.Is, test.err)
+			t.Fail()
+		}
+	}
 }

@@ -28,33 +28,15 @@ const (
 
 func (c *Condition) Happened(Boundries ...interface{}) (Ok bool, err error) {
 	typeOdData := reflect.TypeOf(c.InData).String()
-
-	val := fmt.Sprintf("%v", c.InData)
-	valid := json.Valid([]byte(val))
-	if valid && !IsInt(c.InData) && !IsBool(c.InData) {
+	if IsJson(c.InData) {
 		typeOdData = "json"
-	}
-	IsDataTypeOK, dataTypeDetected := ConditionIsDataTypeOK(typeOdData, c.InData)
-	if dataTypeDetected == "json" {
-		var JsonMap map[string]interface{}
-		val := fmt.Sprintf("%v", c.InData)
-		errJson := json.Unmarshal([]byte(val), &JsonMap)
-		if errJson != nil {
+		var s error
+		c.InData, typeOdData, s = GetDataFromJsom(c.InData, c.JsonAttributeName)
+		if s != nil && typeOdData == "" {
 			return false, errors.New(Words.InvalidaData)
 		}
-		dataInJson := JsonMap[c.JsonAttributeName]
-		if dataInJson == nil {
-			return false, nil
-		}
-		value := fmt.Sprintf("%v", dataInJson)
-		x, err := strconv.Atoi(value)
-		if err != nil {
-			return false, nil
-		}
-		c.InData = x
-		typeOdData = reflect.TypeOf(x).String()
-
 	}
+	IsDataTypeOK, dataTypeDetected := ConditionIsDataTypeOK(typeOdData, c.InData)
 	var BType string
 	if len(Boundries) != 0 {
 		BType = reflect.TypeOf(Boundries[0]).String()
@@ -109,6 +91,28 @@ func (c *Condition) Happened(Boundries ...interface{}) (Ok bool, err error) {
 	}
 	return
 }
+func GetDataFromJsom(JsonString interface{}, Key string) (Resault interface{}, dataType string, err error) {
+	var JsonMap map[string]interface{}
+	val := fmt.Sprintf("%v", JsonString)
+	errJson := json.Unmarshal([]byte(val), &JsonMap)
+	if errJson != nil {
+		return "", "", errors.New(Words.InvalidaData)
+	}
+	dataInJson := JsonMap[Key]
+	if dataInJson == nil {
+		return "", "", errors.New(Words.InvalidaData)
+	}
+	value := fmt.Sprintf("%v", dataInJson)
+	x, err := strconv.Atoi(value)
+	if err != nil {
+		Resault = dataInJson
+		dataType = reflect.TypeOf(dataInJson).String()
+	} else {
+		Resault = x
+		dataType = reflect.TypeOf(x).String()
+	}
+	return
+}
 func IsString(in interface{}) bool {
 	if reflect.TypeOf(in).String() == "string" {
 		return true
@@ -127,7 +131,15 @@ func IsEquale(a interface{}, b interface{}) bool {
 	}
 	return false
 }
+func IsJson(in interface{}) bool {
 
+	val := fmt.Sprintf("%v", in)
+	valid := json.Valid([]byte(val))
+	if valid && !IsInt(in) && !IsBool(in) {
+		return true
+	}
+	return false
+}
 func IsLowerThan(in interface{}, lenght interface{}) bool {
 	if !IsInt(in) || !IsInt(lenght) {
 		return false
