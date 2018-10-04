@@ -83,7 +83,7 @@ func UserGetAllTopic(username string, Type string, Session *mgo.Session) (TopicL
 	}
 	return
 }
-func UserGetAllMqttCommand(username string, Session *mgo.Session) (CommandList []models.MqttCommand, err error) {
+func UserGetAllMqttCommand(username string, Session *mgo.Session) (CommandList []models.Command, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	user, err := UserGetByUsername(username, sessionCopy)
@@ -99,7 +99,7 @@ func UserGetAllMqttCommand(username string, Session *mgo.Session) (CommandList [
 	}
 	return
 }
-func UserGetAllMqttData(username string, Type string, Session *mgo.Session) (CommandList []models.MqttData, err error) {
+func UserGetAllMqttData(username string, Type string, Session *mgo.Session) (CommandList []models.Data, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	user, err := UserGetByUsername(username, sessionCopy)
@@ -115,7 +115,7 @@ func UserGetAllMqttData(username string, Type string, Session *mgo.Session) (Com
 	}
 	return
 }
-func UserHasMqttCommand(username string, Command models.MqttCommand, Session *mgo.Session) (Has bool, err error) {
+func UserHasMqttCommand(username string, Command models.Command, Session *mgo.Session) (Has bool, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	Has = false
@@ -130,7 +130,7 @@ func UserHasMqttCommand(username string, Command models.MqttCommand, Session *mg
 	}
 	return
 }
-func UserGetAllDevice(username string, Session *mgo.Session) (Devices []models.DeviceInDB, err error) {
+func UserGetAllDevice(username string, Session *mgo.Session) (Devices []models.Device, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	UserIndb, err := UserGetByUsername(username, sessionCopy)

@@ -15,11 +15,11 @@ import (
 	Publish      []string      `json:"publish" bson:"publish" valid:"runelength(1|30),blacklist~Bad Char"`
 	Subscribe    []string      `json:"subscribe" bson:"subscribe" valid:"runelength(1|30),blacklist~Bad Char"`
 	Pubsub       []string      `json:"pubsub" bson:"pubsub" valid:"runelength(1|30),blacklist~Bad Char"`
-	MqttData     []MqttData    `json:"data" bson:"data" `
-	MqttCommand  []MqttCommand `json:"command" bson:"command" `
+	Data     []Data    `json:"data" bson:"data" `
+	Command  []Command `json:"command" bson:"command" `
 	MqttPassword string        `json:"mqtt_password" bson:"mqtt_password"`
 }*/
-type DeviceInDB struct {
+type Device struct {
 	Id           bson.ObjectId `json:"id,string" bson:"_id"`
 	Name         string        `json:"devicename" bson:"devicename"`
 	Description  string        `json:"description" bson:"description"`
@@ -30,8 +30,8 @@ type DeviceInDB struct {
 	Publish      []string      `json:"publish" bson:"publish" valid:"runelength(1|200),blacklist~Bad Char"`
 	Subscribe    []string      `json:"subscribe" bson:"subscribe" valid:"runelength(1|200),blacklist~Bad Char"`
 	Pubsub       []string      `json:"pubsub" bson:"pubsub" valid:"runelength(1|200),blacklist~Bad Char"`
-	MqttData     []MqttData    `json:"data" bson:"data" `
-	MqttCommand  []MqttCommand `json:"command" bson:"command"`
+	MqttData     []Data        `json:"data" bson:"data" `
+	MqttCommand  []Command     `json:"command" bson:"command"`
 	MqttPassword string        `json:"mqtt_password" bson:"mqtt_password" valid:"required,runelength(6|30)" `
 }
 

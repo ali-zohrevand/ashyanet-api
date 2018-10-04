@@ -12,9 +12,9 @@ import (
 	"time"
 )
 
-func DeviceCreate(device models.DeviceInDB, user models.UserInDB, Session *mgo.Session) (err error) {
+func DeviceCreate(device models.Device, user models.UserInDB, Session *mgo.Session) (err error) {
 	//err,exist:=DeviceGetByName(device.Name,Session)
-	err, exist := CheckExist("devicename", device.Name, models.DeviceInDB{}, DBname, DeviceCollectionName, DeviceExist, Session)
+	err, exist := CheckExist("devicename", device.Name, models.Device{}, DBname, DeviceCollectionName, DeviceExist, Session)
 	if exist {
 		return
 	}
@@ -106,15 +106,15 @@ func IsOwnerOfDevice(username string, deviceName string, Session *mgo.Session) (
 	}
 	return
 }
-func CreateDeviceWithOutUser(device models.DeviceInDB, Session *mgo.Session) (err error) {
+func CreateDeviceWithOutUser(device models.Device, Session *mgo.Session) (err error) {
 	//err,exist:=DeviceGetByName(device.Name,Session)
-	err, exist := CheckExist("devicename", device.Name, models.DeviceInDB{}, DBname, DeviceCollectionName, DeviceExist, Session)
+	err, exist := CheckExist("devicename", device.Name, models.Device{}, DBname, DeviceCollectionName, DeviceExist, Session)
 	if exist {
 		return
 	}
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
-	var DeviceDB = models.DeviceInDB{}
+	var DeviceDB = models.Device{}
 	DeviceDB.Id = bson.NewObjectId()
 	DeviceDB.Name = device.Name
 	DeviceDB.Description = device.Description
@@ -143,7 +143,7 @@ func CreateDeviceWithOutUser(device models.DeviceInDB, Session *mgo.Session) (er
 	return
 }
 
-func DeviceGetByName(name string, Session *mgo.Session) (err error, Device models.DeviceInDB) {
+func DeviceGetByName(name string, Session *mgo.Session) (err error, Device models.Device) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Find(bson.M{"devicename": name}).One(&Device)
@@ -152,7 +152,7 @@ func DeviceGetByName(name string, Session *mgo.Session) (err error, Device model
 func GetAllDevices(Session *mgo.Session) (err error, Device []OutputAPI.Device) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
-	DevicesInDB := []models.DeviceInDB{}
+	DevicesInDB := []models.Device{}
 	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Find(bson.M{}).All(&DevicesInDB)
 	if err != nil {
 		err = errors.New(DeviceNotExist)

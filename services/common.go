@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func CheckMqttTopic(device *models.DeviceInDB, user models.UserInDB) (OutputDevice *models.DeviceInDB, err error) {
+func CheckMqttTopic(device *models.Device, user models.UserInDB) (OutputDevice *models.Device, err error) {
 	root := ""
 	settings, err := GetServerSettings()
 	if err != nil {
@@ -93,7 +93,7 @@ type Device struct {
 	Publish     []string `json:"publish" bson:"publish" valid:"runelength(1|30),blacklist~Bad Char"`
 	Subscribe   []string `json:"subscribe" bson:"subscribe" valid:"runelength(1|30),blacklist~Bad Char"`
 	Pubsub      []string `json:"pubsub" bson:"pubsub" valid:"runelength(1|30),blacklist~Bad Char"`
-	MqttData        []MqttData	 `json:"data" bson:"data" valid:"runelength(1|30),blacklist~Bad Char"`
+	Data        []Data	 `json:"data" bson:"data" valid:"runelength(1|30),blacklist~Bad Char"`
 	MqttHttpCommand     []MqttHttpCommand `json:"command" bson:"command" valid:"runelength(1|30),blacklist~Bad Char"`
 }
 

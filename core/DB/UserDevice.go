@@ -19,7 +19,7 @@ func AddUserDevice(userToDevice models.UserDevice, Session *mgo.Session) (err er
 		err = errors.New(UserNotExist)
 		return
 	}
-	var deviceToAdd models.DeviceInDB
+	var deviceToAdd models.Device
 	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Find(bson.M{"devicename": userToDevice.DeviceName}).One(&deviceToAdd)
 	if err != nil {
 		err = errors.New(DeviceNotExist)

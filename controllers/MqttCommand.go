@@ -8,7 +8,7 @@ import (
 )
 
 func MqttCommand(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-	command := new(models.MqttCommand)
+	command := new(models.Command)
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&command)
 	if err != nil {

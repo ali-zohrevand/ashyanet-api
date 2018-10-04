@@ -11,7 +11,7 @@ type DeviceKey struct {
 type DeviceKeyInDB struct {
 	Id     bson.ObjectId `json:"id,string" bson:"_id"`
 	Key    string        `json:"key" bson:"key"`
-	Device DeviceInDB    `json:"device" bson:"device"`
+	Device Device        `json:"device" bson:"device"`
 	Status string        `json:"status" bson:"status"`
 }
 

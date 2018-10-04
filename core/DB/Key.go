@@ -22,7 +22,7 @@ func CreateDeviceKey(Session *mgo.Session) (err error) {
 	var DeviceKeyDB = models.DeviceKeyInDB{}
 	DeviceKeyDB.Id = bson.NewObjectId()
 	DeviceKeyDB.Key = deviceKey.Key
-	TempDevice := models.DeviceInDB{}
+	TempDevice := models.Device{}
 	TempDevice.Id = bson.NewObjectId()
 	TempDevice.Name = "temp"
 	DeviceKeyDB.Device = TempDevice

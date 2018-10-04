@@ -11,17 +11,3 @@ type MqttMessage struct {
 	Retained  bool          `json:"retained,string" bson:"retained"`
 	Time      string        `json:"time" bson:"time"`
 }
-type MqttCommand struct {
-	Command
-	Name  string `json:"name" valid:"runelength(1|200),blacklist~Bad Char"`
-	Value string `json:"value" valid:"runelength(1|200),blacklist~Bad Char"`
-	Dsc   string `json:"dsc"`
-	Topic string `json:"topic" valid:"runelength(1|200),blacklist~Bad Char"`
-}
-type MqttData struct {
-	Data
-	Name      string `json:"name" valid:"runelength(1|200),blacklist~Bad Char"`
-	ValueType string `json:"value_type" valid:"runelength(1|200),blacklist~Bad Char"`
-	Dsc       string `json:"dsc"`
-	Topic     string `json:"topic" valid:"runelength(1|200),blacklist~Bad Char"`
-}

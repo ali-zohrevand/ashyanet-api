@@ -13,22 +13,22 @@ func TestAddRootTopic(t *testing.T) {
 	fmt.Println(p)
 }
 func TestCheckMqttTopic(t *testing.T) {
-	var TrunOnCommand models.MqttCommand
+	var TrunOnCommand models.Command
 	TrunOnCommand.Name = "On"
 	TrunOnCommand.Topic = "/home/root"
 	TrunOnCommand.Dsc = "Turn Light On"
 	TrunOnCommand.Value = "on"
-	var TrunoffCommand models.MqttCommand
+	var TrunoffCommand models.Command
 	TrunoffCommand.Name = "Of"
 	TrunoffCommand.Topic = "/home/dffd/dfsdf"
 	TrunoffCommand.Dsc = "Turn Light On"
 	TrunoffCommand.Value = "off"
-	var DaTa models.MqttData
+	var DaTa models.Data
 	DaTa.Dsc = "status"
 	DaTa.Topic = "/sds"
 	DaTa.Name = "Status"
 	DaTa.ValueType = "int"
-	Lamp := models.DeviceInDB{}
+	Lamp := models.Device{}
 	Lamp.Name = "lamp"
 	Lamp.Description = "لامپ داخل اتاقل "
 	Lamp.Key = getValidKey()

@@ -50,7 +50,7 @@ func (mqttobj *mqttStruct) Subscribe(topic string, qos byte, callbackFunction mq
 	}
 	return
 }
-func MqttHttpCommand(command models.MqttCommand, User models.UserInDB) (int, []byte) {
+func MqttHttpCommand(command models.Command, User models.UserInDB) (int, []byte) {
 	out, errValidation, IsValid := validation.ObjectValidation(command)
 	if errValidation != nil || !IsValid {
 		return http.StatusBadRequest, out
@@ -80,7 +80,7 @@ func MqttHttpCommand(command models.MqttCommand, User models.UserInDB) (int, []b
 
 }
 
-func MqttCommandTempAdmin(command models.MqttCommand) (err error) {
+func MqttCommandTempAdmin(command models.Command) (err error) {
 	TempUserAdminUserName, TempAdminPassword, errCreateTempAdmin := EmqttCreateTempAdminMqttUser()
 	if errCreateTempAdmin != nil {
 		return errCreateTempAdmin

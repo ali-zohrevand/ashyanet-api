@@ -12,9 +12,9 @@ func TestDeviceCreate(t *testing.T) {
 		t.Fail()
 	}
 	defer session.Close()
-	var D models.DeviceInDB
-	var MqttCommand models.MqttCommand
-	var MqttData models.MqttData
+	var D models.Device
+	var MqttCommand models.Command
+	var MqttData models.Data
 	MqttCommand.Topic = "/test"
 	MqttCommand.Dsc = "Test"
 	MqttCommand.Name = "on"

@@ -9,7 +9,7 @@ import (
 )
 
 func CreateDevice(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-	device := new(models.DeviceInDB)
+	device := new(models.Device)
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&device)
 	/*	if err != nil {

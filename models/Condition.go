@@ -11,10 +11,11 @@ import (
 )
 
 type Condition struct {
-	InData            interface{}
-	JsonAttributeName string
-	CommandFunction   Command
-	ConditionType     ConditionType
+	InData            interface{}   `json:"in_data" bson:"in_data"`
+	JsonAttributeName string        `json:"json_attribute_name" bson:"json_attribute_name"`
+	CommandFunction   Command       `json:"command_function" bson:"command_function"`
+	ConditionType     ConditionType `json:"condition_type" bson:"condition_type"`
+	Attr              []interface{} `json:"attr" bson:"attr"`
 }
 
 type ConditionType int
@@ -26,7 +27,16 @@ const (
 	EqualeTo   ConditionType = 3
 )
 
-func (c *Condition) Happened(Boundries ...interface{}) (Ok bool, err error) {
+func (c *Condition) GetAttr(in interface{}) {
+
+	c.Attr = append(c.Attr, in)
+
+}
+func (c *Condition) Happened() (Ok bool, err error) {
+	var Boundries []interface{}
+	for _, v := range c.Attr {
+		Boundries = append(Boundries, v)
+	}
 	typeOdData := reflect.TypeOf(c.InData).String()
 	if IsJson(c.InData) {
 		typeOdData = "json"
@@ -47,7 +57,6 @@ func (c *Condition) Happened(Boundries ...interface{}) (Ok bool, err error) {
 	if !ConditionIsBoundriesLenghtOk(c.ConditionType, c.InData, len(Boundries)) || c.InData == nil || !IsDataTypeOK {
 		return false, errors.New(Words.InvalidaData)
 	}
-	fmt.Println(dataTypeDetected)
 	switch c.ConditionType {
 	case GraterThan:
 		if dataTypeDetected == "string" {
