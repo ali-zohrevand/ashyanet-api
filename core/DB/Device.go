@@ -13,7 +13,6 @@ import (
 )
 
 func DeviceCreate(device models.Device, user models.UserInDB, Session *mgo.Session) (err error) {
-	//err,exist:=DeviceGetByName(device.Name,Session)
 	err, exist := CheckExist("devicename", device.Name, models.Device{}, DBname, DeviceCollectionName, DeviceExist, Session)
 	if exist {
 		return
@@ -94,6 +93,7 @@ func DeviceCreate(device models.Device, user models.UserInDB, Session *mgo.Sessi
 	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Insert(device)
 	return
 }
+
 func IsOwnerOfDevice(username string, deviceName string, Session *mgo.Session) (Is bool, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()

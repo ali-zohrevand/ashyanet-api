@@ -11,9 +11,7 @@ import (
 )
 
 type Condition struct {
-	InData            interface{}   `json:"in_data" bson:"in_data"`
 	JsonAttributeName string        `json:"json_attribute_name" bson:"json_attribute_name"`
-	CommandFunction   Command       `json:"command_function" bson:"command_function"`
 	ConditionType     ConditionType `json:"condition_type" bson:"condition_type"`
 	Attr              []interface{} `json:"attr" bson:"attr"`
 }
@@ -32,21 +30,30 @@ func (c *Condition) GetAttr(in interface{}) {
 	c.Attr = append(c.Attr, in)
 
 }
-func (c *Condition) Happened() (Ok bool, err error) {
+func (c *Condition) IsValid() (Is bool) {
+	if len(c.Attr) > 2 || len(c.Attr) < 1 {
+		return false
+	}
+	if c.ConditionType < 0 || c.ConditionType > 4 {
+		return false
+	}
+	return true
+}
+func (c *Condition) Happened(Input interface{}) (Ok bool, err error) {
 	var Boundries []interface{}
 	for _, v := range c.Attr {
 		Boundries = append(Boundries, v)
 	}
-	typeOdData := reflect.TypeOf(c.InData).String()
-	if IsJson(c.InData) {
+	typeOdData := reflect.TypeOf(Input).String()
+	if IsJson(Input) {
 		typeOdData = "json"
 		var s error
-		c.InData, typeOdData, s = GetDataFromJsom(c.InData, c.JsonAttributeName)
+		Input, typeOdData, s = GetDataFromJsom(Input, c.JsonAttributeName)
 		if s != nil && typeOdData == "" {
 			return false, errors.New(Words.InvalidaData)
 		}
 	}
-	IsDataTypeOK, dataTypeDetected := ConditionIsDataTypeOK(typeOdData, c.InData)
+	IsDataTypeOK, dataTypeDetected := ConditionIsDataTypeOK(typeOdData, Input)
 	var BType string
 	if len(Boundries) != 0 {
 		BType = reflect.TypeOf(Boundries[0]).String()
@@ -54,7 +61,7 @@ func (c *Condition) Happened() (Ok bool, err error) {
 	if BType != typeOdData {
 		return false, errors.New(Words.InvalidaData)
 	}
-	if !ConditionIsBoundriesLenghtOk(c.ConditionType, c.InData, len(Boundries)) || c.InData == nil || !IsDataTypeOK {
+	if !ConditionIsBoundriesLenghtOk(c.ConditionType, Input, len(Boundries)) || Input == nil || !IsDataTypeOK {
 		return false, errors.New(Words.InvalidaData)
 	}
 	switch c.ConditionType {
@@ -63,7 +70,7 @@ func (c *Condition) Happened() (Ok bool, err error) {
 			return false, errors.New(Words.InvalidaData)
 		}
 		Check := Boundries[0]
-		if IsGraterThan(c.InData, Check) {
+		if IsGraterThan(Input, Check) {
 			return true, nil
 		} else {
 			return false, nil
@@ -75,14 +82,14 @@ func (c *Condition) Happened() (Ok bool, err error) {
 		}
 		a := Boundries[0]
 		b := Boundries[1]
-		if IsBetween(c.InData, a, b) {
+		if IsBetween(Input, a, b) {
 			return true, nil
 		} else {
 			return false, nil
 		}
 	case EqualeTo:
 		Check := Boundries[0]
-		if IsEquale(c.InData, Check) {
+		if IsEquale(Input, Check) {
 			return true, nil
 		} else {
 			return false, nil
@@ -92,7 +99,7 @@ func (c *Condition) Happened() (Ok bool, err error) {
 			return false, errors.New(Words.InvalidaData)
 		}
 		Check := Boundries[0]
-		if IsLowerThan(c.InData, Check) {
+		if IsLowerThan(Input, Check) {
 			return true, nil
 		} else {
 			return false, nil

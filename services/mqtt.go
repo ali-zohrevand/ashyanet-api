@@ -139,6 +139,10 @@ func MqttSubcribeRootTopic() (err error) {
 		if errAddMessage != nil {
 			log.ErrorHappened(errAddMessage)
 		}
+		errEventRegister := EventMqttMessageRecived(mqttmeesage)
+		if errEventRegister != nil {
+			log.ErrorHappened(errAddMessage)
+		}
 	}
 	errSubscribe := mqttObj.Subscribe("#", 2, eventFunc)
 	if errSubscribe != nil {

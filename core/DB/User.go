@@ -99,7 +99,7 @@ func UserGetAllMqttCommand(username string, Session *mgo.Session) (CommandList [
 	}
 	return
 }
-func UserGetAllMqttData(username string, Type string, Session *mgo.Session) (CommandList []models.Data, err error) {
+func UserGetAllMqttData(username string, Session *mgo.Session) (DataList []models.Data, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	user, err := UserGetByUsername(username, sessionCopy)
@@ -111,7 +111,7 @@ func UserGetAllMqttData(username string, Type string, Session *mgo.Session) (Com
 		if errGetDevice != nil {
 			return nil, errGetDevice
 		}
-		CommandList = append(CommandList, device.MqttData...)
+		DataList = append(DataList, device.MqttData...)
 	}
 	return
 }
@@ -126,6 +126,34 @@ func UserHasMqttCommand(username string, Command models.Command, Session *mgo.Se
 	for _, cm := range AllCommand {
 		if cm.Topic == Command.Topic && cm.Value == Command.Value {
 			Has = true
+		}
+	}
+	return
+}
+func UserGetMqttCommandByName(username string, CommandName string, Session *mgo.Session) (data models.Command, err error) {
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	AllCommand, err := UserGetAllMqttCommand(username, sessionCopy)
+	if err != nil {
+		return data, err
+	}
+	for _, cm := range AllCommand {
+		if cm.Name == CommandName {
+			return cm, nil
+		}
+	}
+	return
+}
+func UserGetMqttDataByName(username string, DataName string, Session *mgo.Session) (data models.Data, err error) {
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	AllData, err := UserGetAllMqttData(username, sessionCopy)
+	if err != nil {
+		return data, err
+	}
+	for _, cm := range AllData {
+		if cm.Name == DataName {
+			return cm, nil
 		}
 	}
 	return
