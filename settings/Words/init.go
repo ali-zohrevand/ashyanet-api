@@ -15,7 +15,7 @@ func InitDbWords() (dbW WorldsDB, err error) {
 	dbW.PermissionCollectionName = PermissionCollectionName
 	dbW.LocationCollectionName = LocationCollectionName
 	dbW.DeviceKeyLocationName = DeviceKeyLocationName
-
+	dbW.DBNotConnectet = DBNotConnectet
 	return
 
 }

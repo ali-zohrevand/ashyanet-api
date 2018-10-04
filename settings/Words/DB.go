@@ -8,6 +8,7 @@ var DeviceCollectionName = "Devices"
 var LocationCollectionName = "Locations"
 var DeviceKeyLocationName = "Keys"
 var SettingsCollectiName = "settings"
+var DBNotConnectet = "DB PROBLEM"
 
 type WorldsDB struct {
 	DBname                   string
@@ -18,4 +19,5 @@ type WorldsDB struct {
 	LocationCollectionName   string
 	DeviceKeyLocationName    string
 	SettingsCollectiName     string
+	DBNotConnectet           string
 }

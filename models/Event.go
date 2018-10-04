@@ -6,6 +6,7 @@ type DataBind struct {
 	DataName     string    `json:"data_name" bson:"data_name"`
 	CommandName  string    `json:"command_name" bson:"command_name"`
 	ConditionSet Condition `json:"condition" bson:"condition"`
+	ComandType   EventType `json:"comand_type" bson:"comand_type"`
 }
 
 type Event struct {
