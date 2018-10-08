@@ -16,7 +16,7 @@ func TestMqttAddMessage(t *testing.T) {
 	m.Retained = false
 	m.Topic = "/test"
 	m.Time = time.Now().String()
-	err := MqttAddMessage(m)
+	err := MqttAddMessageToDb(m)
 	if err != nil {
 		t.Fail()
 		t.Error(err)

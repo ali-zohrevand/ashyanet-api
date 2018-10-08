@@ -11,8 +11,22 @@ import (
 )
 
 func EventMqttMessageRecived(message models.MqttMessage) (err error) {
-	//TopicAddress:=message.Topic
-
+	session, errConnectDB := DB.ConnectDB()
+	if errConnectDB != nil {
+		log.SystemErrorHappened(errConnectDB)
+		return errConnectDB
+	}
+	TopicAddress:=message.Topic
+	event,errGetAdd:=DB.EventGetAddress(TopicAddress,session)
+	if errGetAdd!=nil{
+		return errGetAdd
+	}
+	switch event.EventType {
+	case models.MqttEvent:
+		send mqtt comman
+	case models.SmsEvent:
+	default:
+	}
 	return
 }
 func EventCreate(dataBinde models.DataBind, user models.UserInDB) (int, []byte) {

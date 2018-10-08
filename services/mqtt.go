@@ -81,10 +81,15 @@ func MqttHttpCommand(command models.Command, User models.UserInDB) (int, []byte)
 }
 
 func MqttCommandTempAdmin(command models.Command) (err error) {
-	TempUserAdminUserName, TempAdminPassword, errCreateTempAdmin := EmqttCreateTempAdminMqttUser()
+	EmqttDeleteMqttDefaultAdmin()
+	TempUserAdminUserName, TempAdminPassword, errCreateTempAdmin := EmqttCreateTempAdminMqttUserWithDwefaultAdmin()
 	if errCreateTempAdmin != nil {
 		return errCreateTempAdmin
 	}
+	/*	TempUserAdminUserName, TempAdminPassword, errCreateTempAdmin := EmqttCreateTempAdminMqttUser()
+		if errCreateTempAdmin != nil {
+			return errCreateTempAdmin
+		}*/
 	defer EmqttDeleteUser(TempUserAdminUserName)
 	mqttObj, errCreateMqttUser := NewMqtt(Words.MqttBrokerIp, TempUserAdminUserName, TempAdminPassword, "TempAdmin")
 	if errCreateMqttUser != nil {
@@ -93,7 +98,7 @@ func MqttCommandTempAdmin(command models.Command) (err error) {
 	errPublish := mqttObj.Publish(command.Topic, false, command.Value, 2)
 	return errPublish
 }
-func MqttAddMessage(message models.MqttMessage) (err error) {
+func MqttAddMessageToDb(message models.MqttMessage) (err error) {
 	session, errConnectDB := DB.ConnectDB()
 	if errConnectDB != nil {
 		log.SystemErrorHappened(errConnectDB)
@@ -135,7 +140,7 @@ func MqttSubcribeRootTopic() (err error) {
 		mqttmeesage.Retained = message.Retained()
 		mqttmeesage.Qos = message.Qos()
 		mqttmeesage.MessageId = string(message.MessageID())
-		errAddMessage := MqttAddMessage(mqttmeesage)
+		errAddMessage := MqttAddMessageToDb(mqttmeesage)
 		if errAddMessage != nil {
 			log.ErrorHappened(errAddMessage)
 		}
