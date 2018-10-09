@@ -39,7 +39,7 @@ func (c *Condition) IsValid() (Is bool) {
 	}
 	return true
 }
-func (c *Condition) Happened(Input interface{}) (Ok bool, err error) {
+func (c *Condition) Happened(Input string) (Ok bool, err error) {
 	var Boundries []interface{}
 	for _, v := range c.Attr {
 		Boundries = append(Boundries, v)
@@ -107,20 +107,21 @@ func (c *Condition) Happened(Input interface{}) (Ok bool, err error) {
 	}
 	return
 }
-func GetDataFromJsom(JsonString interface{}, Key string) (Resault interface{}, dataType string, err error) {
-	var JsonMap map[string]interface{}
+func GetDataFromJsom(JsonString string, Key string) (Resault string, dataType string, err error) {
+	var JsonMap map[string]string
 	val := fmt.Sprintf("%v", JsonString)
 	errJson := json.Unmarshal([]byte(val), &JsonMap)
 	if errJson != nil {
 		return "", "", errors.New(Words.InvalidaData)
 	}
 	dataInJson := JsonMap[Key]
-	if dataInJson == nil {
+	if dataInJson == "" {
 		return "", "", errors.New(Words.InvalidaData)
 	}
 	value := fmt.Sprintf("%v", dataInJson)
 	x, err := strconv.Atoi(value)
 	if err != nil {
+
 		Resault = dataInJson
 		dataType = reflect.TypeOf(dataInJson).String()
 	} else {
