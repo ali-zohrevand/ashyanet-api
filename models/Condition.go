@@ -249,6 +249,7 @@ func IsGraterThan(in interface{}, lenght interface{}) bool {
 	return false
 }
 func IsInt(in interface{}) bool {
+	//
 	if reflect.TypeOf(in).String() == "int" {
 		return true
 	}

@@ -16,14 +16,14 @@ func EventMqttMessageRecived(message models.MqttMessage) (err error) {
 		log.SystemErrorHappened(errConnectDB)
 		return errConnectDB
 	}
-	TopicAddress:=message.Topic
-	event,errGetAdd:=DB.EventGetAddress(TopicAddress,session)
-	if errGetAdd!=nil{
+	TopicAddress := message.Topic
+	event, errGetAdd := DB.EventGetAddress(TopicAddress, session)
+	if errGetAdd != nil {
 		return errGetAdd
 	}
 	switch event.EventType {
 	case models.MqttEvent:
-		send mqtt comman
+	//TOdo	send mqtt comman
 	case models.SmsEvent:
 	default:
 	}
