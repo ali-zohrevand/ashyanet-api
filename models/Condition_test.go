@@ -43,18 +43,18 @@ func TestCondition_Happened(t *testing.T) {
 
 	var tests = []struct {
 		c     Condition
-		input interface{}
+		input string
 		Is    bool
 		err   error
 	}{
 		{EqualJsonInt, `{"some":1}`, true, nil},
-		{testIntCondtionbetween, 7, true, nil},
-		{testIntCondtionbetweenFalse, 0, false, nil},
+		{testIntCondtionbetween, "7", true, nil},
+		{testIntCondtionbetweenFalse, "0", false, nil},
 		{EqualeJsonString, `{"some":"sc"}`, true, nil},
 		{StringTestEquale, "a", true, nil},
 		{StringTestNotEquale, "s", false, nil},
-		{testIntCondtionGraterTHan, 9, true, nil},
-		{testIntCondtionLowerTHan, 1, true, nil},
+		{testIntCondtionGraterTHan, "9", true, nil},
+		{testIntCondtionLowerTHan, "1", true, nil},
 	}
 	for i, test := range tests {
 		ok, err := test.c.Happened(test.input)

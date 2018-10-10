@@ -39,21 +39,14 @@ func (c *Condition) IsValid() (Is bool) {
 	}
 	return true
 }
-func (c *Condition) Happened(Input interface{}) (Ok bool, err error) {
+func (c *Condition) Happened(Input string) (Ok bool, err error) {
 	var Boundries []interface{}
 	for _, v := range c.Attr {
 		Boundries = append(Boundries, v)
 	}
-	typeOdData := reflect.TypeOf(Input).String()
-	if IsJson(Input) {
-		typeOdData = "json"
-		var s error
-		Input, typeOdData, s = GetDataFromJsom(Input, c.JsonAttributeName)
-		if s != nil && typeOdData == "" {
-			return false, errors.New(Words.InvalidaData)
-		}
-	}
-	IsDataTypeOK, dataTypeDetected := ConditionIsDataTypeOK(typeOdData, Input)
+	var typeOdData string
+	truInput, typeOdData := c.whatIsDataType(Input)
+	//IsDataTypeOK, dataTypeDetected := ConditionIsDataTypeOK(typeOdData, Input)
 	var BType string
 	if len(Boundries) != 0 {
 		BType = reflect.TypeOf(Boundries[0]).String()
@@ -61,41 +54,41 @@ func (c *Condition) Happened(Input interface{}) (Ok bool, err error) {
 	if BType != typeOdData {
 		return false, errors.New(Words.InvalidaData)
 	}
-	if !ConditionIsBoundriesLenghtOk(c.ConditionType, Input, len(Boundries)) || Input == nil || !IsDataTypeOK {
+	if !ConditionIsBoundriesLenghtOk(c.ConditionType, Input, len(Boundries)) || truInput == nil {
 		return false, errors.New(Words.InvalidaData)
 	}
 	switch c.ConditionType {
 	case GraterThan:
-		if dataTypeDetected == "string" {
+		if typeOdData == "string" {
 			return false, errors.New(Words.InvalidaData)
 		}
 		Check := Boundries[0]
-		if IsGraterThan(Input, Check) {
+		if IsGraterThan(truInput, Check) {
 			return true, nil
 		} else {
 			return false, nil
 		}
 
 	case Between:
-		if dataTypeDetected == "string" {
+		if typeOdData == "string" {
 			return false, errors.New(Words.InvalidaData)
 		}
 		a := Boundries[0]
 		b := Boundries[1]
-		if IsBetween(Input, a, b) {
+		if IsBetween(truInput, a, b) {
 			return true, nil
 		} else {
 			return false, nil
 		}
 	case EqualeTo:
 		Check := Boundries[0]
-		if IsEquale(Input, Check) {
+		if IsEquale(truInput, Check) {
 			return true, nil
 		} else {
 			return false, nil
 		}
 	case LowerThan:
-		if dataTypeDetected == "string" {
+		if typeOdData == "string" {
 			return false, errors.New(Words.InvalidaData)
 		}
 		Check := Boundries[0]
@@ -107,7 +100,23 @@ func (c *Condition) Happened(Input interface{}) (Ok bool, err error) {
 	}
 	return
 }
-func GetDataFromJsom(JsonString interface{}, Key string) (Resault interface{}, dataType string, err error) {
+func (c *Condition) whatIsDataType(Input string) (out interface{}, dataType string) {
+	intValue, isInt := IsInt(Input)
+	if isInt {
+		return intValue, "int"
+	}
+	boolVal, isBool := IsBool(Input)
+	if isBool {
+		return boolVal, "bool"
+	}
+	jsonValue, jasonType, IsJson := IsJson(Input, c.JsonAttributeName)
+	if IsJson {
+		return jsonValue, jasonType
+	}
+
+	return Input, "string"
+}
+func GetDataFromJsom(JsonString string, Key string) (Resault interface{}, dataType string, err error) {
 	var JsonMap map[string]interface{}
 	val := fmt.Sprintf("%v", JsonString)
 	errJson := json.Unmarshal([]byte(val), &JsonMap)
@@ -115,12 +124,13 @@ func GetDataFromJsom(JsonString interface{}, Key string) (Resault interface{}, d
 		return "", "", errors.New(Words.InvalidaData)
 	}
 	dataInJson := JsonMap[Key]
-	if dataInJson == nil {
+	if dataInJson == "" {
 		return "", "", errors.New(Words.InvalidaData)
 	}
 	value := fmt.Sprintf("%v", dataInJson)
 	x, err := strconv.Atoi(value)
 	if err != nil {
+
 		Resault = dataInJson
 		dataType = reflect.TypeOf(dataInJson).String()
 	} else {
@@ -147,19 +157,22 @@ func IsEquale(a interface{}, b interface{}) bool {
 	}
 	return false
 }
-func IsJson(in interface{}) bool {
-
+func IsJson(in string, attribiute string) (value interface{}, valuetype string, isjson bool) {
 	val := fmt.Sprintf("%v", in)
 	valid := json.Valid([]byte(val))
-	if valid && !IsInt(in) && !IsBool(in) {
-		return true
+	_, isint := IsInt(in)
+	_, isbool := IsBool(in)
+	if valid && !isint && !isbool {
+		resualt, valuetype, err := GetDataFromJsom(in, attribiute)
+		if err != nil {
+			return resualt, valuetype, true
+		}
+		return resualt, valuetype, true
 	}
-	return false
+	return nil, valuetype, false
 }
 func IsLowerThan(in interface{}, lenght interface{}) bool {
-	if !IsInt(in) || !IsInt(lenght) {
-		return false
-	}
+
 	a := fmt.Sprintf("%v", in)
 	b := fmt.Sprintf("%v", lenght)
 
@@ -202,9 +215,6 @@ func IsEqule(in interface{}, lenght interface{}) bool {
 }
 
 func IsBetween(input interface{}, low interface{}, up interface{}) bool {
-	if !IsInt(input) || !IsInt(low) || !IsInt(up) {
-		return false
-	}
 	i := fmt.Sprintf("%v", input)
 	x := fmt.Sprintf("%v", low)
 	y := fmt.Sprintf("%v", up)
@@ -228,9 +238,7 @@ func IsBetween(input interface{}, low interface{}, up interface{}) bool {
 	return false
 }
 func IsGraterThan(in interface{}, lenght interface{}) bool {
-	if !IsInt(in) || !IsInt(lenght) {
-		return false
-	}
+
 	a := fmt.Sprintf("%v", in)
 	b := fmt.Sprintf("%v", lenght)
 	var x, y int
@@ -248,20 +256,27 @@ func IsGraterThan(in interface{}, lenght interface{}) bool {
 	}
 	return false
 }
-func IsInt(in interface{}) bool {
-	//
-	if reflect.TypeOf(in).String() == "int" {
-		return true
+func IsInt(input string) (out int, is bool) {
+	is = false
+	y, err := strconv.Atoi(input)
+	if err != nil {
+		return
 	}
-	return false
+	return y, true
 }
-func IsBool(in interface{}) bool {
-	if reflect.TypeOf(in).String() == "bool" {
-		return true
+func IsBool(in string) (value bool, is bool) {
+
+	switch in {
+	case "true":
+		return true, false
+	case "false":
+		return false, true
+	default:
+		return false, false
 	}
-	return false
 }
-func ConditionIsDataTypeOK(dataType string, InData interface{}) (ok bool, typeDected string) {
+
+/*func ConditionIsDataTypeOK(dataType string, InData interface{}) (ok bool, typeDected string) {
 	switch dataType {
 	case "int":
 		return true, "int"
@@ -287,7 +302,7 @@ func ConditionIsDataTypeOK(dataType string, InData interface{}) (ok bool, typeDe
 		return false, "UNKOWN"
 	}
 	return false, ""
-}
+}*/
 func ConditionIsBoundriesLenghtOk(conditionType ConditionType, InDatea interface{}, BoundiresLntght int) (ok bool) {
 	switch conditionType {
 	case LowerThan:
