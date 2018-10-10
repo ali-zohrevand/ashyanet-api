@@ -44,7 +44,7 @@ func (c *Condition) Happened(Input string) (Ok bool, err error) {
 	for _, v := range c.Attr {
 		Boundries = append(Boundries, v)
 	}
-	typeOdData := reflect.TypeOf(Input).String()
+	var typeOdData string
 	if IsJson(Input) {
 		typeOdData = "json"
 		var s error
@@ -107,8 +107,17 @@ func (c *Condition) Happened(Input string) (Ok bool, err error) {
 	}
 	return
 }
-func GetDataFromJsom(JsonString string, Key string) (Resault string, dataType string, err error) {
-	var JsonMap map[string]string
+func (c *Condition)whatIsDataType(Input string)(out interface{},dataType string)  {
+	intValue,isInt:=IsInt(Input)
+	if isInt{
+		return intValue,"int"
+	}
+	jsonValue,jasonType,IsJson:=IsJson()
+
+	return
+}
+func GetDataFromJsom(JsonString string, Key string) (Resault interface{}, dataType string, err error) {
+	var JsonMap map[string]interface{}
 	val := fmt.Sprintf("%v", JsonString)
 	errJson := json.Unmarshal([]byte(val), &JsonMap)
 	if errJson != nil {
@@ -148,33 +157,38 @@ func IsEquale(a interface{}, b interface{}) bool {
 	}
 	return false
 }
-func IsJson(in interface{}) bool {
-
+func IsJson(in string,attribiute string) (value interface{},valuetype string,isjson bool) {
 	val := fmt.Sprintf("%v", in)
 	valid := json.Valid([]byte(val))
-	if valid && !IsInt(in) && !IsBool(in) {
-		return true
+	_,isint:=IsInt(in)
+	_,isbool:=IsBool(in)
+	if valid && !isint && !isbool {
+		resualt,valuetype,err:=GetDataFromJsom(in,attribiute)
+		if err!=nil{
+			return nil,valuetype,true
+		}
+		return resualt,valuetype,true
 	}
-	return false
+	return nil,valuetype,false
 }
-func IsLowerThan(in interface{}, lenght interface{}) bool {
-	if !IsInt(in) || !IsInt(lenght) {
-		return false
-	}
-	a := fmt.Sprintf("%v", in)
-	b := fmt.Sprintf("%v", lenght)
-
-	var x, y int
-	var err error
-	x, err = strconv.Atoi(a)
-	if err != nil {
-		return false
-	}
-	y, err = strconv.Atoi(b)
-	if err != nil {
-		return false
-	}
-	if x < y {
+func IsLowerThan(in int, lenght int) bool {
+	//if !IsInt(in) || !IsInt(lenght) {
+	//	return false
+	//}
+	//a := fmt.Sprintf("%v", in)
+	//b := fmt.Sprintf("%v", lenght)
+	//
+	//var x, y int
+	//var err error
+	//x, err = strconv.Atoi(a)
+	//if err != nil {
+	//	return false
+	//}
+	//y, err = strconv.Atoi(b)
+	//if err != nil {
+	//	return false
+	//}
+	if in < lenght {
 		return true
 	}
 	return false
@@ -202,8 +216,8 @@ func IsEqule(in interface{}, lenght interface{}) bool {
 	return false
 }
 
-func IsBetween(input interface{}, low interface{}, up interface{}) bool {
-	if !IsInt(input) || !IsInt(low) || !IsInt(up) {
+func IsBetween(input int, low int, up int) bool {
+/*	if !IsInt(input) || !IsInt(low) || !IsInt(up) {
 		return false
 	}
 	i := fmt.Sprintf("%v", input)
@@ -222,17 +236,15 @@ func IsBetween(input interface{}, low interface{}, up interface{}) bool {
 	b, err = strconv.Atoi(y)
 	if err != nil {
 		return false
-	}
-	if in > a && in < b {
+	}*/
+	if input > low && input < up {
 		return true
 	}
 	return false
 }
-func IsGraterThan(in interface{}, lenght interface{}) bool {
-	if !IsInt(in) || !IsInt(lenght) {
-		return false
-	}
-	a := fmt.Sprintf("%v", in)
+func IsGraterThan(in int, lenght int) bool {
+
+/*	a := fmt.Sprintf("%v", in)
 	b := fmt.Sprintf("%v", lenght)
 	var x, y int
 	var err error
@@ -243,24 +255,30 @@ func IsGraterThan(in interface{}, lenght interface{}) bool {
 	y, err = strconv.Atoi(b)
 	if err != nil {
 		return false
-	}
-	if x > y {
+	}*/
+	if in > lenght {
 		return true
 	}
 	return false
 }
-func IsInt(in interface{}) bool {
-	//
-	if reflect.TypeOf(in).String() == "int" {
-		return true
+func IsInt(input string) (out int,is bool) {
+	is =false
+	y, err := strconv.Atoi(input)
+	if err!=nil{
+		return
 	}
-	return false
+	return y,true
 }
-func IsBool(in interface{}) bool {
-	if reflect.TypeOf(in).String() == "bool" {
-		return true
+func IsBool(in string) (value bool,is bool) {
+
+	switch in {
+	case "true":
+		return true,false
+	case "false":
+		return false,true
+	default:
+		return false,false
 	}
-	return false
 }
 func ConditionIsDataTypeOK(dataType string, InData interface{}) (ok bool, typeDected string) {
 	switch dataType {
