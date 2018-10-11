@@ -23,7 +23,18 @@ func EventMqttMessageRecived(message models.MqttMessage) (err error) {
 	}
 	switch event.EventType {
 	case models.MqttEvent:
-	//TOdo	send mqtt comman
+		IsHappened, err := event.EventCondition.Happened(message.Message)
+		if IsHappened && err != nil {
+			errRunCOmmand := MqttCommandTempAdmin(event.EventFunction)
+			if errRunCOmmand != nil {
+				log.ErrorHappened(errRunCOmmand)
+
+				return errRunCOmmand
+			}
+		} else {
+			log.ErrorHappened(err)
+			return
+		}
 	case models.SmsEvent:
 	default:
 	}
