@@ -40,7 +40,7 @@ func EventMqttMessageRecived(message models.MqttMessage) (err error) {
 	}
 	return
 }
-func EventCreate(dataBinde models.DataBind, user models.UserInDB) (int, []byte) {
+func EventCreate(dataBinde models.DataBindCommand, user models.UserInDB) (int, []byte) {
 	session, errConnectDB := DB.ConnectDB()
 	if errConnectDB != nil {
 		log.SystemErrorHappened(errConnectDB)
@@ -53,18 +53,18 @@ func EventCreate(dataBinde models.DataBind, user models.UserInDB) (int, []byte) 
 	Comamand, errGetCommand := DB.UserGetMqttCommandByName(user.UserName, CommandName, session)
 	if errGetCommand != nil {
 		message := OutputAPI.Message{}
-		message.Error = Words.DBNotConnectet
+		message.Error = Words.CommandDataNotFOUND
 		json, _ := json.Marshal(message)
 		return http.StatusInternalServerError, []byte(json)
 	}
 	Data, errGetDataName := DB.UserGetMqttDataByName(user.UserName, dataBinde.DataName, session)
 	if errGetDataName != nil {
 		message := OutputAPI.Message{}
-		message.Error = Words.DBNotConnectet
+		message.Error = Words.CommandDataNotFOUND
 		json, _ := json.Marshal(message)
 		return http.StatusInternalServerError, []byte(json)
 	}
-	if Comamand.Name != "" || Data.Name == "" {
+	if Comamand.Name == "" || Data.Name == "" {
 		message := OutputAPI.Message{}
 		message.Info = Words.CommandDataNotFOUND
 		json, _ := json.Marshal(message)

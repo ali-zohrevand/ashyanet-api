@@ -2,7 +2,7 @@ package models
 
 import "gopkg.in/mgo.v2/bson"
 
-type DataBind struct {
+type DataBindCommand struct {
 	DataName     string    `json:"data_name" bson:"data_name"`
 	CommandName  string    `json:"command_name" bson:"command_name"`
 	ConditionSet Condition `json:"condition" bson:"condition"`
