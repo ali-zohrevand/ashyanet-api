@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"golang.org/x/net/websocket"
 	"os"
@@ -14,8 +13,9 @@ func main() {
 	initWebsocketClient()
 }
 
-type messageClass struct {
-	message string
+type message struct {
+	// the json tag means this will serialize as a lowercased field
+	Message string `json:"message"`
 }
 
 func initWebsocketClient() {
@@ -32,14 +32,13 @@ func initWebsocketClient() {
 		i++
 		select {
 
-		case message := <-incomingMessages:
-			fmt.Println(`Message Received:`, message)
-			var m messageClass
+		case messageRecived := <-incomingMessages:
+			fmt.Println(`Message Received:`, messageRecived)
+			var m message
 
-			m.message = "salam" + string(i)
+			m.Message = "salam " + string(i)
 
-			j, _ := json.Marshal(m)
-			websocket.JSON.Send(ws, j)
+			websocket.JSON.Send(ws, m)
 		default:
 			continue
 

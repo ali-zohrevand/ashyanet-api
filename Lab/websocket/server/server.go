@@ -5,6 +5,7 @@ import (
 	"golang.org/x/net/websocket"
 	"log"
 	"net/http"
+	"time"
 )
 
 type message struct {
@@ -14,9 +15,10 @@ type message struct {
 
 func socket(ws *websocket.Conn) {
 	for {
+		time.Sleep(time.Second * 5)
 		// allocate our container struct
 		var m message
-		m2 := message{"Thanks for the message!"}
+		m2 := message{time.Now().String()}
 		if err := websocket.JSON.Send(ws, m2); err != nil {
 			log.Println(err)
 			break
