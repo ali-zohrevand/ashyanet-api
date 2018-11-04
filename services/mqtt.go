@@ -119,7 +119,7 @@ func MqttGetAllMessageByTopicName(topic string) (MessageList []models.MqttMessag
 }
 
 func MqttSubcribeRootTopic() (err error) {
-	EmqttDeleteMqttDefaultAdmin()
+	//EmqttDeleteMqttDefaultAdmin()
 	TempUserAdminUserName, TempAdminPassword, errCreateTempAdmin := EmqttCreateTempAdminMqttUserWithDwefaultAdmin()
 	if errCreateTempAdmin != nil {
 		panic(err)
@@ -127,9 +127,9 @@ func MqttSubcribeRootTopic() (err error) {
 	}
 	defer EmqttDeleteUser(TempUserAdminUserName)
 	done := make(chan bool)
-	mqttObj, errCreateMqttUser := NewMqtt(Words.MqttBrokerIp, TempUserAdminUserName, TempAdminPassword, "TempAdmin")
+	mqttObj, errCreateMqttUser := NewMqtt(Words.MqttBrokerIp, TempUserAdminUserName, TempAdminPassword, "TempAdmin"+GenerateRandomString(3))
 	if errCreateMqttUser != nil {
-		panic(err)
+		panic(errCreateMqttUser)
 		return errCreateMqttUser
 	}
 	var eventFunc mqtt.MessageHandler = func(client mqtt.Client, message mqtt.Message) {

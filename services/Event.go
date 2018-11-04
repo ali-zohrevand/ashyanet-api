@@ -33,7 +33,7 @@ func EventMqttMessageRecived(message models.MqttMessage) (err error) {
 			}
 		} else {
 			log.ErrorHappened(err)
-			return
+			return err
 		}
 	case models.SmsEvent:
 	default:
