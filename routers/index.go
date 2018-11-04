@@ -12,9 +12,15 @@ func index(router *mux.Router) *mux.Router {
 		negroni.HandlerFunc(services.RequireTokenAuthentication),
 		negroni.HandlerFunc(controllers.Index),
 	)
+	UpFunc := negroni.New(
+		negroni.HandlerFunc(controllers.Status),
+	)
 	router.Handle("/", HandleFunc).Methods("GET")
+	router.Handle("/status", UpFunc).Methods("GET")
+
 	return router
 }
+
 
 /*
 	router.Handle("/test/hello",
