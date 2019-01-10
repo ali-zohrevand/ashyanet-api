@@ -60,7 +60,7 @@ func CreateDevice(device *models.Device, user models.UserInDB) (int, []byte) {
 
 		message := OutputAPI.Message{}
 		message.Info = Words.DeviceCreated
-		json, _ := json.Marshal(message)
+		json, _ := json.Marshal(device)
 		return http.StatusCreated, json
 	}
 	return http.StatusInternalServerError, nil

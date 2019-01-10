@@ -28,22 +28,26 @@ func TestCreateDevice(t *testing.T) {
 	Lamp := models.Device{}
 	//FSROUPwjOKbGJjYQs5TI
 	//.........................................
-	Lamp.Name = "testDevice-" + GenerateRandomString(5)
-	Lamp.Description = "لامپ داخل اتاقل "
-	Lamp.Key = getValidKey()
-	Lamp.Type = "light"
-	Lamp.Location = "room"
-	Lamp.Publish = append(Lamp.Publish, "sdsd/sdsad/545465/sdfsdf")
-	Lamp.Publish = append(Lamp.Publish, "sddfdfsd/sdsad")
-	Lamp.Publish = append(Lamp.Publish, "sdsd/sdsad/sdfsdf")
-	Lamp.Subscribe = append(Lamp.Subscribe, "/dfsdfsdsd/sdsad/545465/sdfsdf")
-	Lamp.Subscribe = append(Lamp.Subscribe, "sddfdfdfdfdf5456456465dfsd/sdsad")
-	Lamp.Subscribe = append(Lamp.Subscribe, "/")
+	/*	Lamp.Name = "testDevice-" + GenerateRandomString(5)
+		Lamp.Description = "لامپ داخل اتاقل "
+		Lamp.Key = getValidKey()
+		Lamp.Type = "light"
+		Lamp.Location = "room"
+		Lamp.Publish = append(Lamp.Publish, "sdsd/sdsad/545465/sdfsdf")
+		Lamp.Publish = append(Lamp.Publish, "sddfdfsd/sdsad")
+		Lamp.Publish = append(Lamp.Publish, "sdsd/sdsad/sdfsdf")
+		Lamp.Subscribe = append(Lamp.Subscribe, "/dfsdfsdsd/sdsad/545465/sdfsdf")
+		Lamp.Subscribe = append(Lamp.Subscribe, "sddfdfdfdfdf5456456465dfsd/sdsad")
+		Lamp.Subscribe = append(Lamp.Subscribe, "/")*/
 
-	Lamp.MqttCommand = append(Lamp.MqttCommand, TrunOnCommand)
-	Lamp.MqttCommand = append(Lamp.MqttCommand, TrunoffCommand)
-	Lamp.Pubsub = append(Lamp.Pubsub, "/d")
-	Lamp.Pubsub = append(Lamp.Pubsub, "sd656456465dfsd/sdsad")
+	//.......................................................
+	Lamp.Name = "SerialSensor"
+	Lamp.Description = "سنسور سریال"
+	Lamp.Key = getValidKey()
+	Lamp.Type = "sensor"
+	Lamp.Location = "room"
+	Lamp.Publish = append(Lamp.Publish, "/sensor")
+	Lamp.Subscribe = append(Lamp.Subscribe, "/sensor")
 	Lamp.MqttPassword = "123456789"
 	Lamp.MqttData = append(Lamp.MqttData, DaTa)
 	s, _ := DB.ConnectDB()

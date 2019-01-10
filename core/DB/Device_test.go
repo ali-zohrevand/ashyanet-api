@@ -24,8 +24,8 @@ func TestDeviceCreate(t *testing.T) {
 	MqttData.ValueType = "int"
 	D.MqttCommand = append(D.MqttCommand, MqttCommand)
 	D.MqttData = append(D.MqttData, MqttData)
-	D.MqttPassword = "123456"
-	D.Name = "testD" + GenerateKey()
+	D.MqttPassword = "mahdi1369"
+	D.Name = "alialiali"
 	D.Description = "test device"
 	D.Location = "room"
 	D.Owners = append(D.Owners, "admin")

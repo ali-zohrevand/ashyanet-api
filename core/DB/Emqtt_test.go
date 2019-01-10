@@ -13,7 +13,7 @@ func TestGetEmqttUserByUserName(t *testing.T) {
 		t.Fail()
 	}
 	user := models.MqttUser{}
-	user.Username = "test-"+GenerateRandomString(5)
+	user.Username = "AAA"
 	user.Password = "dfjfhsdjkfhskdjfhsjkdfhjksdfhk"
 	user.Is_superuser = true
 	user.Created = time.Now().String()
@@ -22,7 +22,7 @@ func TestGetEmqttUserByUserName(t *testing.T) {
 		t.Fail()
 		t.Error(err)
 	}
-	fmt.Println("Create EmqttUser Checked!",user)
+	fmt.Println("Create EmqttUser Checked!", user)
 	u, errGetUser := EmqttGetUserByUserName(user.Username, session)
 	if errGetUser != nil {
 		t.Fail()
@@ -30,11 +30,11 @@ func TestGetEmqttUserByUserName(t *testing.T) {
 	}
 	fmt.Println("Get EmqttUser Checked! ", u)
 
-/*	errDele := EmqttDeleteUser(user.Username, session)
-	if errDele != nil {
-		t.Fail()
-		t.Error(errDele)
-	}
-	fmt.Println("Delete EmqttUser Checked!")
-*/
+	/*	errDele := EmqttDeleteUser(user.Username, session)
+		if errDele != nil {
+			t.Fail()
+			t.Error(errDele)
+		}
+		fmt.Println("Delete EmqttUser Checked!")
+	*/
 }
