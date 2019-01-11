@@ -12,6 +12,8 @@ type User struct {
 	Role      string   `json:"role" bson:"role"`
 	Locations []string `json:"locations" bson:"locations"`
 	Devices   []string `json:"devices" bson:"devices"`
+	Active 	  bool      `json:"active" bson:"active"`
+	TempKeyGenreated string `json:"-" bson:"temp_key_genreated"`
 }
 type UserInDB struct {
 	Id        bson.ObjectId `json:"id" bson:"_id"`
@@ -23,6 +25,9 @@ type UserInDB struct {
 	Role      string        `json:"role" bson:"role"`
 	Locations []string      `json:"locations" bson:"locations"`
 	Devices   []string      `json:"devices" bson:"devices"`
+	Active 	  bool     	    `json:"active" bson:"active"`
+	TempKeyGenreated string `json:"-" bson:"temp_key_genreated"`
+
 }
 
 /*
