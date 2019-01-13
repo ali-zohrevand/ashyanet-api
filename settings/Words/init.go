@@ -51,6 +51,8 @@ func InitValidationWords() (dbV WordsValidation, err error) {
 	dbV.UserActivated = UserActivated
 	dbV.TimeExpired = TimeExpired
 	dbV.UserNotActive = UserNotActive
+	dbV.VerifyMailSent=VerifyMailSent
+	dbV.UserVerifyMailProblem = UserVerifyMailProblem
 	a, err := json.Marshal(dbV)
 	fmt.Println(string(a))
 	return

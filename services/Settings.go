@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"gitlab.com/hooshyar/ChiChiNi-API/core/DB"
 	"gitlab.com/hooshyar/ChiChiNi-API/models"
+	"gitlab.com/hooshyar/ChiChiNi-API/services/Tools"
 	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
 )
 
 func CreateSettingsFile() (err error) {
-	if IsFileExist(Words.SettingPath) {
+	if Tools.IsFileExist(Words.SettingPath) {
 		return
 	}
 	setting := models.SettingsInDB{}
@@ -25,12 +26,18 @@ func CreateSettingsFile() (err error) {
 	setting.Key = key.Key
 	setting.Password = "123456"
 	setting.Identifier = DB.GenerateKey()
-	setting.Type = "gateway"
+	setting.Type = "server"
+	setting.Url= "https://127.0.0.1:5000/active"
+	setting.MailHost="smtp.gmail.com"
+	setting.MailPort="465"
+	setting.MailVerifyUsername="ashyanet@gmail.com"
+	setting.MailVerifyPassword = "mahdi1369QWE"
 	settingJsonByte, err := json.Marshal(setting)
+
 	if err != nil {
 		return
 	}
-	err = WriteFile(Words.SettingPath, string(settingJsonByte))
+	err = Tools.WriteFile(Words.SettingPath, string(settingJsonByte))
 	return
 
 }
@@ -45,7 +52,7 @@ func SaveSetingsInDB() (err error) {
 	if !Is {
 		return
 	}
-	content, er := ReadFile(Words.SettingPath)
+	content, er := Tools.ReadFile(Words.SettingPath)
 	if er != nil {
 		return
 	}

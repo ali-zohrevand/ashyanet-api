@@ -17,6 +17,7 @@ type Mail struct {
 	Bcc     []string
 	Subject string
 	Body    string
+	Smtpserver SmtpServer
 }
 
 type SmtpServer struct {
@@ -38,10 +39,26 @@ func (mail *Mail) BuildMessage() string {
 	if len(mail.Cc) > 0 {
 		header += fmt.Sprintf("Cc: %s\r\n", strings.Join(mail.Cc, ";"))
 	}
-
 	header += fmt.Sprintf("Subject: %s\r\n", mail.Subject)
+	header += fmt.Sprintf("MIME-version: %s\r\n","1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n")
 	header += "\r\n" + mail.Body
 
 	return header
 }
 
+func (mail *Mail) SendMail() string {
+
+	header := ""
+	header += fmt.Sprintf("From: %s\r\n", mail.Sender)
+	if len(mail.To) > 0 {
+		header += fmt.Sprintf("To: %s\r\n", strings.Join(mail.To, ";"))
+	}
+	if len(mail.Cc) > 0 {
+		header += fmt.Sprintf("Cc: %s\r\n", strings.Join(mail.Cc, ";"))
+	}
+	header += fmt.Sprintf("Subject: %s\r\n", mail.Subject)
+	header += fmt.Sprintf("MIME-version: %s\r\n","1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n")
+	header += "\r\n" + mail.Body
+
+	return header
+}

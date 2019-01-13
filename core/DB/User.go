@@ -64,6 +64,7 @@ func (ds *UserDataStore) CreateUser(userToCreate models.User, Session *mgo.Sessi
 		return
 	}
 	err = sessionCopy.DB(Words.DBname).C(Words.UserCollectionName).Insert(Userdb)
+
 	return
 }
 func FindUserByEmail(email string, Session *mgo.Session) (userToCreate models.UserInDB, err error) {

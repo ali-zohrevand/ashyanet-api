@@ -2,14 +2,15 @@ package services
 
 import (
 	"fmt"
+	"gitlab.com/hooshyar/ChiChiNi-API/services/Tools"
 	"testing"
 )
 
 func TestGetValidKey(t *testing.T) {
 	code, message := CreatValidKey()
 	if code != 200 {
-		t.Error(BytesToString(message))
+		t.Error(Tools.BytesToString(message))
 	} else {
-		fmt.Println(BytesToString(message))
+		fmt.Println(Tools.BytesToString(message))
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"gitlab.com/hooshyar/ChiChiNi-API/OutputAPI"
 	"gitlab.com/hooshyar/ChiChiNi-API/core/DB"
 	"gitlab.com/hooshyar/ChiChiNi-API/models"
+	"gitlab.com/hooshyar/ChiChiNi-API/services/Tools"
 	"gitlab.com/hooshyar/ChiChiNi-API/services/log"
 	"gitlab.com/hooshyar/ChiChiNi-API/services/validation"
 	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
@@ -64,11 +65,38 @@ func Register(requestUser *models.User) (int, []byte) {
 		return http.StatusInternalServerError, []byte("")
 
 	} else {
+		settings, errLoadSettings := DB.LoadSettings(session)
+		if errLoadSettings!=nil{
+			return http.StatusInternalServerError, []byte("")
+		}
+		if settings.Type !="server"{
+			message := OutputAPI.Message{}
+			message.Info = Words.UserCreated
+			json, _ := json.Marshal(message)
+			return http.StatusCreated, json
 
-		message := OutputAPI.Message{}
-		message.Info = Words.UserCreated
-		json, _ := json.Marshal(message)
-		return http.StatusCreated, json
+		}
+		// TODO: ممکنه کاربری ساخته بشه ولی میل فرستاده نشده. میبایست امکانی اندیشیده شود.
+		userIndb,errFetchUser:=DB.UserGetByUsername(requestUser.UserName,session)
+		if errFetchUser!=nil{
+			message := OutputAPI.Message{}
+			message.Info = Words.UserCreated+ " But "+ Words.UserVerifyMailProblem
+			json, _ := json.Marshal(message)
+			return http.StatusCreated, json
+		}
+		errSendMail:=Verify(userIndb,session)
+		if errSendMail!=nil{
+			message := OutputAPI.Message{}
+			message.Info = Words.UserCreated+ " But "+ Words.UserVerifyMailProblem
+			json, _ := json.Marshal(message)
+			return http.StatusCreated, json
+		}else {
+			message := OutputAPI.Message{}
+			message.Info = Words.VerifyMailSent+ "Your mail is: "+ requestUser.Email
+			json, _ := json.Marshal(message)
+			return http.StatusCreated, json
+		}
+
 	}
 	//......................................................................................
 	return http.StatusInternalServerError, []byte("")
@@ -118,7 +146,7 @@ func Login(requestUser *models.User, request *http.Request) (int, []byte) {
 				JwtToken:      token,
 				OwnerUsername: requestUser.UserName,
 				TimeCreated:   time.Now(),
-				Ip:            GetIpOfRequest(request),
+				Ip:            Tools.GetIpOfRequest(request),
 			}
 			var jwtSessionDataStore = DB.JwtSessionDataStore{}
 			errAddToSessionDB := jwtSessionDataStore.CreateJwtSession(sessionObj, session)

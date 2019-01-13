@@ -29,7 +29,7 @@ func Active(username string,activeCode string)(statusCode int,message []byte)  {
 	}
 	if user.Active{
 		message := OutputAPI.Message{}
-		message.Error = Words.UserActivated
+		message.Info = Words.UserActivated
 		json, _ := json.Marshal(message)
 		return http.StatusOK, json
 	}
@@ -52,7 +52,7 @@ func Active(username string,activeCode string)(statusCode int,message []byte)  {
 	}
 	if status{
 		message := OutputAPI.Message{}
-		message.Error = Words.UserActivated
+		message.Info = Words.UserActivated
 		json, _ := json.Marshal(message)
 		return http.StatusOK, json
 	}
