@@ -1,6 +1,8 @@
 package models
 
-import "gopkg.in/mgo.v2/bson"
+import (
+	"gopkg.in/mgo.v2/bson"
+)
 
 type User struct {
 	Id        string   `json:"id" bson:"_id"`
@@ -14,6 +16,7 @@ type User struct {
 	Devices   []string `json:"devices" bson:"devices"`
 	Active 	  bool      `json:"active" bson:"active"`
 	TempKeyGenreated string `json:"-" bson:"temp_key_genreated"`
+	TimeTempKeyGenreated int64 `json:"-"  bson:"time_key_genrated"`
 }
 type UserInDB struct {
 	Id        bson.ObjectId `json:"id" bson:"_id"`
@@ -27,6 +30,7 @@ type UserInDB struct {
 	Devices   []string      `json:"devices" bson:"devices"`
 	Active 	  bool     	    `json:"active" bson:"active"`
 	TempKeyGenreated string `json:"-" bson:"temp_key_genreated"`
+	TimeTempKeyGenreated int64 `json:"-"  bson:"time_key_genrated"`
 
 }
 

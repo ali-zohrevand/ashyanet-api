@@ -48,6 +48,9 @@ func InitValidationWords() (dbV WordsValidation, err error) {
 	dbV.UserNotExist = UserNotExist
 	dbV.UserOrLocationNotFound = UserOrLocationNotFound
 	dbV.UserAddedToLocation = UserAddedToLocation
+	dbV.UserActivated = UserActivated
+	dbV.TimeExpired = TimeExpired
+	dbV.UserNotActive = UserNotActive
 	a, err := json.Marshal(dbV)
 	fmt.Println(string(a))
 	return

@@ -16,5 +16,6 @@ func InitRoutes() *mux.Router {
 	router = Acl(router)
 	router = UserDeviceLocation(router)
 	router = Event(router)
+	router = Active(router)
 	return router
 }

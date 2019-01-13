@@ -25,7 +25,7 @@ func AddInitUser() {
 	user, _ := DB.UserGetByUsername(Words.DeafualtAdmminUserName, session)
 	if user.Role != Words.DeafualtAdmminRole {
 		//کاربر ادمین را ایجاد می نماییم.
-		DefaultAdmin := models.User{"", Words.DeafualtAdmminUserName, Words.DeafualtAdmminFirstName, Words.DeafualtAdmminLastName, Words.DeafualtAdmminEmail, Words.DeafualtAdmminPassword, Words.DeafualtAdmminRole, nil, nil,true,""}
+		DefaultAdmin := models.User{"", Words.DeafualtAdmminUserName, Words.DeafualtAdmminFirstName, Words.DeafualtAdmminLastName, Words.DeafualtAdmminEmail, Words.DeafualtAdmminPassword, Words.DeafualtAdmminRole, nil, nil,true,"",time.Now().Unix()}
 		// کاربر ادمیت را به سمت پایگاه داده ارسال میکنیم.
 		errCreateUser := UserDatastore.CreateUser(DefaultAdmin, session)
 		if errCreateUser != nil && errCreateUser.Error() != Words.UserExist {
@@ -91,6 +91,16 @@ func Login(requestUser *models.User, request *http.Request) (int, []byte) {
 		return http.StatusUnauthorized, []byte("")
 	}
 	defer session.Close()
+	userInDB,errGetUser:= DB.UserGetByUsername(requestUser.UserName,session)
+	if errGetUser!=nil{
+		return http.StatusUnauthorized, []byte("")
+	}
+	if !userInDB.Active{
+		message := OutputAPI.Message{}
+		message.Error = Words.UserNotActive
+		json, _ := json.Marshal(message)
+		return http.StatusBadRequest, json
+	}
 	if UserDatastore.CheckUserPassCorrect(*requestUser, session) {
 		token, err := GenerateToken(requestUser.UserName)
 		if err != nil {

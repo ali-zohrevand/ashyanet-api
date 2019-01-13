@@ -4,6 +4,9 @@ var FirstNameNeeded = "First name Could not be empty"
 var UserExist = "User Exist"
 var UserCreated = "User Created"
 var UserNotExist = "User Not Exist"
+var TimeExpired = "Time Expired."
+var UserActivated = "User Activated."
+var UserNotActive = "User Not Active."
 var DeviceNotExist = "Device Not Exist"
 var DeviceExist = "Device Exist"
 var LocationExist = "Location Exist"
@@ -30,4 +33,7 @@ type WordsValidation struct {
 	LocationNotFound       string
 	UserOrLocationNotFound string
 	UserAddedToLocation    string
+	UserActivated string
+	TimeExpired string
+	UserNotActive string
 }

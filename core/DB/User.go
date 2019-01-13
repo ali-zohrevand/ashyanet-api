@@ -7,6 +7,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"time"
 )
 
 type UserDataStore struct {
@@ -28,6 +29,10 @@ func (ds *UserDataStore) CheckUserPassCorrect(user models.User, Session *mgo.Ses
 	return
 }
 func (ds *UserDataStore) CreateUser(userToCreate models.User, Session *mgo.Session) (err error) {
+	settings, errLoadSettings := LoadSettings(Session)
+	if errLoadSettings != nil  || settings.Type==""{
+		return errors.New("setting Not Exist")
+	}
 	userBack, err := FindUserByEmail(userToCreate.Email, Session)
 	if userBack.UserName != "" {
 		err = errors.New(Words.UserExist)
@@ -47,6 +52,13 @@ func (ds *UserDataStore) CreateUser(userToCreate models.User, Session *mgo.Sessi
 	Userdb.FirstName = userToCreate.FirstName
 	Userdb.LastName = userToCreate.LastName
 	Userdb.Role = "user"
+	if settings.Type=="server"{
+		Userdb.Active =false
+	}else {
+		Userdb.Active= true
+	}
+	Userdb.TempKeyGenreated = GenerateRandomString(10)
+	Userdb.TimeTempKeyGenreated = time.Now().Unix()
 	Userdb.Password, err = bcrypt.GenerateFromPassword([]byte(userToCreate.Password), bcrypt.MinCost)
 	if err != nil {
 		return
@@ -66,7 +78,21 @@ func UserGetByUsername(username string, Session *mgo.Session) (userToCreate mode
 	err = sessionCopy.DB(Words.DBname).C(Words.UserCollectionName).Find(bson.M{"username": username}).One(&userToCreate)
 	return
 }
-
+func UserActiveBuUsername(username string, Session *mgo.Session)(success bool,err error)  {
+	var user models.UserInDB
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	err = sessionCopy.DB(Words.DBname).C(Words.UserCollectionName).Find(bson.M{"username": username}).One(&user)
+	if err!=nil{
+		return false,err
+	}
+	user.Active = true
+	err = sessionCopy.DB(Words.DBname).C(Words.UserCollectionName).UpdateId(user.Id,user)
+	if err!=nil{
+		return false,err
+	}
+	return true,err
+}
 func UserGetAllTopic(username string, Type string, Session *mgo.Session) (TopicList []string, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
