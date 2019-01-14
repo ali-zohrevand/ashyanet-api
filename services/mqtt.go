@@ -233,10 +233,12 @@ func MqttCommandTempAdmin(command models.Command) (err error) {
 		}*/
 	defer EmqttDeleteUser(TempUserAdminUserName)
 	mqttObj, errCreateMqttUser := NewMqtt(Words.MqttBrokerIp, TempUserAdminUserName, TempAdminPassword, "TempAdmin")
+	defer mqttObj.Client.Disconnect(50)
 	if errCreateMqttUser != nil {
 		return errCreateMqttUser
 	}
 	errPublish := mqttObj.Publish(command.Topic, false, command.Value, 2)
+	mqttObj.Client.Disconnect(50)
 	return errPublish
 }
 func MqttAddMessageToDb(message models.MqttMessage) (err error) {
@@ -269,6 +271,7 @@ func MqttSubcribeRootTopic() (err error) {
 	defer EmqttDeleteUser(TempUserAdminUserName)
 	done := make(chan bool)
 	mqttObj, errCreateMqttUser := NewMqtt(Words.MqttBrokerIp, TempUserAdminUserName, TempAdminPassword, "TempAdmin"+GenerateRandomString(3))
+	defer mqttObj.Client.Disconnect(50)
 	if errCreateMqttUser != nil {
 		panic(errCreateMqttUser)
 		return errCreateMqttUser

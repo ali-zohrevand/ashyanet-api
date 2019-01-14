@@ -44,7 +44,7 @@ func DeviceCreate(device models.Device, user models.UserInDB, Session *mgo.Sessi
 			}
 		}
 	}
-	userFetchedFromDB, err := UserGetByUsername(DeafualtAdmminUserName, sessionCopy)
+	userFetchedFromDB, err := UserGetByUsername(user.UserName, sessionCopy)
 	if err != nil {
 		err = errors.New(UserNotExist)
 
@@ -55,6 +55,11 @@ func DeviceCreate(device models.Device, user models.UserInDB, Session *mgo.Sessi
 	device.Pubsub, _ = DeleteRepetedCell(device.Pubsub)
 	device.Publish, _ = DeleteRepetedCell(device.Publish)
 	device.Subscribe, _ = DeleteRepetedCell(device.Subscribe)
+	userDevice :=models.UserDevice{}
+	userDevice.UserName=user.UserName
+	userDevice.DeviceName=device.Name
+	//.......................................................................................
+
 	//..........................................ADD mqtt user ...............................
 	var mqttUser models.MqttUser
 	mqttUser.Username = device.Name
@@ -91,6 +96,13 @@ func DeviceCreate(device models.Device, user models.UserInDB, Session *mgo.Sessi
 		return errors.New("INTERNAL ERROR")
 	}
 	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Insert(device)
+	if err!=nil{
+		return err
+	}
+	erraddUserDevice:=AddUserDevice(userDevice,sessionCopy)
+	if erraddUserDevice!=nil{
+		return erraddUserDevice
+	}
 	return
 }
 

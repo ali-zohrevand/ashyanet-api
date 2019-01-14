@@ -84,6 +84,7 @@ func EventCreate(dataBinde models.DataBindCommand, user models.UserInDB) (int, [
 	}
 	// در نهایت میخواهیم رخ داد (event) را ایجاد و در پایگاه داده ذخیره نماییم.
 	var event models.Event
+	event.UserOwner=user.UserName
 	event.EventName = user.UserName + "-" + dataBinde.DataName + "-" + dataBinde.CommandName + "-" + GenerateRandomString(5)
 	event.EventFunction = Comamand
 	event.EventCondition = dataBinde.ConditionSet
