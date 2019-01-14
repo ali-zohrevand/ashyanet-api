@@ -18,8 +18,10 @@ func EventCreate(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) 
 	userInDB, err := GetUserFromHeader(r)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+	}else {
+		responseStatus, token := services.EventCreate(*dataBinde, userInDB)
+		w.WriteHeader(responseStatus)
+		w.Write(token)
 	}
-	responseStatus, token := services.EventCreate(*dataBinde, userInDB)
-	w.WriteHeader(responseStatus)
-	w.Write(token)
+
 }

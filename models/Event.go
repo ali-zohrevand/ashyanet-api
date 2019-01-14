@@ -22,4 +22,21 @@ type EventType int
 const (
 	MqttEvent EventType = 0
 	SmsEvent  EventType = 1
+	MailEvent EventType = 2
 )
+/*
+//Simple grater than event
+{
+	"data_name":"Status",
+	"command_name":"On",
+	"condition":
+		{
+			"json_attribute_name":"",
+			"condition_type":1,
+			"attr":[5]
+
+		},
+	"comand_type":0
+
+}
+ */

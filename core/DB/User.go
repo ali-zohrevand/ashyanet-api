@@ -165,7 +165,7 @@ func UserGetMqttCommandByName(username string, CommandName string, Session *mgo.
 		return data, err
 	}
 	for _, cm := range AllCommand {
-		if cm.Name == CommandName {
+		if cm.Name == CommandName  {
 			return cm, nil
 		}
 	}

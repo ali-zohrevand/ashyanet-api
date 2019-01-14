@@ -24,7 +24,7 @@ func EventMqttMessageRecived(message models.MqttMessage) (err error) {
 	switch event.EventType {
 	case models.MqttEvent:
 		IsHappened, err := event.EventCondition.Happened(message.Message)
-		if IsHappened && err != nil {
+		if IsHappened && err == nil {
 			errRunCOmmand := MqttCommandTempAdmin(event.EventFunction)
 			if errRunCOmmand != nil {
 				log.ErrorHappened(errRunCOmmand)
@@ -49,14 +49,17 @@ func EventCreate(dataBinde models.DataBindCommand, user models.UserInDB) (int, [
 		json, _ := json.Marshal(message)
 		return http.StatusInternalServerError, []byte(json)
 	}
-	CommandName := dataBinde.CommandName
-	Comamand, errGetCommand := DB.UserGetMqttCommandByName(user.UserName, CommandName, session)
+	//  در این تابع تمامی کامند هایی که در تمامی دستگاه های کاربر مورد نظر وجود دارد
+	//  بررسی خواهد شد و چک میشود کاربر کامندی با نام مورد نظر دارد یا خیر
+	Comamand, errGetCommand := DB.UserGetMqttCommandByName(user.UserName, dataBinde.CommandName, session)
 	if errGetCommand != nil {
 		message := OutputAPI.Message{}
 		message.Error = Words.CommandDataNotFOUND
 		json, _ := json.Marshal(message)
 		return http.StatusInternalServerError, []byte(json)
 	}
+	//ر این تابع تمامی دیتا هایی که در تمامی دستگاه های کاربر مورد نظر وجود دارد
+	//  بررسی خواهد شد و چک میشود کاربر دیتایی با نام مورد نظر دارد یا خیر
 	Data, errGetDataName := DB.UserGetMqttDataByName(user.UserName, dataBinde.DataName, session)
 	if errGetDataName != nil {
 		message := OutputAPI.Message{}
@@ -64,12 +67,14 @@ func EventCreate(dataBinde models.DataBindCommand, user models.UserInDB) (int, [
 		json, _ := json.Marshal(message)
 		return http.StatusInternalServerError, []byte(json)
 	}
+	// برای بررسی دوباره صحت کامند و دیتا را بررسی می نماییم.
 	if Comamand.Name == "" || Data.Name == "" {
 		message := OutputAPI.Message{}
 		message.Info = Words.CommandDataNotFOUND
 		json, _ := json.Marshal(message)
 		return http.StatusNotFound, []byte(json)
 	}
+	// در این مرحله متغیر های کلاس condition‌ را اعتبار سنجی اولیه میکنیم.
 	if !dataBinde.ConditionSet.IsValid() {
 		message := OutputAPI.Message{}
 		message.Error = Words.ConditionIsNotValid
@@ -77,8 +82,9 @@ func EventCreate(dataBinde models.DataBindCommand, user models.UserInDB) (int, [
 		return http.StatusNotAcceptable, []byte(json)
 
 	}
+	// در نهایت میخواهیم رخ داد (event) را ایجاد و در پایگاه داده ذخیره نماییم.
 	var event models.Event
-	event.EventName = user.UserName + "-" + dataBinde.DataName + "-" + CommandName + "-" + GenerateRandomString(5)
+	event.EventName = user.UserName + "-" + dataBinde.DataName + "-" + dataBinde.CommandName + "-" + GenerateRandomString(5)
 	event.EventFunction = Comamand
 	event.EventCondition = dataBinde.ConditionSet
 	event.EventAddress = Data.Topic

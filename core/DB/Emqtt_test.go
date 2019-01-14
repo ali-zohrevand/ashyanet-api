@@ -13,8 +13,8 @@ func TestGetEmqttUserByUserName(t *testing.T) {
 		t.Fail()
 	}
 	user := models.MqttUser{}
-	user.Username = "AAA"
-	user.Password = "dfjfhsdjkfhskdjfhsjkdfhjksdfhk"
+	user.Username = "admin"
+	user.Password = "123456789"
 	user.Is_superuser = true
 	user.Created = time.Now().String()
 	err := EmqttCreateUser(user, session)
