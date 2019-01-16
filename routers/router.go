@@ -12,7 +12,10 @@ func InitRoutes() *mux.Router {
 	router = Device(router)
 	router = Key(router)
 	router = Location(router)
-	router = Emqtt(router)
+	router = MqttCommand(router)
 	router = Acl(router)
+	router = UserDeviceLocation(router)
+	router = Event(router)
+	router = Active(router)
 	return router
 }

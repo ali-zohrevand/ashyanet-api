@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"github.com/ali-zohrevand/ashyanet-api/core/DB"
 	"github.com/ali-zohrevand/ashyanet-api/models"
-	"github.com/ali-zohrevand/ashyanet-api/settings/ConstKey"
+	"github.com/ali-zohrevand/ashyanet-api/services/Tools"
+	"github.com/ali-zohrevand/ashyanet-api/settings/Words"
 )
 
 func CreateSettingsFile() (err error) {
-	if IsFileExist(ConstKey.SettingPath) {
+	if Tools.IsFileExist(Words.SettingPath) {
 		return
 	}
 	setting := models.SettingsInDB{}
@@ -18,15 +19,25 @@ func CreateSettingsFile() (err error) {
 		return
 	}
 	defer session.Close()
-	key := DB.GetValidKey(session)
-	setting.Key = key.Key
-	setting.Password = "123456"
-	setting.Identifier = DB.GenerateKey()
-	settingJsonByte, err := json.Marshal(setting)
+	key, err := DB.GetValidKey(session)
 	if err != nil {
 		return
 	}
-	err = WriteFile(ConstKey.SettingPath, string(settingJsonByte))
+	setting.Key = key.Key
+	setting.Password = "123456"
+	setting.Identifier = DB.GenerateKey()
+	setting.Type = "server"
+	setting.Url = "https://127.0.0.1:5000/active"
+	setting.MailHost = "smtp.gmail.com"
+	setting.MailPort = "465"
+	setting.MailVerifyUsername = "ashyanet@gmail.com"
+	setting.MailVerifyPassword = "mahdi1369QWE"
+	settingJsonByte, err := json.Marshal(setting)
+
+	if err != nil {
+		return
+	}
+	err = Tools.WriteFile(Words.SettingPath, string(settingJsonByte))
 	return
 
 }
@@ -37,11 +48,11 @@ func SaveSetingsInDB() (err error) {
 		return
 	}
 	defer session.Close()
-	Is := DB.IsCollectionEmptty(ConstKey.DBname, ConstKey.SettingsCollectiName, session)
+	Is := DB.IsCollectionEmptty(Words.DBname, Words.SettingsCollectiName, session)
 	if !Is {
 		return
 	}
-	content, er := ReadFile(ConstKey.SettingPath)
+	content, er := Tools.ReadFile(Words.SettingPath)
 	if er != nil {
 		return
 	}
@@ -53,15 +64,15 @@ func SaveSetingsInDB() (err error) {
 	err = DB.SaveSettings(setting, session)
 	return err
 }
-func GetIdentifire() (identifire string) {
+func GetServerSettings() (settings models.SettingsInDB, err error) {
 	session, err := DB.ConnectDB()
 	if err != nil {
 		return
 	}
 	defer session.Close()
-	SettingsObj, err := DB.LoadSettings(session)
+	settings, err = DB.LoadSettings(session)
 	if err != nil {
 		return
 	}
-	return SettingsObj.Identifier
+	return
 }

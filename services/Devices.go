@@ -7,11 +7,12 @@ import (
 	"github.com/ali-zohrevand/ashyanet-api/models"
 	"github.com/ali-zohrevand/ashyanet-api/services/log"
 	"github.com/ali-zohrevand/ashyanet-api/services/validation"
-	"github.com/ali-zohrevand/ashyanet-api/settings/ConstKey"
+	"github.com/ali-zohrevand/ashyanet-api/settings/Words"
 	"net/http"
+	"strings"
 )
 
-func CreateDevice(device *models.Device) (int, []byte) {
+func CreateDevice(device *models.Device, user models.UserInDB) (int, []byte) {
 	session, errConnectDB := DB.ConnectDB()
 	if errConnectDB != nil {
 		log.SystemErrorHappened(errConnectDB)
@@ -22,20 +23,42 @@ func CreateDevice(device *models.Device) (int, []byte) {
 	if errValidation != nil || !IsValid {
 		return http.StatusBadRequest, out
 	}
-	errCreateUser := DB.CreateDevice(*device, session)
+	//.......................We add locattionPath/DeviceType to pubsub slice..........................
+	LocationPath, err := DB.GetLocationPath(device.Location, session)
+	if err != nil {
+		log.SystemErrorHappened(errConnectDB)
+		return http.StatusInternalServerError, []byte("")
+	}
+	LocationAndType := LocationPath + "/" + device.Type
+	LocationAndType = strings.Replace(LocationAndType, "//", "/", -1)
+	device.Pubsub = append(device.Pubsub, LocationAndType)
+	//.................................................
+	deviceWithCorrectTopic, err := CheckMqttTopic(device, user)
+	if err != nil {
+		log.SystemErrorHappened(errConnectDB)
+		return http.StatusInternalServerError, []byte("")
+	}
+	errCreateUser := DB.DeviceCreate(*deviceWithCorrectTopic, user, session)
 	if errCreateUser != nil {
-		if errCreateUser.Error() == ConstKey.DeviceExist {
+		if errCreateUser.Error() == Words.DeviceExist {
 			//User Exist
 			message := OutputAPI.Message{}
-			message.Error = ConstKey.DeviceExist
+			message.Error = Words.DeviceExist
 			json, _ := json.Marshal(message)
 			return http.StatusOK, json
 		}
-		if errCreateUser.Error() == ConstKey.KeyIsNotValid {
+		if errCreateUser.Error() == Words.KeyIsNotValid {
 			message := OutputAPI.Message{}
-			message.Error = ConstKey.KeyIsNotValid
+			message.Error = Words.KeyIsNotValid
 			json, _ := json.Marshal(message)
 			return http.StatusNotFound, json
+		}
+		if errCreateUser.Error() == Words.DataExist || errCreateUser.Error() == Words.CommandExist {
+			message := OutputAPI.Message{}
+			message.Error = errCreateUser.Error()
+			json, _ := json.Marshal(message)
+			return http.StatusBadRequest, json
+
 		}
 		log.SystemErrorHappened(errCreateUser)
 		return http.StatusInternalServerError, []byte("")
@@ -43,36 +66,10 @@ func CreateDevice(device *models.Device) (int, []byte) {
 	} else {
 
 		message := OutputAPI.Message{}
-		message.Info = ConstKey.DeviceCreated
-		json, _ := json.Marshal(message)
+		message.Info = Words.DeviceCreated
+		json, _ := json.Marshal(device)
 		return http.StatusCreated, json
 	}
-	return http.StatusInternalServerError, nil
-}
-func AddUserToDevice(userdevice *models.UserDevice) (int, []byte) {
-	session, errConnectDB := DB.ConnectDB()
-	if errConnectDB != nil {
-		log.SystemErrorHappened(errConnectDB)
-		return http.StatusInternalServerError, []byte("")
-	}
-	defer session.Close()
-	out, errValidation, IsValid := validation.ObjectValidation(*userdevice)
-	if errValidation != nil || !IsValid {
-		return http.StatusBadRequest, out
-	}
-	err := DB.AddUserToDevice(*userdevice, session)
-	if err != nil {
-		message := OutputAPI.Message{}
-		message.Error = ConstKey.DeviceOrUserNotFound
-		json, _ := json.Marshal(message)
-		return http.StatusBadRequest, json
-	} else {
-		message := OutputAPI.Message{}
-		message.Info = ConstKey.UserAddedToDevice
-		json, _ := json.Marshal(message)
-		return http.StatusOK, json
-	}
-
 	return http.StatusInternalServerError, nil
 }
 func ListDevices() (int, []byte) {

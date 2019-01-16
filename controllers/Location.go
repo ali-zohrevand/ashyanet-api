@@ -2,10 +2,9 @@ package controllers
 
 import (
 	"encoding/json"
-	"net/http"
-
 	"github.com/ali-zohrevand/ashyanet-api/models"
 	"github.com/ali-zohrevand/ashyanet-api/services"
+	"net/http"
 )
 
 func CreateLocation(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {

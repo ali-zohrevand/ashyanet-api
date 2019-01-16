@@ -8,4 +8,5 @@ func InitServices() {
 	AddTempData()
 	AddInitUser()
 	AddPermissionModelToDB()
+	go MqttSubcribeRootTopic()
 }

@@ -16,7 +16,7 @@ func CreateAcl(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 
 	}
 	w.Header().Set("Content-Type", "application/json")
-	responseStatus, token := services.CreateMqttAcl(Acl)
+	responseStatus, token := services.EmqttHttpCreateAcl(Acl)
 	w.WriteHeader(responseStatus)
 	w.Write(token)
 }

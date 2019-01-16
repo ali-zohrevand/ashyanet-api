@@ -2,7 +2,7 @@ package DB
 
 import (
 	"github.com/ali-zohrevand/ashyanet-api/models"
-	"github.com/ali-zohrevand/ashyanet-api/settings/ConstKey"
+	"github.com/ali-zohrevand/ashyanet-api/settings/Words"
 	"github.com/pkg/errors"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -20,11 +20,11 @@ func CreateLocation(Location models.Location, Session *mgo.Session) (err error) 
 	LocationDB.Description = Location.Description
 	LocationDB.Name = Location.Name
 	for i := 0; i < len(Location.Devices); i++ {
-		_, deviceFound := FindDeviceByName(Location.Devices[i], sessionCopy)
+		_, deviceFound := DeviceGetByName(Location.Devices[i], sessionCopy)
 		if deviceFound.Name == Location.Devices[i] {
 			LocationDB.Devices = append(LocationDB.Devices, Location.Devices[i])
 		} else {
-			err = errors.New(ConstKey.DeviceNotExist)
+			err = errors.New(Words.DeviceNotExist)
 			return
 		}
 	}
@@ -34,30 +34,30 @@ func CreateLocation(Location models.Location, Session *mgo.Session) (err error) 
 			LocationDB.Parent = Location.Parent
 
 		} else {
-			err = errors.New(ConstKey.LocationNotFound)
+			err = errors.New(Words.LocationNotFound)
 			return
 		}
 	}
-	err = sessionCopy.DB(ConstKey.DBname).C(ConstKey.LocationCollectionName).Insert(LocationDB)
+	err = sessionCopy.DB(Words.DBname).C(Words.LocationCollectionName).Insert(LocationDB)
 	return
 }
 func CheckLocationExist(name string, Session *mgo.Session) (err error, Exist bool) {
 	var Location models.LocationInDB
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
-	err = sessionCopy.DB(ConstKey.DBname).C(ConstKey.LocationCollectionName).Find(bson.M{"locationname": name}).One(&Location)
+	err = sessionCopy.DB(Words.DBname).C(Words.LocationCollectionName).Find(bson.M{"locationname": name}).One(&Location)
 	if Location.Name != "" && err == nil {
-		err = errors.New(ConstKey.LocationExist)
+		err = errors.New(Words.LocationExist)
 		Exist = true
 		return
 	}
 	Exist = false
 	return
 }
-func GetLocationByName(name string, Session *mgo.Session) (location models.LocationInDB, err error) {
+func LocationGetByName(name string, Session *mgo.Session) (location models.LocationInDB, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
-	err = sessionCopy.DB(ConstKey.DBname).C(ConstKey.LocationCollectionName).Find(bson.M{"locationname": name}).One(&location)
+	err = sessionCopy.DB(Words.DBname).C(Words.LocationCollectionName).Find(bson.M{"locationname": name}).One(&location)
 	return
 }
 func AddDeviceToLocation() {
@@ -69,7 +69,7 @@ func GetLocationPath(locationName string, Session *mgo.Session) (path string, er
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	for {
-		Location, err := GetLocationByName(name, sessionCopy)
+		Location, err := LocationGetByName(name, sessionCopy)
 		if err != nil {
 			break
 		}

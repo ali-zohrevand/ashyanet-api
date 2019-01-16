@@ -11,10 +11,21 @@ func TestCreateFile(t *testing.T) {
 		t.Error(err)
 		t.Fail()
 	}
+	err = DeleteFile(path)
+	if err != nil {
+		t.Error(err)
+		t.Fail()
+	}
 }
 func TestWriteFile(t *testing.T) {
 	path := "test.txt"
+
 	err := WriteFile(path, "Salam")
+	if err != nil {
+		t.Error(err)
+		t.Fail()
+	}
+	err = DeleteFile(path)
 	if err != nil {
 		t.Error(err)
 		t.Fail()

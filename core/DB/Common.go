@@ -2,6 +2,8 @@ package DB
 
 import (
 	"errors"
+	"fmt"
+	"github.com/ali-zohrevand/ashyanet-api/settings/Words"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -39,4 +41,27 @@ func IsCollectionEmptty(DbName string, CollName string, Session *mgo.Session) (I
 	}
 	return false
 
+}
+
+func IsMongoUp() (Valid bool) {
+	s, err := mgo.Dial("mongodb://localhost")
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	err = s.Ping()
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	return true
+}
+func GenerateRandomString(length int) string {
+	var charset string
+	charset = Words.RuneCharInKey
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[seededRand.Intn(len(charset))]
+	}
+	return string(b)
 }

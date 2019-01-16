@@ -7,7 +7,7 @@ import (
 	"github.com/ali-zohrevand/ashyanet-api/models"
 	"github.com/ali-zohrevand/ashyanet-api/services/log"
 	"github.com/ali-zohrevand/ashyanet-api/services/validation"
-	"github.com/ali-zohrevand/ashyanet-api/settings/ConstKey"
+	"github.com/ali-zohrevand/ashyanet-api/settings/Words"
 	"net/http"
 )
 
@@ -41,8 +41,8 @@ func CreatValidKey() (int, []byte) {
 		return http.StatusInternalServerError, []byte("")
 		log.SystemErrorHappened(errConnectDB)
 	}
-	key := DB.GetValidKey(session)
-	if len(key.Key) != ConstKey.LengthOfDeviceKey {
+	key, err := DB.GetValidKey(session)
+	if len(key.Key) != Words.LengthOfDeviceKey || err != nil {
 		return http.StatusInternalServerError, []byte("")
 
 	} else {
@@ -68,12 +68,12 @@ func AddKeyToDevice(deviceKey *models.DeviceKey) (int, []byte) {
 	err := DB.AddKeyToDevice(*deviceKey, session)
 	if err != nil {
 		message := OutputAPI.Message{}
-		message.Error = ConstKey.KeyIsNotValid
+		message.Error = Words.KeyIsNotValid
 		json, _ := json.Marshal(message)
 		return http.StatusBadRequest, json
 	} else {
 		message := OutputAPI.Message{}
-		message.Info = ConstKey.KeyAddedTodevice
+		message.Info = Words.KeyAddedTodevice
 		json, _ := json.Marshal(message)
 		return http.StatusOK, json
 	}

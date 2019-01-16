@@ -7,6 +7,5 @@ import (
 
 func Register(router *mux.Router) *mux.Router {
 	router.HandleFunc("/register", controllers.RegisterPost).Methods("POST")
-
 	return router
 }

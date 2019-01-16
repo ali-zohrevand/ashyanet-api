@@ -3,7 +3,7 @@ package services
 import (
 	"errors"
 	"github.com/ali-zohrevand/ashyanet-api/services/log"
-	"github.com/ali-zohrevand/ashyanet-api/settings/ConstKey"
+	"github.com/ali-zohrevand/ashyanet-api/settings/Words"
 	"github.com/dgrijalva/jwt-go"
 	"time"
 )
@@ -22,7 +22,7 @@ func GenerateToken(userUUID string) (string, error) {
 		"iat": time.Now().Unix(),
 		"sub": userUUID,
 	}
-	tokenString, err := token.SignedString([]byte(ConstKey.TokenKey))
+	tokenString, err := token.SignedString([]byte(Words.TokenKey))
 	//		tokenString, err := token.SignedString([]byte(SECRET))
 	if err != nil {
 		log.ErrorHappened(err)
@@ -35,7 +35,7 @@ func ValidateToken(token string) (IsValid bool) {
 		if jwt.SigningMethodHS256 != token.Method {
 			return nil, errors.New("Invalid signing algorithm")
 		}
-		return []byte(ConstKey.TokenKey), nil
+		return []byte(Words.TokenKey), nil
 	})
 
 	//todo check ip and it token

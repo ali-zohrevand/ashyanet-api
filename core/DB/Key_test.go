@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/ali-zohrevand/ashyanet-api/Lab/mosquitto/03_crateTopicBaseLocation/DB"
 	"github.com/ali-zohrevand/ashyanet-api/models"
-	"github.com/ali-zohrevand/ashyanet-api/settings/ConstKey"
+	"github.com/ali-zohrevand/ashyanet-api/settings/Words"
 	"testing"
 )
 
@@ -37,7 +37,7 @@ func TestSetKeyForDevice(t *testing.T) {
 	defer session.Close()
 	keydevice := models.DeviceKey{}
 	keydevice.Device = "lamp"
-	newKey := GetValidKey(session)
+	newKey, _ := GetValidKey(session)
 	keydevice.Key = newKey.Key
 	var tests = []struct {
 		input    models.DeviceKey
@@ -54,9 +54,10 @@ func TestSetKeyForDevice(t *testing.T) {
 }
 func TestGenerateKey(t *testing.T) {
 	key := GenerateKey()
-	if len(key) != ConstKey.LengthOfDeviceKey {
+	if len(key) != Words.LengthOfDeviceKey {
 		t.Error("Test Failed: key is ", key)
 	}
+	fmt.Println(key)
 
 }
 func TestGetValidKey(t *testing.T) {
@@ -65,8 +66,8 @@ func TestGetValidKey(t *testing.T) {
 		t.Fail()
 	}
 	defer session.Close()
-	key := GetValidKey(session)
-	if len(key.Key) != ConstKey.LengthOfDeviceKey || key.Status != ConstKey.StatusValid {
+	key, _ := GetValidKey(session)
+	if len(key.Key) != Words.LengthOfDeviceKey {
 		t.Error("Test Failed: key is ", key)
 	}
 	fmt.Println("key is : ", key)
@@ -78,7 +79,7 @@ func TestCheckKeyIsValid(t *testing.T) {
 	}
 	defer session.Close()
 	CheckKeyIsValid("", session)
-	key := GetValidKey(session)
+	key, _ := GetValidKey(session)
 	var tests = []struct {
 		input    string
 		expected bool

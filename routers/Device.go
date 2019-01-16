@@ -22,13 +22,7 @@ func Device(router *mux.Router) *mux.Router {
 	)
 	router.Handle("/user/devices", HandleFuncList).Methods("GET")
 	//.......................................................................................................
-	HandleFuncAddUserToDevice := negroni.New(
-		negroni.HandlerFunc(services.RequireTokenAuthentication),
-		negroni.HandlerFunc(controllers.AddUserToDevice),
-	)
-	router.Handle("/user/aud", HandleFuncAddUserToDevice).Methods("POST")
-	//.......................................................................................................
-	//.......................................................................................................
+
 	HandleFuncAddKeyToDevice := negroni.New(
 		negroni.HandlerFunc(services.RequireTokenAuthentication),
 		negroni.HandlerFunc(controllers.AddKeyToDevice),
