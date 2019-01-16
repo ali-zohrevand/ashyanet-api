@@ -50,6 +50,9 @@ func (c *Condition) Happened(Input string) (Ok bool, err error) {
 	var BType string
 	if len(Boundries) != 0 {
 		BType = reflect.TypeOf(Boundries[0]).String()
+		if BType=="float64"{
+			BType="int"
+		}
 	}
 	if BType != typeOdData {
 		return false, errors.New(Words.InvalidaData)

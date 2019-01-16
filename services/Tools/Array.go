@@ -1,6 +1,8 @@
-package services
+package Tools
 
-import "errors"
+import (
+	"errors"
+)
 
 func IsInArray(Target interface{}, Array []interface{}) (Found bool) {
 
@@ -29,6 +31,7 @@ func DeleteSliceByIndex(i int, slice []interface{}) (output []interface{}, err e
 		return slice, errors.New("OUT OF RANGE")
 	}
 }
+
 func DeleteSliceByObject(Target interface{}, slice []interface{}) (output []interface{}, err error) {
 	i := FindInArray(Target, slice)
 	if i == -1 {

@@ -2,7 +2,7 @@ package models
 
 import "gopkg.in/mgo.v2/bson"
 
-type DataBind struct {
+type DataBindCommand struct {
 	DataName     string    `json:"data_name" bson:"data_name"`
 	CommandName  string    `json:"command_name" bson:"command_name"`
 	ConditionSet Condition `json:"condition" bson:"condition"`
@@ -11,6 +11,7 @@ type DataBind struct {
 
 type Event struct {
 	Id             bson.ObjectId `json:"id,string" bson:"_id"`
+	UserOwner	   string		 `json:"user_owner" bson:"user_owner"`
 	EventName      string        `json:"event_name" bson:"event_name"`
 	EventAddress   string        `json:"event_address" bson:"event_address"`
 	EventType      EventType     `json:"event_type" bson:"event_type"`
@@ -22,4 +23,21 @@ type EventType int
 const (
 	MqttEvent EventType = 0
 	SmsEvent  EventType = 1
+	MailEvent EventType = 2
 )
+/*
+//Simple grater than event
+{
+	"data_name":"Status",
+	"command_name":"On",
+	"condition":
+		{
+			"json_attribute_name":"",
+			"condition_type":1,
+			"attr":[5]
+
+		},
+	"comand_type":0
+
+}
+ */

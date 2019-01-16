@@ -1,6 +1,7 @@
 package DB
 
 import (
+	"encoding/json"
 	"fmt"
 	"gitlab.com/hooshyar/ChiChiNi-API/models"
 	"testing"
@@ -24,8 +25,8 @@ func TestDeviceCreate(t *testing.T) {
 	MqttData.ValueType = "int"
 	D.MqttCommand = append(D.MqttCommand, MqttCommand)
 	D.MqttData = append(D.MqttData, MqttData)
-	D.MqttPassword = "123456"
-	D.Name = "testD" + GenerateKey()
+	D.MqttPassword = "mahdi1369"
+	D.Name = "alialiali"
 	D.Description = "test device"
 	D.Location = "room"
 	D.Owners = append(D.Owners, "admin")
@@ -94,5 +95,26 @@ for _, test := range tests {
 	}
 }*/
 func TestDeviceGetAllTopic(t *testing.T) {
-
+}
+func TestDevicesGetAllByUsername(t *testing.T) {
+	session, errConnectDB := ConnectDB()
+	if errConnectDB != nil {
+		t.Fail()
+	}
+	username:="user6"
+	Devices,err:=DevicesGetAllByUsername(username,session)
+	if err != nil {
+		t.Fail()
+	}
+	DeviceJson,_:=json.Marshal(Devices)
+	fmt.Println(len(Devices))
+	fmt.Println(string(DeviceJson))
+}
+func TestDeviceGetById(t *testing.T) {
+	session, errConnectDB := ConnectDB()
+	if errConnectDB != nil {
+		t.Fail()
+	}
+	device,_:=DeviceGetById("5c3c3da31d41c82efb985cef",session)
+	fmt.Println(device)
 }

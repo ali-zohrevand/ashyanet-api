@@ -61,6 +61,7 @@ func EmqttCreateTempAdminMqttUserWithDwefaultAdmin() (UserName string, Passwoard
 	}
 	var user models.MqttUser
 	user.Username = Words.MqttDefaultAdmin
+	//user.Username="admin-"+GenerateRandomString(9)
 	user.Password = GenerateRandomString(16)
 	user.Is_superuser = true
 	user.Created = time.Now().String()
