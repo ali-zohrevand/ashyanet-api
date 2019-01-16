@@ -1,10 +1,10 @@
 package services
 
 import (
-	"gitlab.com/hooshyar/ChiChiNi-API/core/DB"
-	"gitlab.com/hooshyar/ChiChiNi-API/models"
-	"gitlab.com/hooshyar/ChiChiNi-API/services/log"
-	"gitlab.com/hooshyar/ChiChiNi-API/settings/ConstKey"
+	"github.com/ali-zohrevand/ashyanet-api/core/DB"
+	"github.com/ali-zohrevand/ashyanet-api/models"
+	"github.com/ali-zohrevand/ashyanet-api/services/log"
+	"github.com/ali-zohrevand/ashyanet-api/settings/ConstKey"
 	"gopkg.in/mgo.v2/bson"
 )
 

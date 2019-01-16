@@ -1,8 +1,8 @@
 package DB
 
 import (
-	"gitlab.com/hooshyar/ChiChiNi-API/Lab/mosquitto/03_crateTopicBaseLocation/DB"
-	"gitlab.com/hooshyar/ChiChiNi-API/models"
+	"github.com/ali-zohrevand/ashyanet-api/Lab/mosquitto/03_crateTopicBaseLocation/DB"
+	"github.com/ali-zohrevand/ashyanet-api/models"
 	"testing"
 )
 

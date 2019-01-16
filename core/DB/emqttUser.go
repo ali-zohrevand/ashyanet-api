@@ -3,9 +3,9 @@ package DB
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"github.com/ali-zohrevand/ashyanet-api/models"
+	"github.com/ali-zohrevand/ashyanet-api/settings/ConstKey"
 	"github.com/pkg/errors"
-	"gitlab.com/hooshyar/ChiChiNi-API/models"
-	"gitlab.com/hooshyar/ChiChiNi-API/settings/ConstKey"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )

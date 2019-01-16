@@ -2,9 +2,9 @@ package validation
 
 import (
 	"encoding/json"
+	"github.com/ali-zohrevand/ashyanet-api/OutputAPI"
+	"github.com/ali-zohrevand/ashyanet-api/models"
 	"github.com/asaskevich/govalidator"
-	"gitlab.com/hooshyar/ChiChiNi-API/OutputAPI"
-	"gitlab.com/hooshyar/ChiChiNi-API/models"
 	"strings"
 )
 

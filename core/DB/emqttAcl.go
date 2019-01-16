@@ -2,8 +2,8 @@ package DB
 
 import (
 	"errors"
-	"gitlab.com/hooshyar/ChiChiNi-API/models"
-	"gitlab.com/hooshyar/ChiChiNi-API/settings/ConstKey"
+	"github.com/ali-zohrevand/ashyanet-api/models"
+	"github.com/ali-zohrevand/ashyanet-api/settings/ConstKey"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
