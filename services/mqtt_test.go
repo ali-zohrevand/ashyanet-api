@@ -3,7 +3,7 @@ package services
 import (
 	"encoding/json"
 	"fmt"
-	"gitlab.com/hooshyar/ChiChiNi-API/models"
+	"github.com/ali-zohrevand/ashyanet-api/models"
 	"testing"
 	"time"
 )

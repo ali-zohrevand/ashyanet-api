@@ -2,10 +2,10 @@ package services
 
 import (
 	"fmt"
+	"github.com/ali-zohrevand/ashyanet-api/core/DB"
+	"github.com/ali-zohrevand/ashyanet-api/services/log"
 	"github.com/casbin/casbin"
 	scas "github.com/qiangmzsx/string-adapter"
-	"gitlab.com/hooshyar/ChiChiNi-API/core/DB"
-	"gitlab.com/hooshyar/ChiChiNi-API/services/log"
 	"net/http"
 	"strings"
 )

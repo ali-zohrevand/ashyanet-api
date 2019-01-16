@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"encoding/json"
-	"gitlab.com/hooshyar/ChiChiNi-API/models"
-	"gitlab.com/hooshyar/ChiChiNi-API/services"
+	"github.com/ali-zohrevand/ashyanet-api/models"
+	"github.com/ali-zohrevand/ashyanet-api/services"
 	"net/http"
 )
 
@@ -18,7 +18,7 @@ func EventCreate(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) 
 	userInDB, err := GetUserFromHeader(r)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-	}else {
+	} else {
 		responseStatus, token := services.EventCreate(*dataBinde, userInDB)
 		w.WriteHeader(responseStatus)
 		w.Write(token)

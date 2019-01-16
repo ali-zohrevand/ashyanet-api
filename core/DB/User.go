@@ -2,8 +2,8 @@ package DB
 
 import (
 	"errors"
-	"gitlab.com/hooshyar/ChiChiNi-API/models"
-	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
+	"github.com/ali-zohrevand/ashyanet-api/models"
+	"github.com/ali-zohrevand/ashyanet-api/settings/Words"
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -30,7 +30,7 @@ func (ds *UserDataStore) CheckUserPassCorrect(user models.User, Session *mgo.Ses
 }
 func (ds *UserDataStore) CreateUser(userToCreate models.User, Session *mgo.Session) (err error) {
 	settings, errLoadSettings := LoadSettings(Session)
-	if errLoadSettings != nil  || settings.Type==""{
+	if errLoadSettings != nil || settings.Type == "" {
 		return errors.New("setting Not Exist")
 	}
 	userBack, err := FindUserByEmail(userToCreate.Email, Session)
@@ -52,10 +52,10 @@ func (ds *UserDataStore) CreateUser(userToCreate models.User, Session *mgo.Sessi
 	Userdb.FirstName = userToCreate.FirstName
 	Userdb.LastName = userToCreate.LastName
 	Userdb.Role = "user"
-	if settings.Type=="server"{
-		Userdb.Active =false
-	}else {
-		Userdb.Active= true
+	if settings.Type == "server" {
+		Userdb.Active = false
+	} else {
+		Userdb.Active = true
 	}
 	Userdb.TempKeyGenreated = GenerateRandomString(10)
 	Userdb.TimeTempKeyGenreated = time.Now().Unix()
@@ -79,20 +79,20 @@ func UserGetByUsername(username string, Session *mgo.Session) (userToCreate mode
 	err = sessionCopy.DB(Words.DBname).C(Words.UserCollectionName).Find(bson.M{"username": username}).One(&userToCreate)
 	return
 }
-func UserActiveBuUsername(username string, Session *mgo.Session)(success bool,err error)  {
+func UserActiveBuUsername(username string, Session *mgo.Session) (success bool, err error) {
 	var user models.UserInDB
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	err = sessionCopy.DB(Words.DBname).C(Words.UserCollectionName).Find(bson.M{"username": username}).One(&user)
-	if err!=nil{
-		return false,err
+	if err != nil {
+		return false, err
 	}
 	user.Active = true
-	err = sessionCopy.DB(Words.DBname).C(Words.UserCollectionName).UpdateId(user.Id,user)
-	if err!=nil{
-		return false,err
+	err = sessionCopy.DB(Words.DBname).C(Words.UserCollectionName).UpdateId(user.Id, user)
+	if err != nil {
+		return false, err
 	}
-	return true,err
+	return true, err
 }
 func UserGetAllTopic(username string, Type string, Session *mgo.Session) (TopicList []string, err error) {
 	sessionCopy := Session.Copy()
@@ -165,7 +165,7 @@ func UserGetMqttCommandByName(username string, CommandName string, Session *mgo.
 		return data, err
 	}
 	for _, cm := range AllCommand {
-		if cm.Name == CommandName  {
+		if cm.Name == CommandName {
 			return cm, nil
 		}
 	}
@@ -201,24 +201,24 @@ func UserGetAllDevice(username string, Session *mgo.Session) (Devices []models.D
 	}
 	return
 }
-func UserGetAllCommandData(user string,Session *mgo.Session) (DataName []string,commandsName []string,err error) {
+func UserGetAllCommandData(user string, Session *mgo.Session) (DataName []string, commandsName []string, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	devices, err := DevicesGetAllByUsername(user, sessionCopy)
 	if err != nil {
 		return
 	}
-	for _,device := range devices {
+	for _, device := range devices {
 		for _, Commandname := range device.MqttCommand {
-			commandsName=append(commandsName, Commandname.Name)
+			commandsName = append(commandsName, Commandname.Name)
 
 		}
 		for _, dataName := range device.MqttData {
-			DataName=append(DataName, dataName.Name)
+			DataName = append(DataName, dataName.Name)
 		}
 	}
 	return
 }
-func UserGetAllEvents()  {
-	
+func UserGetAllEvents() {
+
 }

@@ -2,11 +2,11 @@ package services
 
 import (
 	"encoding/json"
-	"gitlab.com/hooshyar/ChiChiNi-API/OutputAPI"
-	"gitlab.com/hooshyar/ChiChiNi-API/core/DB"
-	"gitlab.com/hooshyar/ChiChiNi-API/models"
-	"gitlab.com/hooshyar/ChiChiNi-API/services/log"
-	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
+	"github.com/ali-zohrevand/ashyanet-api/OutputAPI"
+	"github.com/ali-zohrevand/ashyanet-api/core/DB"
+	"github.com/ali-zohrevand/ashyanet-api/models"
+	"github.com/ali-zohrevand/ashyanet-api/services/log"
+	"github.com/ali-zohrevand/ashyanet-api/settings/Words"
 	"net/http"
 )
 
@@ -84,7 +84,7 @@ func EventCreate(dataBinde models.DataBindCommand, user models.UserInDB) (int, [
 	}
 	// در نهایت میخواهیم رخ داد (event) را ایجاد و در پایگاه داده ذخیره نماییم.
 	var event models.Event
-	event.UserOwner=user.UserName
+	event.UserOwner = user.UserName
 	event.EventName = user.UserName + "-" + dataBinde.DataName + "-" + dataBinde.CommandName + "-" + GenerateRandomString(5)
 	event.EventFunction = Comamand
 	event.EventCondition = dataBinde.ConditionSet

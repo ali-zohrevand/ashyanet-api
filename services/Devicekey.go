@@ -2,12 +2,12 @@ package services
 
 import (
 	"encoding/json"
-	"gitlab.com/hooshyar/ChiChiNi-API/OutputAPI"
-	"gitlab.com/hooshyar/ChiChiNi-API/core/DB"
-	"gitlab.com/hooshyar/ChiChiNi-API/models"
-	"gitlab.com/hooshyar/ChiChiNi-API/services/log"
-	"gitlab.com/hooshyar/ChiChiNi-API/services/validation"
-	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
+	"github.com/ali-zohrevand/ashyanet-api/OutputAPI"
+	"github.com/ali-zohrevand/ashyanet-api/core/DB"
+	"github.com/ali-zohrevand/ashyanet-api/models"
+	"github.com/ali-zohrevand/ashyanet-api/services/log"
+	"github.com/ali-zohrevand/ashyanet-api/services/validation"
+	"github.com/ali-zohrevand/ashyanet-api/settings/Words"
 	"net/http"
 )
 

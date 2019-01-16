@@ -3,7 +3,7 @@ package DB
 import (
 	"encoding/json"
 	"fmt"
-	"gitlab.com/hooshyar/ChiChiNi-API/models"
+	"github.com/ali-zohrevand/ashyanet-api/models"
 	"testing"
 )
 
@@ -101,12 +101,12 @@ func TestDevicesGetAllByUsername(t *testing.T) {
 	if errConnectDB != nil {
 		t.Fail()
 	}
-	username:="user6"
-	Devices,err:=DevicesGetAllByUsername(username,session)
+	username := "user6"
+	Devices, err := DevicesGetAllByUsername(username, session)
 	if err != nil {
 		t.Fail()
 	}
-	DeviceJson,_:=json.Marshal(Devices)
+	DeviceJson, _ := json.Marshal(Devices)
 	fmt.Println(len(Devices))
 	fmt.Println(string(DeviceJson))
 }
@@ -115,6 +115,6 @@ func TestDeviceGetById(t *testing.T) {
 	if errConnectDB != nil {
 		t.Fail()
 	}
-	device,_:=DeviceGetById("5c3c3da31d41c82efb985cef",session)
+	device, _ := DeviceGetById("5c3c3da31d41c82efb985cef", session)
 	fmt.Println(device)
 }

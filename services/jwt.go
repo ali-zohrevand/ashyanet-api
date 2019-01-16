@@ -2,9 +2,9 @@ package services
 
 import (
 	"errors"
+	"github.com/ali-zohrevand/ashyanet-api/services/log"
+	"github.com/ali-zohrevand/ashyanet-api/settings/Words"
 	"github.com/dgrijalva/jwt-go"
-	"gitlab.com/hooshyar/ChiChiNi-API/services/log"
-	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
 	"time"
 )
 

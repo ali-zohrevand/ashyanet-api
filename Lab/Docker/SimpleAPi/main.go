@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"gitlab.com/hooshyar/ChiChiNi-API/Lab/Docker/SimpleAPi/api"
+	"github.com/ali-zohrevand/ashyanet-api/Lab/Docker/SimpleAPi/api"
 	"net/http"
 	"os"
 )

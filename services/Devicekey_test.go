@@ -2,7 +2,7 @@ package services
 
 import (
 	"fmt"
-	"gitlab.com/hooshyar/ChiChiNi-API/services/Tools"
+	"github.com/ali-zohrevand/ashyanet-api/services/Tools"
 	"testing"
 )
 

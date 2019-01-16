@@ -2,7 +2,7 @@ package simple_mail
 
 import (
 	"crypto/tls"
-	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
+	"github.com/ali-zohrevand/ashyanet-api/settings/Words"
 	"log"
 	"net/smtp"
 	"testing"
@@ -12,8 +12,8 @@ func TestMAIL(t *testing.T) {
 	mail := Mail{}
 	mail.Sender = "ashyanet@gmail.com"
 	mail.To = []string{"alihooshyar1990@gmail.com"}
-/*	mail.Cc = []string{"mnp@gmail.com"}
-	mail.Bcc = []string{"a69@outlook.com"}*/
+	/*	mail.Cc = []string{"mnp@gmail.com"}
+		mail.Bcc = []string{"a69@outlook.com"}*/
 	mail.Subject = "تایید میل"
 	mail.Body = Words.VerifyMail
 	messageBody := mail.BuildMessage()
@@ -82,4 +82,3 @@ func TestMAIL(t *testing.T) {
 	log.Println("Mail sent successfully")
 
 }
-

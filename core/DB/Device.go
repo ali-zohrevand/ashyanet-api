@@ -3,9 +3,9 @@ package DB
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"github.com/ali-zohrevand/ashyanet-api/models"
+	. "github.com/ali-zohrevand/ashyanet-api/settings/Words"
 	"github.com/pkg/errors"
-	"gitlab.com/hooshyar/ChiChiNi-API/models"
-	. "gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"time"
@@ -54,28 +54,28 @@ func DeviceCreate(device models.Device, user models.UserInDB, Session *mgo.Sessi
 	device.Pubsub, _ = DeleteRepetedCell(device.Pubsub)
 	device.Publish, _ = DeleteRepetedCell(device.Publish)
 	device.Subscribe, _ = DeleteRepetedCell(device.Subscribe)
-	userDevice :=models.UserDevice{}
-	userDevice.UserName=user.UserName
-	userDevice.DeviceName=device.Name
+	userDevice := models.UserDevice{}
+	userDevice.UserName = user.UserName
+	userDevice.DeviceName = device.Name
 	//.......................................................................................
 	commands, data, err := UserGetAllCommandData(user.UserName, sessionCopy)
 
 	for _, data := range device.MqttData {
-		data.Name = device.Name + "-"+data.Name
+		data.Name = device.Name + "-" + data.Name
 	}
 	for _, command := range device.MqttCommand {
-		command.Name = device.Name + "-"+command.Name
+		command.Name = device.Name + "-" + command.Name
 	}
 	for _, command := range device.MqttCommand {
 		for _, c := range commands {
-			if c == command.Name{
+			if c == command.Name {
 				return errors.New(CommandExist)
 			}
 		}
 	}
 	for _, dataObj := range device.MqttData {
 		for _, c := range data {
-			if dataObj.Name==c{
+			if dataObj.Name == c {
 				return errors.New(DataExist)
 			}
 		}
@@ -116,11 +116,11 @@ func DeviceCreate(device models.Device, user models.UserInDB, Session *mgo.Sessi
 		return errors.New("INTERNAL ERROR")
 	}
 	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Insert(device)
-	if err!=nil{
+	if err != nil {
 		return err
 	}
-	erraddUserDevice:=AddUserDevice(userDevice,sessionCopy)
-	if erraddUserDevice!=nil{
+	erraddUserDevice := AddUserDevice(userDevice, sessionCopy)
+	if erraddUserDevice != nil {
 		return erraddUserDevice
 	}
 	return
@@ -182,10 +182,10 @@ func DeviceGetByName(name string, Session *mgo.Session) (err error, Device model
 	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Find(bson.M{"devicename": name}).One(&Device)
 	return
 }
-func DeviceGetById(id string, Session *mgo.Session) ( Device models.Device,err error) {
+func DeviceGetById(id string, Session *mgo.Session) (Device models.Device, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
-	deviceId:=bson.ObjectIdHex(id)
+	deviceId := bson.ObjectIdHex(id)
 	err = sessionCopy.DB(DBname).C(DeviceCollectionName).FindId(deviceId).One(&Device)
 	return
 }
@@ -199,10 +199,10 @@ func DevicesGetAll(Session *mgo.Session) (err error, Device []models.Device) {
 	}
 	return
 }
-func DevicesGetAllByUsername(username string,Session *mgo.Session) ( Device []models.Device,err error) {
+func DevicesGetAllByUsername(username string, Session *mgo.Session) (Device []models.Device, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
-	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Find(bson.M{"owner":username}).All(&Device)
+	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Find(bson.M{"owner": username}).All(&Device)
 	if err != nil {
 		err = errors.New(DeviceNotExist)
 		return
@@ -247,7 +247,7 @@ func DeviceGetAllTopic(deviceName string, Type string, Session *mgo.Session) (To
 	}
 	return
 }
-func DeviceAddCommandByDeviceName(deviceName string,command models.Command,Session *mgo.Session)(err error)  {
+func DeviceAddCommandByDeviceName(deviceName string, command models.Command, Session *mgo.Session) (err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	err, device := DeviceGetByName(deviceName, sessionCopy)
@@ -255,17 +255,16 @@ func DeviceAddCommandByDeviceName(deviceName string,command models.Command,Sessi
 		return
 	}
 	for _, c := range device.MqttCommand {
-		if c.Name== command.Name{
+		if c.Name == command.Name {
 			return errors.New(CommandExist)
 		}
 	}
 	device.MqttCommand = append(device.MqttCommand, command)
-	err = sessionCopy.DB(DBname).C(DeviceCollectionName).UpdateId(device.Id,device)
+	err = sessionCopy.DB(DBname).C(DeviceCollectionName).UpdateId(device.Id, device)
 	return
 
-
 }
-func DeviceAddDataByDeviceName(deviceName string,data models.Data,Session *mgo.Session)(err error)  {
+func DeviceAddDataByDeviceName(deviceName string, data models.Data, Session *mgo.Session) (err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	err, device := DeviceGetByName(deviceName, sessionCopy)
@@ -273,37 +272,37 @@ func DeviceAddDataByDeviceName(deviceName string,data models.Data,Session *mgo.S
 		return
 	}
 	for _, c := range device.MqttData {
-		if c.Name== data.Name{
+		if c.Name == data.Name {
 			return errors.New(DataExist)
 		}
 	}
 	device.MqttData = append(device.MqttData, data)
-	err = sessionCopy.DB(DBname).C(DeviceCollectionName).UpdateId(device.Id,device)
+	err = sessionCopy.DB(DBname).C(DeviceCollectionName).UpdateId(device.Id, device)
 	return
 }
-func DeviceUpdateCommandByDeviceName(deviceName string,commmand models.Command,Session *mgo.Session)(err error)  {
+func DeviceUpdateCommandByDeviceName(deviceName string, commmand models.Command, Session *mgo.Session) (err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	err, device := DeviceGetByName(deviceName, sessionCopy)
-	commandExist:=false
+	commandExist := false
 	if err != nil {
 		return
 	}
 	for _, v := range device.MqttCommand {
-		if v.Name == commmand.Name{
-			commandExist=true
-			v.Dsc=commmand.Dsc
+		if v.Name == commmand.Name {
+			commandExist = true
+			v.Dsc = commmand.Dsc
 			v.Topic = commmand.Topic
 			v.Value = commmand.Value
 		}
 	}
-	if !commandExist{
+	if !commandExist {
 		return errors.New(CommandDataNotFOUND)
 	}
-	err = sessionCopy.DB(DBname).C(DeviceCollectionName).UpdateId(device.Id,device)
+	err = sessionCopy.DB(DBname).C(DeviceCollectionName).UpdateId(device.Id, device)
 	return
 }
-func DeviceDeleteByName(deviceName string,Session *mgo.Session)(err error)  {
+func DeviceDeleteByName(deviceName string, Session *mgo.Session) (err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	err, device := DeviceGetByName(deviceName, sessionCopy)
@@ -314,10 +313,10 @@ func DeviceDeleteByName(deviceName string,Session *mgo.Session)(err error)  {
 	return
 }
 
-func DeviceDeleteById(id string,Session *mgo.Session)(err error)  {
+func DeviceDeleteById(id string, Session *mgo.Session) (err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
-	deviceId:=bson.ObjectIdHex(id)
+	deviceId := bson.ObjectIdHex(id)
 	err = sessionCopy.DB(DBname).C(DeviceCollectionName).RemoveId(deviceId)
 	return
 }

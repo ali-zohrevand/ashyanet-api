@@ -2,12 +2,12 @@ package services
 
 import (
 	"fmt"
+	"github.com/ali-zohrevand/ashyanet-api/core/DB"
+	"github.com/ali-zohrevand/ashyanet-api/models"
+	"github.com/ali-zohrevand/ashyanet-api/services/log"
+	"github.com/ali-zohrevand/ashyanet-api/settings/Words"
 	"github.com/casbin/casbin"
 	"github.com/casbin/mongodb-adapter"
-	"gitlab.com/hooshyar/ChiChiNi-API/core/DB"
-	"gitlab.com/hooshyar/ChiChiNi-API/models"
-	"gitlab.com/hooshyar/ChiChiNi-API/services/log"
-	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
 	"gopkg.in/mgo.v2/bson"
 )
 

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"gitlab.com/hooshyar/ChiChiNi-API/models"
-	"gitlab.com/hooshyar/ChiChiNi-API/services"
+	"github.com/ali-zohrevand/ashyanet-api/models"
+	"github.com/ali-zohrevand/ashyanet-api/services"
 )
 
 func CreateDevice(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
@@ -21,14 +21,13 @@ func CreateDevice(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("user not found"))
 
-	}else {
+	} else {
 		w.Header().Set("Content-Type", "application/json")
 
 		responseStatus, token := services.CreateDevice(device, userInDB)
 		w.WriteHeader(responseStatus)
 		w.Write(token)
 	}
-
 
 }
 

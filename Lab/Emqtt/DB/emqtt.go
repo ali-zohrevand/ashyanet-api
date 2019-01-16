@@ -4,7 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
-	"gitlab.com/hooshyar/ChiChiNi-API/Lab/Emqtt/models"
+	"github.com/ali-zohrevand/ashyanet-api/Lab/Emqtt/models"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )

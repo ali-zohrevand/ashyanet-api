@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/ali-zohrevand/ashyanet-api/routers"
+	"github.com/ali-zohrevand/ashyanet-api/services"
 	"github.com/codegangsta/negroni"
-	"gitlab.com/hooshyar/ChiChiNi-API/routers"
-	"gitlab.com/hooshyar/ChiChiNi-API/services"
 	"net/http"
 )
 
