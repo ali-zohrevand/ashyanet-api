@@ -53,6 +53,13 @@ func CreateDevice(device *models.Device, user models.UserInDB) (int, []byte) {
 			json, _ := json.Marshal(message)
 			return http.StatusNotFound, json
 		}
+		if errCreateUser.Error() == Words.DataExist || errCreateUser.Error()==Words.CommandExist{
+			message := OutputAPI.Message{}
+			message.Error = errCreateUser.Error()
+			json, _ := json.Marshal(message)
+			return http.StatusBadRequest, json
+
+		}
 		log.SystemErrorHappened(errCreateUser)
 		return http.StatusInternalServerError, []byte("")
 

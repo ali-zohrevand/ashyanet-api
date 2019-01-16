@@ -201,3 +201,24 @@ func UserGetAllDevice(username string, Session *mgo.Session) (Devices []models.D
 	}
 	return
 }
+func UserGetAllCommandData(user string,Session *mgo.Session) (DataName []string,commandsName []string,err error) {
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	devices, err := DevicesGetAllByUsername(user, sessionCopy)
+	if err != nil {
+		return
+	}
+	for _,device := range devices {
+		for _, Commandname := range device.MqttCommand {
+			commandsName=append(commandsName, Commandname.Name)
+
+		}
+		for _, dataName := range device.MqttData {
+			DataName=append(DataName, dataName.Name)
+		}
+	}
+	return
+}
+func UserGetAllEvents()  {
+	
+}
