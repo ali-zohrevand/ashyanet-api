@@ -8,6 +8,7 @@ import (
 	"net/http"
 )
 
+//init
 func init() {
 	services.InitServices()
 }
