@@ -2,9 +2,9 @@ package DB
 
 import (
 	"fmt"
-	"gitlab.com/hooshyar/ChiChiNi-API/Lab/mosquitto/03_crateTopicBaseLocation/DB"
-	"gitlab.com/hooshyar/ChiChiNi-API/models"
-	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
+	"github.com/ali-zohrevand/ashyanet-api/Lab/mosquitto/03_crateTopicBaseLocation/DB"
+	"github.com/ali-zohrevand/ashyanet-api/models"
+	"github.com/ali-zohrevand/ashyanet-api/settings/Words"
 	"testing"
 )
 

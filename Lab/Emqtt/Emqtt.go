@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"gitlab.com/hooshyar/ChiChiNi-API/Lab/Emqtt/DB"
-	"gitlab.com/hooshyar/ChiChiNi-API/Lab/Emqtt/models"
+	"github.com/ali-zohrevand/ashyanet-api/Lab/Emqtt/DB"
+	"github.com/ali-zohrevand/ashyanet-api/Lab/Emqtt/models"
 )
 
 func main() {

@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/ali-zohrevand/ashyanet-api/Lab/MqttClient/services"
 	"github.com/eclipse/paho.mqtt.golang"
-	"gitlab.com/hooshyar/ChiChiNi-API/Lab/MqttClient/services"
 	"time"
 )
 

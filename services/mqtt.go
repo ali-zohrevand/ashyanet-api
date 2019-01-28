@@ -1,12 +1,12 @@
 package services
 
 import (
+	"github.com/ali-zohrevand/ashyanet-api/core/DB"
+	"github.com/ali-zohrevand/ashyanet-api/models"
+	"github.com/ali-zohrevand/ashyanet-api/services/log"
+	"github.com/ali-zohrevand/ashyanet-api/services/validation"
+	"github.com/ali-zohrevand/ashyanet-api/settings/Words"
 	"github.com/eclipse/paho.mqtt.golang"
-	"gitlab.com/hooshyar/ChiChiNi-API/core/DB"
-	"gitlab.com/hooshyar/ChiChiNi-API/models"
-	"gitlab.com/hooshyar/ChiChiNi-API/services/log"
-	"gitlab.com/hooshyar/ChiChiNi-API/services/validation"
-	"gitlab.com/hooshyar/ChiChiNi-API/settings/Words"
 	"net/http"
 	"time"
 )
