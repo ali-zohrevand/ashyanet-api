@@ -65,3 +65,37 @@ func TypeGetAllTypes(user models.UserInDB) (int, []byte) {
 
 	return http.StatusInternalServerError, []byte("")
 }
+func TypesDeleteByName(typesName string, user models.UserInDB) (int, []byte) {
+	hasUserTypes := false
+	index := 0
+	for i, typeInArray := range user.Types {
+		if typeInArray == typesName {
+			hasUserTypes = true
+			index = i
+		}
+	}
+	if !hasUserTypes {
+		return http.StatusUnauthorized, []byte("User Has Not this type.")
+	}
+	session, errConnectDB := DB.ConnectDB()
+	if errConnectDB != nil {
+		log.SystemErrorHappened(errConnectDB)
+		return http.StatusInternalServerError, []byte("")
+
+	}
+	err := DB.TypeDeleteByName(typesName, session)
+	if err == nil {
+		user.Types = append(user.Types[:index], user.Types[index+1:]...)
+		errUpdateuser := DB.UserUpdateByUserObj(user, session)
+		if errUpdateuser != nil {
+			log.ErrorHappened(errUpdateuser)
+			return http.StatusInternalServerError, []byte("")
+		}
+		var message OutputAPI.Message
+		message.Error = Words.TypeDeleted
+		messageJson, _ := json.Marshal(message)
+		return http.StatusOK, messageJson
+	}
+	return http.StatusInternalServerError, []byte("")
+
+}

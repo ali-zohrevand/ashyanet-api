@@ -110,6 +110,12 @@ func UserGetAllTopic(username string, Type string, Session *mgo.Session) (TopicL
 	}
 	return
 }
+func UserUpdateByUserObj(user models.UserInDB, Session *mgo.Session) (err error) {
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	err = sessionCopy.DB(Words.DBname).C(Words.UserCollectionName).UpdateId(user.Id, user)
+	return
+}
 func UserGetAllMqttCommand(username string, Session *mgo.Session) (CommandList []models.Command, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
