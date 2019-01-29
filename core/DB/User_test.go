@@ -47,7 +47,7 @@ func TestUserGetAllCommandDat(t *testing.T) {
 		t.Fail()
 	}
 	commands, data, err := UserGetAllCommandData("user6", session)
-	if err!=nil{
+	if err != nil {
 		t.Fail()
 
 	}
