@@ -20,3 +20,16 @@ func EventGetAddress(EvenaAddress string, Session *mgo.Session) (event models.Ev
 	err = sessionCopy.DB(Words.DBname).C(Words.EventCollectionName).Find(bson.M{"event_address": EvenaAddress}).One(&event)
 	return
 }
+func EventUpdate(eventName models.Event, Session *mgo.Session) (err error) {
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	err = sessionCopy.DB(Words.DBname).C(Words.EventCollectionName).UpdateId(eventName.Id, eventName)
+	return
+}
+func EventDeleteById(id string, Session *mgo.Session) (err error) {
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	eventId := bson.ObjectIdHex(id)
+	err = sessionCopy.DB(Words.DBname).C(Words.EventCollectionName).RemoveId(eventId)
+	return
+}

@@ -15,14 +15,15 @@ func CheckMqttTopic(device *models.Device, user models.UserInDB) (OutputDevice *
 		return
 	}
 
-	if settings.Type == "server" {
+	/*if settings.Type == "server" {
 		root = user.UserName
 	} else if settings.Type == "gateway" {
 		root = settings.Identifier
 
 	} else {
 		root = settings.Identifier
-	}
+	}*/
+	root = settings.Identifier + "/" + user.UserName
 	for i, topicPath := range device.Publish {
 		topicPath = AddRootTopic(root, topicPath)
 		device.Publish[i] = topicPath

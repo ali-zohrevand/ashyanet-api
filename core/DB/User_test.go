@@ -41,3 +41,16 @@ func TestUserGetAllDevice(t *testing.T) {
 	a, _ := UserGetAllDevice("ali", session)
 	fmt.Println(a)
 }
+func TestUserGetAllCommandDat(t *testing.T) {
+	session, errConnectDB := ConnectDB()
+	if errConnectDB != nil {
+		t.Fail()
+	}
+	commands, data, err := UserGetAllCommandData("user6", session)
+	if err!=nil{
+		t.Fail()
+
+	}
+	fmt.Println(commands)
+	fmt.Println(data)
+}
