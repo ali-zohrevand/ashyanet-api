@@ -182,6 +182,11 @@ func DeviceGetByName(name string, Session *mgo.Session) (err error, Device model
 	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Find(bson.M{"devicename": name}).One(&Device)
 	return
 }
+<<<<<<< HEAD
+func GetAllDevices(Session *mgo.Session) (err error, Device []models.Device) {
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+=======
 func DeviceGetById(id string, Session *mgo.Session) (Device models.Device, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
@@ -192,11 +197,14 @@ func DeviceGetById(id string, Session *mgo.Session) (Device models.Device, err e
 func DevicesGetAll(Session *mgo.Session) (err error, Device []models.Device) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
+>>>>>>> Development
 	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Find(bson.M{}).All(&Device)
 	if err != nil {
 		err = errors.New(DeviceNotExist)
 		return
 	}
+<<<<<<< HEAD
+=======
 	return
 }
 func DevicesGetAllByUsername(username string, Session *mgo.Session) (Device []models.Device, err error) {
@@ -207,6 +215,7 @@ func DevicesGetAllByUsername(username string, Session *mgo.Session) (Device []mo
 		err = errors.New(DeviceNotExist)
 		return
 	}
+>>>>>>> Development
 
 	return
 }
