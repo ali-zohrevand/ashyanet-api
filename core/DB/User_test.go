@@ -1,14 +1,13 @@
 package DB
 
 import (
-	"SimpleAPIBasePlatform/SimpleAPI/core/DB"
 	"fmt"
 	"testing"
 )
 
 func TestUserGetAllTopic(t *testing.T) {
 
-	session, errConnectDB := DB.ConnectDB()
+	session, errConnectDB := ConnectDB()
 	if errConnectDB != nil {
 		t.Fail()
 	}
@@ -24,7 +23,7 @@ func TestUserGetAllTopic(t *testing.T) {
 
 }
 func TestUserGetAllCommand(t *testing.T) {
-	session, errConnectDB := DB.ConnectDB()
+	session, errConnectDB := ConnectDB()
 	if errConnectDB != nil {
 		t.Fail()
 	}
@@ -33,7 +32,7 @@ func TestUserGetAllCommand(t *testing.T) {
 	fmt.Println(command)
 }
 func TestUserGetAllDevice(t *testing.T) {
-	session, errConnectDB := DB.ConnectDB()
+	session, errConnectDB := ConnectDB()
 	if errConnectDB != nil {
 		t.Fail()
 	}

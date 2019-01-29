@@ -222,3 +222,10 @@ func UserGetAllCommandData(user string, Session *mgo.Session) (DataName []string
 func UserGetAllEvents() {
 
 }
+func UserAddTypes(user models.UserInDB, types models.Types, Session *mgo.Session) (err error) {
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	user.Types = append(user.Types, types.Name)
+	err = sessionCopy.DB(Words.DBname).C(Words.UserCollectionName).UpdateId(user.Id, user)
+	return
+}
