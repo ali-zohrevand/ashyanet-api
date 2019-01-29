@@ -3,7 +3,6 @@ package DB
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"github.com/ali-zohrevand/ashyanet-api/OutputAPI"
 	"github.com/ali-zohrevand/ashyanet-api/models"
 	. "github.com/ali-zohrevand/ashyanet-api/settings/Words"
 	"github.com/pkg/errors"
@@ -149,25 +148,15 @@ func DeviceGetByName(name string, Session *mgo.Session) (err error, Device model
 	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Find(bson.M{"devicename": name}).One(&Device)
 	return
 }
-func GetAllDevices(Session *mgo.Session) (err error, Device []OutputAPI.Device) {
+func GetAllDevices(Session *mgo.Session) (err error, Device []models.Device) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
-	DevicesInDB := []models.Device{}
-	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Find(bson.M{}).All(&DevicesInDB)
+	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Find(bson.M{}).All(&Device)
 	if err != nil {
 		err = errors.New(DeviceNotExist)
 		return
 	}
 
-	for i := 0; i < len(DevicesInDB); i++ {
-		tempDevice := OutputAPI.Device{}
-		tempDevice.Name = DevicesInDB[i].Name
-		tempDevice.Location = DevicesInDB[i].Location
-		tempDevice.Description = DevicesInDB[i].Description
-		tempDevice.Key = DevicesInDB[i].Key
-		tempDevice.Id = DevicesInDB[i].Id.Hex()
-		//Todo Complete it
-	}
 	return
 }
 func DeviceGetAllTopic(deviceName string, Type string, Session *mgo.Session) (TopicList []string, err error) {
