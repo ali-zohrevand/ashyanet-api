@@ -17,6 +17,7 @@ type User struct {
 	Active               bool     `json:"active" bson:"active"`
 	TempKeyGenreated     string   `json:"-" bson:"temp_key_genreated"`
 	TimeTempKeyGenreated int64    `json:"-"  bson:"time_key_genrated"`
+	Types                []string `json:"types" bson:"types"`
 }
 type UserInDB struct {
 	Id                   bson.ObjectId `json:"id" bson:"_id"`
@@ -31,6 +32,7 @@ type UserInDB struct {
 	Active               bool          `json:"active" bson:"active"`
 	TempKeyGenreated     string        `json:"-" bson:"temp_key_genreated"`
 	TimeTempKeyGenreated int64         `json:"-"  bson:"time_key_genrated"`
+	Types                []string      `json:"types" bson:"types"`
 }
 
 /*
