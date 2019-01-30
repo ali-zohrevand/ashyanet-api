@@ -43,9 +43,7 @@ func TypesDelete(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) 
 }
 
 func TypesGetAll(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-	typeObj := new(models.Types)
-	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&typeObj)
+
 	userInDB, err := GetUserFromHeader(r)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

@@ -24,13 +24,6 @@ func TypeCreate(typesObj models.Types, user models.UserInDB) (int, []byte) {
 	}
 	typesObj.Owner = user.UserName
 	err := DB.TypesCreate(typesObj, session)
-	if err.Error() == Words.TypeExits {
-		var message OutputAPI.Message
-		message.Error = Words.TypeExits
-		messageJson, _ := json.Marshal(message)
-		return http.StatusBadRequest, messageJson
-
-	}
 	if err == nil {
 		///..........................................
 		errAddUserTypes := DB.UserAddTypes(user, typesObj, session)
@@ -44,6 +37,14 @@ func TypeCreate(typesObj models.Types, user models.UserInDB) (int, []byte) {
 		messageJson, _ := json.Marshal(message)
 		return http.StatusCreated, messageJson
 	}
+	if err.Error() == Words.TypeExits {
+		var message OutputAPI.Message
+		message.Error = Words.TypeExits
+		messageJson, _ := json.Marshal(message)
+		return http.StatusBadRequest, messageJson
+
+	}
+
 	return http.StatusInternalServerError, []byte("")
 }
 func TypeGetAllTypes(user models.UserInDB) (int, []byte) {
@@ -75,7 +76,7 @@ func TypesDeleteByName(typesName string, user models.UserInDB) (int, []byte) {
 		}
 	}
 	if !hasUserTypes {
-		return http.StatusUnauthorized, []byte("User Has Not this type.")
+		return http.StatusNotFound, []byte("")
 	}
 	session, errConnectDB := DB.ConnectDB()
 	if errConnectDB != nil {

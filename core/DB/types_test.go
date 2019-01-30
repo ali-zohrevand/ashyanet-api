@@ -8,9 +8,9 @@ import (
 
 func TestTypesCreate(t *testing.T) {
 	var typeObj models.Types
-	typeObj.Name = "newTypeTest"
+	typeObj.Name = "newTypeTest3"
 	typeObj.Dsc = "justForTest"
-	typeObj.Owner = "No One Yet!"
+	typeObj.Owner = "user6"
 	typeObj.IconName = "nothing yet"
 
 	session, errConnectDB := ConnectDB()
@@ -40,9 +40,9 @@ func TestTypesCreate(t *testing.T) {
 		t.Error("not exist")
 	}
 	fmt.Println("all types: ", types)
-	errDelete := TypeDeleteByName(typeObj.Name, session)
+	/*errDelete := TypeDeleteByName(typeObj.Name, session)
 	if errDelete != nil {
 		t.Fail()
 		t.Error(errDelete)
-	}
+	}*/
 }
