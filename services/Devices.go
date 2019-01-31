@@ -154,3 +154,17 @@ func DeviceDeleteID(user models.UserInDB, id string) (int, []byte) {
 	return http.StatusInternalServerError, []byte("")
 
 }
+func DeviceUpdateID(id string, user models.UserInDB, device models.Device) (int, []byte) {
+	session, errConnectDB := DB.ConnectDB()
+	if errConnectDB != nil {
+		log.SystemErrorHappened(errConnectDB)
+		return http.StatusInternalServerError, []byte("")
+	}
+	defer session.Close()
+	out, errValidation, IsValid := validation.ObjectValidation(device)
+	if errValidation != nil || !IsValid {
+		return http.StatusBadRequest, out
+	}
+	return http.StatusInternalServerError, []byte("")
+
+}

@@ -74,6 +74,24 @@ func DeviceDeleteId(w http.ResponseWriter, r *http.Request, next http.HandlerFun
 		w.Write(token)
 	}
 }
+func DeviceUpdateId(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+	userInDB, err := GetUserFromHeader(r)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(""))
+
+	} else {
+		device := new(models.Device)
+		decoder := json.NewDecoder(r.Body)
+		decoder.Decode(&device)
+		w.Header().Set("Content-Type", "application/json")
+		responseStatus, token := services.DeviceUpdateID(id, userInDB, *device)
+		w.WriteHeader(responseStatus)
+		w.Write(token)
+	}
+}
 func AddKeyToDevice(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	deviceKey := new(models.DeviceKey)
 	decoder := json.NewDecoder(r.Body)
