@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/ali-zohrevand/ashyanet-api/models"
 	"github.com/ali-zohrevand/ashyanet-api/services"
+	"github.com/gorilla/mux"
 	"net/http"
 )
 
@@ -25,9 +26,9 @@ func TypesCreate(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) 
 
 }
 func TypesDelete(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-	typeObj := new(models.Types)
-	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&typeObj)
+	vars := mux.Vars(r)
+	id := vars["id"]
+
 	userInDB, err := GetUserFromHeader(r)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -35,7 +36,7 @@ func TypesDelete(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) 
 
 	} else {
 		w.Header().Set("Content-Type", "application/json")
-		responseStatus, token := services.TypesDeleteByName(typeObj.Name, userInDB)
+		responseStatus, token := services.TypesDeleteByName(id, userInDB)
 		w.WriteHeader(responseStatus)
 		w.Write(token)
 	}

@@ -25,7 +25,7 @@ func DeviceCreate(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)
 	} else {
 		w.Header().Set("Content-Type", "application/json")
 
-		responseStatus, token := services.CreateDevice(device, userInDB)
+		responseStatus, token := services.DeviceCreate(device, userInDB)
 		w.WriteHeader(responseStatus)
 		w.Write(token)
 	}

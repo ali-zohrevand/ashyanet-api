@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-func CreateDevice(device *models.Device, user models.UserInDB) (int, []byte) {
+func DeviceCreate(device *models.Device, user models.UserInDB) (int, []byte) {
 	session, errConnectDB := DB.ConnectDB()
 	if errConnectDB != nil {
 		log.SystemErrorHappened(errConnectDB)

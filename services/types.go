@@ -55,6 +55,12 @@ func TypeGetAllTypes(user models.UserInDB) (int, []byte) {
 
 	}
 	types, err := DB.TypesGetAllTypesOfUser(user.UserName, session)
+	if types == nil {
+		var message OutputAPI.Message
+		message.Error = Words.TypeNotExit
+		messageJson, _ := json.Marshal(message)
+		return http.StatusNotFound, messageJson
+	}
 	if err == nil {
 		typesJson, errJson := json.Marshal(types)
 		if errJson != nil {
@@ -66,11 +72,27 @@ func TypeGetAllTypes(user models.UserInDB) (int, []byte) {
 
 	return http.StatusInternalServerError, []byte("")
 }
-func TypesDeleteByName(typesName string, user models.UserInDB) (int, []byte) {
+func TypesDeleteByName(id string, user models.UserInDB) (int, []byte) {
+
+	session, errConnectDB := DB.ConnectDB()
+	if errConnectDB != nil {
+		log.SystemErrorHappened(errConnectDB)
+		return http.StatusInternalServerError, []byte("")
+
+	}
+	defer session.Clone()
+	typeObj, err := DB.TypeGetTypeByID(id, session)
+	if err != nil {
+		var message OutputAPI.Message
+		message.Error = Words.TypeNotExit
+		messageJson, _ := json.Marshal(message)
+		return http.StatusNotFound, messageJson
+
+	}
 	hasUserTypes := false
 	index := 0
 	for i, typeInArray := range user.Types {
-		if typeInArray == typesName {
+		if typeInArray == typeObj.Name {
 			hasUserTypes = true
 			index = i
 		}
@@ -78,14 +100,8 @@ func TypesDeleteByName(typesName string, user models.UserInDB) (int, []byte) {
 	if !hasUserTypes {
 		return http.StatusNotFound, []byte("")
 	}
-	session, errConnectDB := DB.ConnectDB()
-	if errConnectDB != nil {
-		log.SystemErrorHappened(errConnectDB)
-		return http.StatusInternalServerError, []byte("")
-
-	}
-	err := DB.TypeDeleteByName(typesName, session)
-	if err == nil {
+	errDelete := DB.TypeDeleteByName(typeObj.Name, session)
+	if errDelete == nil {
 		user.Types = append(user.Types[:index], user.Types[index+1:]...)
 		errUpdateuser := DB.UserUpdateByUserObj(user, session)
 		if errUpdateuser != nil {
