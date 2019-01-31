@@ -50,6 +50,13 @@ func TypeGetTypeByName(typeName string, Session *mgo.Session) (typeObj models.Ty
 	err = sessionCopy.DB(Words.DBname).C(Words.TypesCollectionName).Find(bson.M{"name": typeName}).One(&typeObj)
 	return
 }
+func TypeGetTypeByID(id string, Session *mgo.Session) (typeObj models.Types, err error) {
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	idBson := bson.ObjectIdHex(id)
+	err = sessionCopy.DB(Words.DBname).C(Words.TypesCollectionName).FindId(idBson).One(&typeObj)
+	return
+}
 func TypeDeleteByName(typeName string, Session *mgo.Session) (err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()

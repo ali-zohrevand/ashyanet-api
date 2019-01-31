@@ -211,7 +211,49 @@ func DevicesGetAllByUsername(username string, Session *mgo.Session) (Device []mo
 	}
 	return
 }
+func DevicesGetAllByUsernameAndId(username string, id string, Session *mgo.Session) (Device models.Device, err error) {
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	var Devices []models.Device
+	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Find(bson.M{"owner": username}).All(&Devices)
 
+	if err != nil {
+		err = errors.New(DeviceNotExist)
+		return
+	}
+	if err == nil {
+		for _, device := range Devices {
+			stringId := device.Id.Hex()
+			if stringId == id {
+				return device, nil
+			}
+		}
+	}
+	err = errors.New(DeviceNotExist)
+	return
+}
+func DevicesDeletelByUsernameAndId(username string, id string, Session *mgo.Session) (err error) {
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	var Devices []models.Device
+	err = sessionCopy.DB(DBname).C(DeviceCollectionName).Find(bson.M{"owner": username}).All(&Devices)
+
+	if err != nil {
+		err = errors.New(DeviceNotExist)
+		return
+	}
+	if err == nil {
+		for _, device := range Devices {
+			stringId := device.Id.Hex()
+			if stringId == id {
+				err = sessionCopy.DB(DBname).C(DeviceCollectionName).RemoveId(device.Id)
+				return err
+			}
+		}
+	}
+	err = errors.New(DeviceNotExist)
+	return
+}
 func DeviceGetAllTopic(deviceName string, Type string, Session *mgo.Session) (TopicList []string, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()

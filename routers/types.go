@@ -22,7 +22,7 @@ func Types(router *mux.Router) *mux.Router {
 	)
 	router.Handle("/user/types", HandleFuncTypesCreate).Methods("POST")
 	router.Handle("/user/types", HandleFuncTypesGetAll).Methods("GET")
-	router.Handle("/user/types", HandleFuncTypesDelete).Methods("DELETE")
+	router.Handle("/user/types/{id}", HandleFuncTypesDelete).Methods("DELETE")
 
 	//.......................................................................................................
 	return router

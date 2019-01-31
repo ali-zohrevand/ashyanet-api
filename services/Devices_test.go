@@ -52,7 +52,7 @@ func TestCreateDevice(t *testing.T) {
 	Lamp.MqttData = append(Lamp.MqttData, DaTa)
 	s, _ := DB.ConnectDB()
 	user, _ := DB.UserGetByUsername("ali", s)
-	err, meesgat := CreateDevice(&Lamp, user)
+	err, meesgat := DeviceCreate(&Lamp, user)
 
 	fmt.Println(string(meesgat), err)
 	fmt.Println(time.Now())
