@@ -72,7 +72,35 @@ func CreateDevice(device *models.Device, user models.UserInDB) (int, []byte) {
 	}
 	return http.StatusInternalServerError, nil
 }
-func ListDevices() (int, []byte) {
+func DevicesGetAll(user models.UserInDB) (int, []byte) {
+	session, errConnectDB := DB.ConnectDB()
+	if errConnectDB != nil {
+		log.SystemErrorHappened(errConnectDB)
+		return http.StatusInternalServerError, []byte("")
+	}
+	defer session.Close()
+	devices, errGetDevice := DB.DevicesGetAllByUsername(user.UserName, session)
+	if errGetDevice == nil {
+		jsonOut, errjson := json.Marshal(devices)
+		if errjson != nil {
+			message := OutputAPI.Message{}
+			message.Error = "BAD JSON"
+			json, _ := json.Marshal(message)
+			return http.StatusInternalServerError, json
+		}
+		return http.StatusOK, jsonOut
+	}
+	if errGetDevice != nil {
+		message := OutputAPI.Message{}
+		message.Error = Words.DeviceNotExist
+		json, _ := json.Marshal(message)
+		return http.StatusBadRequest, json
+	}
+
+	return http.StatusInternalServerError, []byte("")
+
+}
+func DeviceGetId(user models.UserInDB, id string) (int, []byte) {
 	session, errConnectDB := DB.ConnectDB()
 	if errConnectDB != nil {
 		log.SystemErrorHappened(errConnectDB)
@@ -80,6 +108,49 @@ func ListDevices() (int, []byte) {
 	}
 	defer session.Close()
 
+	devices, errGetDevice := DB.DevicesGetAllByUsernameAndId(user.UserName, id, session)
+	if errGetDevice == nil {
+		jsonOut, errjson := json.Marshal(devices)
+		if errjson != nil {
+			message := OutputAPI.Message{}
+			message.Error = "BAD JSON"
+			json, _ := json.Marshal(message)
+			return http.StatusInternalServerError, json
+		}
+		return http.StatusOK, jsonOut
+
+	}
+	if errGetDevice != nil {
+		message := OutputAPI.Message{}
+		message.Error = Words.DeviceNotExist
+		json, _ := json.Marshal(message)
+		return http.StatusBadRequest, json
+	}
+
+	return http.StatusInternalServerError, []byte("")
+
+}
+func DeviceDeleteID(user models.UserInDB, id string) (int, []byte) {
+	session, errConnectDB := DB.ConnectDB()
+	if errConnectDB != nil {
+		log.SystemErrorHappened(errConnectDB)
+		return http.StatusInternalServerError, []byte("")
+	}
+	defer session.Close()
+	errGetDevice := DB.DevicesDeletelByUsernameAndId(user.UserName, id, session)
+	if errGetDevice == nil {
+		message := OutputAPI.Message{}
+		message.Info = Words.DeviceDeleted
+		json, _ := json.Marshal(message)
+		return http.StatusOK, json
+
+	}
+	if errGetDevice != nil {
+		message := OutputAPI.Message{}
+		message.Error = Words.DeviceNotExist
+		json, _ := json.Marshal(message)
+		return http.StatusBadRequest, json
+	}
 	return http.StatusInternalServerError, []byte("")
 
 }
