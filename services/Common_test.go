@@ -9,7 +9,7 @@ import (
 )
 
 func TestAddRootTopic(t *testing.T) {
-	p := AddRootTopic("/sdsadsd/asdsdsad", "/sdsadsd/asdsdsad/sdfsdfdf")
+	p := AddRootTopic("/sdsadsd/asdsdd", "/sdsadsd/asdsdsad/sdfsdfdf")
 	fmt.Println(p)
 }
 func TestCheckMqttTopic(t *testing.T) {

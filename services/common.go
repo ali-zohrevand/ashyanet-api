@@ -78,7 +78,9 @@ func AddRootTopic(rootPath string, TopicPath string) (UpdatedPath string) {
 			UpdatedPath = UpdatedPath + "/" + v
 		}
 	}
+	UpdatedPath = strings.Replace(UpdatedPath, rootPath+"/"+rootPath, rootPath, -1)
 	UpdatedPath = strings.Replace(UpdatedPath, "//", "/", -1)
+
 	return
 }
 

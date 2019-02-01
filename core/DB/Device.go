@@ -54,9 +54,17 @@ func DeviceCreate(device models.Device, user models.UserInDB, Session *mgo.Sessi
 	device.Pubsub, _ = DeleteRepetedCell(device.Pubsub)
 	device.Publish, _ = DeleteRepetedCell(device.Publish)
 	device.Subscribe, _ = DeleteRepetedCell(device.Subscribe)
-	userDevice := models.UserDevice{}
-	userDevice.UserName = user.UserName
-	userDevice.DeviceName = device.Name
+	userDevice := []models.UserDevice{}
+	for _, newOwsner := range device.Owners {
+		newUserDevice := models.UserDevice{}
+		newUserDevice.DeviceName = device.Name
+		newUserDevice.UserName = newOwsner
+		userDevice = append(userDevice, newUserDevice)
+	}
+	newUserDevice := models.UserDevice{}
+	newUserDevice.UserName = user.UserName
+	newUserDevice.DeviceName = device.Name
+	userDevice = append(userDevice, newUserDevice)
 	//.......................................................................................
 	commands, data, err := UserGetAllCommandData(user.UserName, sessionCopy)
 
@@ -119,13 +127,154 @@ func DeviceCreate(device models.Device, user models.UserInDB, Session *mgo.Sessi
 	if err != nil {
 		return err
 	}
-	erraddUserDevice := AddUserDevice(userDevice, sessionCopy)
-	if erraddUserDevice != nil {
-		return erraddUserDevice
+	for _, ud := range userDevice {
+		erraddUserDevice := AddUserDevice(ud, sessionCopy)
+		if erraddUserDevice != nil {
+			return erraddUserDevice
+		}
 	}
 	return
 }
+func DeviceUpdate(id string, device models.Device, user models.UserInDB, Session *mgo.Session) (err error) {
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	HasUserDeviceWithNameInput := false
+	deviceInDB, err := DeviceGetById(id, sessionCopy)
+	if err != nil {
+		return errors.New(DeviceNotExist)
+	}
+	if deviceInDB.Id.Hex() != id {
+		return errors.New(DeviceNotExist)
+	}
+	for _, deviceName := range user.Devices {
+		if deviceInDB.Name == deviceName {
+			HasUserDeviceWithNameInput = true
+		}
+	}
+	if !HasUserDeviceWithNameInput {
+		return errors.New(DeviceNotExist)
+	}
+	BackUPdevice := deviceInDB
+	deviceInDB.Name = GenerateRandomString(10)
+	deviceInDB.Owners = nil
+	deviceInDB.Description = ""
+	deviceInDB.Location = ""
+	deviceInDB.MqttCommand = nil
+	deviceInDB.MqttData = nil
+	deviceInDB.Publish = nil
+	deviceInDB.Subscribe = nil
+	deviceInDB.Type = ""
+	deviceInDB.Pubsub = nil
+	deviceInDB.Key = ""
+	err = sessionCopy.DB(DBname).C(DeviceCollectionName).UpdateId(deviceInDB.Id, deviceInDB)
+	device.Id = deviceInDB.Id
+	err, _ = DeviceGetByName(device.Name, sessionCopy)
+	if err == nil {
+		return errors.New(DeviceExist)
+	}
+	// در این بخش داریم چک میکنیم مالکین دستگاه که اضافه شده اند در پایگاه داده وجود دارند یا نه.
+	if len(device.Owners) > 0 {
+		for _, user := range device.Owners {
+			_, err := UserGetByUsername(user, sessionCopy)
+			if err != nil {
+				err = errors.New(user + ": " + UserNotExist)
+				return err
+			}
+		}
+	}
 
+	device.Owners = append(device.Owners, user.UserName)
+	device.Owners, _ = DeleteRepetedCell(device.Owners)
+	device.Pubsub, _ = DeleteRepetedCell(device.Pubsub)
+	device.Publish, _ = DeleteRepetedCell(device.Publish)
+	device.Subscribe, _ = DeleteRepetedCell(device.Subscribe)
+	userDevice := []models.UserDevice{}
+	for _, newOwsner := range device.Owners {
+		newUserDevice := models.UserDevice{}
+		newUserDevice.DeviceName = device.Name
+		newUserDevice.UserName = newOwsner
+		userDevice = append(userDevice, newUserDevice)
+	}
+	newUserDevice := models.UserDevice{}
+	newUserDevice.UserName = user.UserName
+	newUserDevice.DeviceName = device.Name
+	userDevice = append(userDevice, newUserDevice)
+
+	//.......................................................................................
+	commands, data, err := UserGetAllCommandData(user.UserName, sessionCopy)
+
+	for _, data := range device.MqttData {
+		data.Name = device.Name + "-" + data.Name
+	}
+	for _, command := range device.MqttCommand {
+		command.Name = device.Name + "-" + command.Name
+	}
+	for _, command := range device.MqttCommand {
+		for _, c := range commands {
+			if c == command.Name {
+				return errors.New(CommandExist)
+			}
+		}
+	}
+	for _, dataObj := range device.MqttData {
+		for _, c := range data {
+			if dataObj.Name == c {
+				return errors.New(DataExist)
+			}
+		}
+	}
+	EmqttDeleteByUsername(device.Name, sessionCopy)
+	//..........................................ADD mqtt user ...............................
+	var mqttUser models.MqttUser
+
+	mqttUser.Username = device.Name
+	mqttUser.Password = device.MqttPassword
+	sha := sha256.New()
+	sha.Write([]byte(device.MqttPassword))
+	passByte := sha.Sum(nil)
+	passStr := hex.EncodeToString(passByte)
+	device.MqttPassword = passStr
+	mqttUser.Is_superuser = false
+	mqttUser.Created = time.Now().String()
+	errCreateMqttUser := EmqttCreateUser(mqttUser, sessionCopy)
+	if errCreateMqttUser != nil && errCreateMqttUser.Error() != UserExist {
+		return errors.New("INTERNAL ERROR")
+	}
+	//..........................................ADD mqtt acl ...............................
+
+	var acl models.MqttAcl
+	acl.Username = device.Name
+	acl = addTopicInArraToMqttACL(device.Subscribe, acl, "s")
+	acl = addTopicInArraToMqttACL(device.Publish, acl, "p")
+	acl = addTopicInArraToMqttACL(device.Pubsub, acl, "ps")
+	//Delete Repeated
+	for _, c := range device.MqttCommand {
+		acl.Subscribe = append(acl.Subscribe, c.Topic)
+	}
+	for _, c := range device.MqttData {
+		acl.Publish = append(acl.Publish, c.Topic)
+	}
+	acl.Subscribe, _ = DeleteRepetedCell(acl.Subscribe)
+	acl.Publish, _ = DeleteRepetedCell(acl.Publish)
+	acl.Pubsub, _ = DeleteRepetedCell(acl.Pubsub)
+	errCreatACL := EmqttCreateAcl(acl, sessionCopy)
+	if errCreatACL != nil {
+		return errors.New("INTERNAL ERROR")
+	}
+	err = sessionCopy.DB(DBname).C(DeviceCollectionName).UpdateId(device.Id, device)
+	if err != nil {
+		sessionCopy.DB(DBname).C(DeviceCollectionName).UpdateId(BackUPdevice.Id, BackUPdevice)
+		return err
+	}
+	for _, ud := range userDevice {
+		erraddUserDevice := AddUserDevice(ud, sessionCopy)
+		if erraddUserDevice != nil {
+			return erraddUserDevice
+		}
+	}
+
+	return
+}
 func IsOwnerOfDevice(username string, deviceName string, Session *mgo.Session) (Is bool, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
