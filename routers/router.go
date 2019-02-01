@@ -7,8 +7,7 @@ import (
 func InitRoutes() *mux.Router {
 	router := mux.NewRouter()
 	router = index(router)
-	router = login(router)
-	router = Register(router)
+	router = User(router)
 	router = Device(router)
 	router = Key(router)
 	router = Location(router)
