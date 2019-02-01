@@ -60,15 +60,19 @@ var seededRand *rand.Rand = rand.New(
 	rand.NewSource(time.Now().UnixNano()))
 
 func AddRootTopic(rootPath string, TopicPath string) (UpdatedPath string) {
+	rootPathArrya := strings.Split(rootPath, "/")
 	PathArray := strings.Split(TopicPath, "/")
 	if len(PathArray) == 0 {
 		return
 	}
 	if PathArray[0] == rootPath {
 		return TopicPath
-	} else if len(PathArray) >= 2 && PathArray[1] == rootPath {
-		return TopicPath
 	} else {
+		if len(rootPathArrya) > 1 && len(PathArray) > 1 {
+			if rootPathArrya[0] == PathArray[1] && rootPathArrya[1] == PathArray[2] {
+				return TopicPath
+			}
+		}
 		var NewArrPath []string
 		NewArrPath = append(NewArrPath, rootPath)
 		for _, v := range PathArray {
@@ -78,7 +82,6 @@ func AddRootTopic(rootPath string, TopicPath string) (UpdatedPath string) {
 			UpdatedPath = UpdatedPath + "/" + v
 		}
 	}
-	UpdatedPath = strings.Replace(UpdatedPath, rootPath+"/"+rootPath, rootPath, -1)
 	UpdatedPath = strings.Replace(UpdatedPath, "//", "/", -1)
 
 	return

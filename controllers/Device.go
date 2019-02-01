@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
 
@@ -14,22 +13,25 @@ func DeviceCreate(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)
 	device := new(models.Device)
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&device)
-	/*	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-	}*/
-	//................................
-	userInDB, err := GetUserFromHeader(r)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("user not found"))
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(""))
 
 	} else {
-		w.Header().Set("Content-Type", "application/json")
+		userInDB, err := GetUserFromHeader(r)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("user not found"))
 
-		responseStatus, token := services.DeviceCreate(device, userInDB)
-		w.WriteHeader(responseStatus)
-		w.Write(token)
+		} else {
+			w.Header().Set("Content-Type", "application/json")
+
+			responseStatus, token := services.DeviceCreate(device, userInDB)
+			w.WriteHeader(responseStatus)
+			w.Write(token)
+		}
 	}
+	//................................
 
 }
 func DeviceGetAll(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
@@ -79,21 +81,26 @@ func DeviceUpdateId(w http.ResponseWriter, r *http.Request, next http.HandlerFun
 	device := new(models.Device)
 	decoder := json.NewDecoder(r.Body)
 	errDecode := decoder.Decode(&device)
-	fmt.Print(errDecode)
-	userInDB, err := GetUserFromHeader(r)
-	vars := mux.Vars(r)
-	id := vars["id"]
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
+	if errDecode != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(""))
-
 	} else {
+		userInDB, err := GetUserFromHeader(r)
+		vars := mux.Vars(r)
+		id := vars["id"]
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte(""))
 
-		w.Header().Set("Content-Type", "application/json")
-		responseStatus, token := services.DeviceUpdateID(id, userInDB, *device)
-		w.WriteHeader(responseStatus)
-		w.Write(token)
+		} else {
+
+			w.Header().Set("Content-Type", "application/json")
+			responseStatus, token := services.DeviceUpdateID(id, userInDB, *device)
+			w.WriteHeader(responseStatus)
+			w.Write(token)
+		}
 	}
+
 }
 func AddKeyToDevice(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	deviceKey := new(models.DeviceKey)
