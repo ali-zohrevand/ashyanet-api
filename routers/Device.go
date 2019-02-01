@@ -36,7 +36,7 @@ func Device(router *mux.Router) *mux.Router {
 	//.......................................................................................................
 	HandleFuncUpdateId := negroni.New(
 		negroni.HandlerFunc(services.RequireTokenAuthentication),
-		negroni.HandlerFunc(controllers.DeviceDeleteId),
+		negroni.HandlerFunc(controllers.DeviceUpdateId),
 	)
 	router.Handle("/user/devices/{id}", HandleFuncUpdateId).Methods("PUT")
 	//.......................................................................................................

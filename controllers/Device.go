@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
 
@@ -75,17 +76,19 @@ func DeviceDeleteId(w http.ResponseWriter, r *http.Request, next http.HandlerFun
 	}
 }
 func DeviceUpdateId(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+	device := new(models.Device)
+	decoder := json.NewDecoder(r.Body)
+	errDecode := decoder.Decode(&device)
+	fmt.Print(errDecode)
+	userInDB, err := GetUserFromHeader(r)
 	vars := mux.Vars(r)
 	id := vars["id"]
-	userInDB, err := GetUserFromHeader(r)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(""))
 
 	} else {
-		device := new(models.Device)
-		decoder := json.NewDecoder(r.Body)
-		decoder.Decode(&device)
+
 		w.Header().Set("Content-Type", "application/json")
 		responseStatus, token := services.DeviceUpdateID(id, userInDB, *device)
 		w.WriteHeader(responseStatus)

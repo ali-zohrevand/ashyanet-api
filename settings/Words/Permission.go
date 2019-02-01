@@ -19,7 +19,7 @@ m = g(r.sub, p.sub)  && keyMatch(r.obj, p.obj) && regexMatch(r.act, p.act)
 `
 var PermissionPolicy = `
 p, admin, /*, (GET)|(POST)
-p, user, /*, (GET)|(POST)|(DELETE)
+p, user, /*, (GET)|(POST)|(DELETE)|(PUT)
 p, user, /, (GET)|(POST)
 p, user, /device, POST
 p, user, /aud, POST

@@ -137,6 +137,7 @@ func DeviceDeleteID(user models.UserInDB, id string) (int, []byte) {
 		return http.StatusInternalServerError, []byte("")
 	}
 	defer session.Close()
+
 	errGetDevice := DB.DevicesDeletelByUsernameAndId(user.UserName, id, session)
 	if errGetDevice == nil {
 		message := OutputAPI.Message{}
@@ -165,6 +166,34 @@ func DeviceUpdateID(id string, user models.UserInDB, device models.Device) (int,
 	if errValidation != nil || !IsValid {
 		return http.StatusBadRequest, out
 	}
+	LocationPath, err := DB.GetLocationPath(device.Location, session)
+	if err != nil {
+		log.SystemErrorHappened(errConnectDB)
+		return http.StatusInternalServerError, []byte("")
+	}
+	LocationAndType := LocationPath + "/" + device.Type
+	LocationAndType = strings.Replace(LocationAndType, "//", "/", -1)
+	device.Pubsub = append(device.Pubsub, LocationAndType)
+	//.................................................
+	deviceWithCorrectTopic, err := CheckMqttTopic(&device, user)
+	if err != nil {
+		log.SystemErrorHappened(errConnectDB)
+		return http.StatusInternalServerError, []byte("")
+	}
+	err = DB.DeviceUpdate(id, *deviceWithCorrectTopic, user, session)
+	if err == nil {
+		message := OutputAPI.Message{}
+		message.Info = Words.DeviceUpdated
+		json, _ := json.Marshal(message)
+		return http.StatusOK, json
+	}
+	if err != nil {
+		message := OutputAPI.Message{}
+		message.Error = err.Error()
+		json, _ := json.Marshal(message)
+		return http.StatusNoContent, json
+	}
+
 	return http.StatusInternalServerError, []byte("")
 
 }

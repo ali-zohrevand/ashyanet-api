@@ -32,7 +32,7 @@ type Device struct {
 	Pubsub       []string      `json:"pubsub" bson:"pubsub" valid:"runelength(1|200),blacklist~Bad Char"`
 	MqttData     []Data        `json:"data" bson:"data" `
 	MqttCommand  []Command     `json:"command" bson:"command"`
-	MqttPassword string        `json:"-" bson:"mqtt_password" valid:"required,runelength(6|30)" `
+	MqttPassword string        `json:"mqtt_password" bson:"mqtt_password" valid:"required,runelength(6|30)" `
 }
 
 /*
