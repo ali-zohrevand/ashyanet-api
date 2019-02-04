@@ -9,6 +9,7 @@ import (
 	"github.com/ali-zohrevand/ashyanet-api/services/validation"
 	"github.com/ali-zohrevand/ashyanet-api/settings/Words"
 	"net/http"
+	"strings"
 )
 
 func TypeCreate(typesObj models.Types, user models.UserInDB) (int, []byte) {
@@ -23,6 +24,9 @@ func TypeCreate(typesObj models.Types, user models.UserInDB) (int, []byte) {
 
 	}
 	typesObj.Owner = user.UserName
+	typeName := typesObj.Name
+	typeName = strings.Replace(typeName, " ", "-", -1)
+	typesObj.Name = typeName
 	err := DB.TypesCreate(typesObj, session)
 	if err == nil {
 		///..........................................
