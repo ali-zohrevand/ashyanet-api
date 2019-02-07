@@ -38,10 +38,10 @@ type UserInDB struct {
 /*
 {
   "Id": "",
-  "UserName": "ali",
-  "FirstName": "adfdfli",
+  "UserName": "user6",
+  "FirstName": "admin",
   "LastName": "zohrevand",
-  "Email": "ali@ali.ir",
-  "Password": "mahdi"
+  "Email": "alihooshyar1990@gmail.com",
+  "Password": "mahdi1369"
 }
 */

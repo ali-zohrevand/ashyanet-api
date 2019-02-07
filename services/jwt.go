@@ -14,13 +14,13 @@ type JWTData struct {
 	jwt.StandardClaims
 }
 
-func GenerateToken(userUUID string) (string, error) {
+func GenerateToken(username string) (string, error) {
 	//todo: add token and its ip to a
 	token := jwt.New(jwt.SigningMethodHS256)
 	token.Claims = jwt.MapClaims{
 		"exp": time.Now().Add(time.Hour * 10000).Unix(),
 		"iat": time.Now().Unix(),
-		"sub": userUUID,
+		"sub": username,
 	}
 	tokenString, err := token.SignedString([]byte(Words.TokenKey))
 	//		tokenString, err := token.SignedString([]byte(SECRET))
@@ -39,7 +39,7 @@ func ValidateToken(token string) (IsValid bool) {
 	})
 
 	//todo check ip and it token
-	//todo if ip of token is not equale log security alert and unathorized
+	//todo if ip of token is not equal log security alert and unauthorized
 	if err != nil {
 		return false
 
