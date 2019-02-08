@@ -127,7 +127,7 @@ func Login(requestUser *models.User, request *http.Request) (int, []byte) {
 		message := OutputAPI.Message{}
 		message.Error = Words.UserNotActive
 		json, _ := json.Marshal(message)
-		return http.StatusBadRequest, json
+		return http.StatusNonAuthoritativeInfo, json
 	}
 	if UserDatastore.CheckUserPassCorrect(*requestUser, session) {
 		token, err := GenerateToken(requestUser.UserName)
@@ -149,7 +149,7 @@ func Login(requestUser *models.User, request *http.Request) (int, []byte) {
 				Ip:            Tools.GetIpOfRequest(request),
 			}
 			var jwtSessionDataStore = DB.JwtSessionDataStore{}
-			errAddToSessionDB := jwtSessionDataStore.CreateJwtSession(sessionObj, session)
+			errAddToSessionDB := jwtSessionDataStore.JwtCreate(sessionObj, session)
 			if errAddToSessionDB != nil {
 				log.SystemErrorHappened(errConnectDB)
 				return http.StatusInternalServerError, []byte("")

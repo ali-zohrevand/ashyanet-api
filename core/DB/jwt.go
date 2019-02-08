@@ -10,7 +10,7 @@ import (
 type JwtSessionDataStore struct {
 }
 
-func (ds *JwtSessionDataStore) CreateJwtSession(Session models.JwtSession, dbSession *mgo.Session) (err error) {
+func (ds *JwtSessionDataStore) JwtCreate(Session models.JwtSession, dbSession *mgo.Session) (err error) {
 	sessionCopy := dbSession.Copy()
 	defer sessionCopy.Close()
 
@@ -32,7 +32,7 @@ func IsUserSession(username string, token string, Ip string, dbSession *mgo.Sess
 	}
 	return
 }
-func GetUserOfSession(token string, dbSession *mgo.Session) (user models.UserInDB, err error) {
+func JwtGetUser(token string, dbSession *mgo.Session) (user models.UserInDB, err error) {
 	sessionCopy := dbSession.Copy()
 	defer sessionCopy.Close()
 	var JwtSession = models.JwtSession{}

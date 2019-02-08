@@ -2,9 +2,11 @@ package services
 
 import (
 	"errors"
+	"github.com/ali-zohrevand/ashyanet-api/core/DB"
 	"github.com/ali-zohrevand/ashyanet-api/services/log"
 	"github.com/ali-zohrevand/ashyanet-api/settings/Words"
 	"github.com/dgrijalva/jwt-go"
+	"net/http"
 	"time"
 )
 
@@ -18,7 +20,7 @@ func GenerateToken(username string) (string, error) {
 	//todo: add token and its ip to a
 	token := jwt.New(jwt.SigningMethodHS256)
 	token.Claims = jwt.MapClaims{
-		"exp": time.Now().Add(time.Hour * 10000).Unix(),
+		"exp": time.Now().Add(time.Hour * 24).Unix(),
 		"iat": time.Now().Unix(),
 		"sub": username,
 	}
@@ -30,21 +32,42 @@ func GenerateToken(username string) (string, error) {
 	}
 	return tokenString, nil
 }
-func ValidateToken(token string) (IsValid bool) {
-	_, err := jwt.ParseWithClaims(token, &JWTData{}, func(token *jwt.Token) (interface{}, error) {
+func ValidateToken(tokenString string, username string) (IsValid bool) {
+	var jwtData JWTData
+	token, err := jwt.ParseWithClaims(tokenString, &jwtData, func(token *jwt.Token) (interface{}, error) {
 		if jwt.SigningMethodHS256 != token.Method {
 			return nil, errors.New("Invalid signing algorithm")
 		}
+
 		return []byte(Words.TokenKey), nil
 	})
 
-	//todo check ip and it token
-	//todo if ip of token is not equal log security alert and unauthorized
-	if err != nil {
+	//todo check ip and it tokenString
+	//todo if ip of tokenString is not equal log security alert and unauthorized
+	subject := jwtData.Subject
+	if subject != username || err != nil || !token.Valid {
 		return false
 
 	}
 	return true
+}
+func IsJwtValid(token string) (int, []byte) {
+	session, errConnectDB := DB.ConnectDB()
+	if errConnectDB != nil {
+		log.SystemErrorHappened(errConnectDB)
+		return http.StatusNotFound, nil
+	}
+	User, err := DB.JwtGetUser(token, session)
+	if err != nil {
+		return http.StatusNotFound, nil
+
+	}
+	if ValidateToken(token, User.UserName) {
+		return http.StatusOK, nil
+
+	}
+	return http.StatusNotFound, nil
+
 }
 
 /*
