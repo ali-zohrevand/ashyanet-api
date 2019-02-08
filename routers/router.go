@@ -18,5 +18,6 @@ func InitRoutes() *mux.Router {
 	router = Active(router)
 	router = Types(router)
 	router = Jwt(router)
+	router = Info(router)
 	return router
 }
