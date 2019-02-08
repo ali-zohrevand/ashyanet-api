@@ -15,7 +15,6 @@ func CreateLocation(Location *models.Location) (int, []byte) {
 	session, errConnectDB := DB.ConnectDB()
 	if errConnectDB != nil {
 		log.SystemErrorHappened(errConnectDB)
-		panic(errConnectDB)
 
 	}
 	defer session.Close()
