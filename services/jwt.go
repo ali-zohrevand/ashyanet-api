@@ -1,7 +1,9 @@
 package services
 
 import (
+	"encoding/json"
 	"errors"
+	"github.com/ali-zohrevand/ashyanet-api/OutputAPI"
 	"github.com/ali-zohrevand/ashyanet-api/core/DB"
 	"github.com/ali-zohrevand/ashyanet-api/services/log"
 	"github.com/ali-zohrevand/ashyanet-api/settings/Words"
@@ -55,18 +57,30 @@ func IsJwtValid(token string) (int, []byte) {
 	session, errConnectDB := DB.ConnectDB()
 	if errConnectDB != nil {
 		log.SystemErrorHappened(errConnectDB)
-		return http.StatusNotFound, nil
+		var message OutputAPI.TokenValid
+		message.Valid = false
+		outJason, _ := json.Marshal(message)
+		return http.StatusNotFound, outJason
 	}
 	User, err := DB.JwtGetUser(token, session)
 	if err != nil {
-		return http.StatusNotFound, nil
+		var message OutputAPI.TokenValid
+		message.Valid = false
+		outJason, _ := json.Marshal(message)
+		return http.StatusNotFound, outJason
 
 	}
 	if ValidateToken(token, User.UserName) {
-		return http.StatusOK, nil
+		var message OutputAPI.TokenValid
+		message.Valid = true
+		outJason, _ := json.Marshal(message)
+		return http.StatusOK, outJason
 
 	}
-	return http.StatusNotFound, nil
+	var message OutputAPI.TokenValid
+	message.Valid = false
+	outJason, _ := json.Marshal(message)
+	return http.StatusNotFound, outJason
 
 }
 
