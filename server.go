@@ -22,5 +22,6 @@ func main() {
 	n := negroni.Classic()
 	n.UseHandler(corsHandler)
 	err := http.ListenAndServeTLS(":5000", "cert.pem", "key.pem", n)
+	//err := http.ListenAndServe(":5000",  n)
 	fmt.Println(err)
 }
