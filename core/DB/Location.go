@@ -22,6 +22,7 @@ func LocationCreateWithUserName(Location models.Location, userName string, Sessi
 	var LocationDB = models.LocationInDB{}
 	LocationDB.Id = bson.NewObjectId()
 	LocationDB.Description = Location.Description
+	LocationDB.DisplayName = Location.DisplayName
 	LocationDB.Name = userName + "-" + Location.Name
 	LocationDB.Users = append(LocationDB.Users, userName)
 	for i := 0; i < len(Location.Devices); i++ {
