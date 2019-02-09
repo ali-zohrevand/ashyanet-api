@@ -51,7 +51,7 @@ func TypeCreate(typesObj models.Types, user models.UserInDB) (int, []byte) {
 
 	return http.StatusInternalServerError, []byte("")
 }
-func TypeGetAllTypes(user models.UserInDB) (int, []byte) {
+func TypeGetAllByUsername(user models.UserInDB) (int, []byte) {
 	session, errConnectDB := DB.ConnectDB()
 	if errConnectDB != nil {
 		log.SystemErrorHappened(errConnectDB)
@@ -76,7 +76,7 @@ func TypeGetAllTypes(user models.UserInDB) (int, []byte) {
 
 	return http.StatusInternalServerError, []byte("")
 }
-func TypesDeleteByName(id string, user models.UserInDB) (int, []byte) {
+func TypesDeleteById(id string, user models.UserInDB) (int, []byte) {
 
 	session, errConnectDB := DB.ConnectDB()
 	if errConnectDB != nil {
