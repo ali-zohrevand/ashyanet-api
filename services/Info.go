@@ -14,6 +14,7 @@ func Info(user models.UserInDB) (int, []byte) {
 	}
 	var info models.Info
 	info.Username = user.UserName
+	info.Name = user.FirstName
 	info.TopicRootPath = settings.Identifier + "/" + user.UserName
 	infoJson, err := json.Marshal(info)
 	if err != nil {

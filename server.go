@@ -19,10 +19,10 @@ func main() {
 	router := routers.InitRoutes()
 	//corsHandler := cors.AllowAll().Handler(router)
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://127.0.0.1:4200"},
+		AllowedOrigins:   []string{"*"},
 		AllowCredentials: true,
 
-		AllowedHeaders: []string{"Authorization", "Content-Type"},
+		AllowedHeaders: []string{"Authorization", "Content-Type", "Access-Control-Allow-Origin"},
 		// Enable Debugging for testing, consider disabling in production
 		AllowedMethods: []string{"GET", "UPDATE", "PUT", "POST", "DELETE"},
 		Debug:          true,
@@ -33,4 +33,9 @@ func main() {
 	err := http.ListenAndServeTLS(":5000", "cert.pem", "key.pem", n)
 	//err := http.ListenAndServe(":5000",  n)
 	fmt.Println(err)
+}
+func setupResponse(w *http.ResponseWriter, req *http.Request) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 }
