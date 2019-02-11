@@ -3,6 +3,7 @@ package DB
 import (
 	"github.com/ali-zohrevand/ashyanet-api/models"
 	"github.com/ali-zohrevand/ashyanet-api/settings/Words"
+	"github.com/pkg/errors"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -33,6 +34,9 @@ func IsUserSession(username string, token string, Ip string, dbSession *mgo.Sess
 	return
 }
 func JwtGetUser(token string, dbSession *mgo.Session) (user models.UserInDB, err error) {
+	if dbSession == nil {
+		return user, errors.New("ERROR")
+	}
 	sessionCopy := dbSession.Copy()
 	defer sessionCopy.Close()
 	var JwtSession = models.JwtSession{}

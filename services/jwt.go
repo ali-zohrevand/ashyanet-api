@@ -22,7 +22,7 @@ func GenerateToken(username string) (string, error) {
 	//todo: add token and its ip to a
 	token := jwt.New(jwt.SigningMethodHS256)
 	token.Claims = jwt.MapClaims{
-		"exp": time.Now().Add(time.Hour * 48).Unix(),
+		"exp": time.Now().Add(time.Hour * 1000).Unix(),
 		"iat": time.Now().Unix(),
 		"sub": username,
 	}
