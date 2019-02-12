@@ -45,7 +45,7 @@ func TypeCreate(typesObj models.Types, user models.UserInDB) (int, []byte) {
 		var message OutputAPI.Message
 		message.Error = Words.TypeExits
 		messageJson, _ := json.Marshal(message)
-		return http.StatusBadRequest, messageJson
+		return http.StatusOK, messageJson
 
 	}
 
