@@ -63,7 +63,7 @@ func TypeGetAllByUsername(user models.UserInDB) (int, []byte) {
 		var message OutputAPI.Message
 		message.Error = Words.TypeNotExit
 		messageJson, _ := json.Marshal(message)
-		return http.StatusNotFound, messageJson
+		return http.StatusOK, messageJson
 	}
 	if err == nil {
 		typesJson, errJson := json.Marshal(types)

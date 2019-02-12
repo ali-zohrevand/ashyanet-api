@@ -61,7 +61,7 @@ func LocationGetAllByUsername(user models.UserInDB) (int, []byte) {
 		var message OutputAPI.Message
 		message.Error = Words.LocationNotFound
 		messageJson, _ := json.Marshal(message)
-		return http.StatusNotFound, messageJson
+		return http.StatusOK, messageJson
 	}
 	if err == nil {
 		locationJson, errJson := json.Marshal(locations)
