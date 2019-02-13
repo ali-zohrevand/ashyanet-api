@@ -37,7 +37,7 @@ func TypeCreate(typesObj models.Types, user models.UserInDB) (int, []byte) {
 		}
 		///..........................................
 		var message OutputAPI.Message
-		message.Error = Words.TypeCreated
+		message.Info = Words.TypeCreated
 		messageJson, _ := json.Marshal(message)
 		return http.StatusCreated, messageJson
 	}
