@@ -17,11 +17,25 @@ func main() {
 	// Check if the cert files are available.
 	services.GeneratTls()
 	router := routers.InitRoutes()
-	corsHandler := cors.AllowAll().Handler(router)
+	//corsHandler := cors.AllowAll().Handler(router)
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowCredentials: true,
 
+		AllowedHeaders: []string{"Authorization", "Content-Type", "Access-Control-Allow-Origin"},
+		// Enable Debugging for testing, consider disabling in production
+		AllowedMethods: []string{"GET", "UPDATE", "PUT", "POST", "DELETE"},
+		Debug:          true,
+	})
 	n := negroni.Classic()
-	n.UseHandler(corsHandler)
+	n.Use(c)
+	n.UseHandler(router)
 	err := http.ListenAndServeTLS(":5000", "cert.pem", "key.pem", n)
 	//err := http.ListenAndServe(":5000",  n)
 	fmt.Println(err)
+}
+func setupResponse(w *http.ResponseWriter, req *http.Request) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 }

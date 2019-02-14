@@ -58,8 +58,8 @@ func AddTempData() (err error) {
 	RoomLocation.Description = "اتاق بچه ها"
 	RoomLocation.Parent = "home"
 	RoomLocation.Devices = append(RoomLocation.Devices, Lamp.Name, MovementSensor.Name)
-	err = DB.CreateLocation(HomeLoattion, session)
-	err = DB.CreateLocation(RoomLocation, session)
+	err = DB.LocationCreate(HomeLoattion, session)
+	err = DB.LocationCreate(RoomLocation, session)
 
 	return err
 }

@@ -36,7 +36,7 @@ func TypesDelete(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) 
 
 	} else {
 		w.Header().Set("Content-Type", "application/json")
-		responseStatus, token := services.TypesDeleteByName(id, userInDB)
+		responseStatus, token := services.TypesDeleteById(id, userInDB)
 		w.WriteHeader(responseStatus)
 		w.Write(token)
 	}
@@ -52,7 +52,7 @@ func TypesGetAll(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) 
 
 	} else {
 		w.Header().Set("Content-Type", "application/json")
-		responseStatus, token := services.TypeGetAllTypes(userInDB)
+		responseStatus, token := services.TypeGetAllByUsername(userInDB)
 		w.WriteHeader(responseStatus)
 		w.Write(token)
 	}

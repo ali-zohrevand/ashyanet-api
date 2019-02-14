@@ -23,6 +23,46 @@ func DeviceCreate(device *models.Device, user models.UserInDB) (int, []byte) {
 	if errValidation != nil || !IsValid {
 		return http.StatusBadRequest, out
 	}
+	///.....................
+	locations, errGetLocation := DB.LocationGetByUsername(user.UserName, session)
+	if errGetLocation != nil {
+		message := OutputAPI.Message{}
+		message.Error = Words.LocationNotFound
+		json, _ := json.Marshal(message)
+		return http.StatusNotFound, json
+	}
+	UserHasLocation := false
+	UserHasType := false
+	for _, location := range locations {
+		if location.Name == device.Location {
+			UserHasLocation = true
+		}
+	}
+	if !UserHasLocation {
+		message := OutputAPI.Message{}
+		message.Error = Words.LocationNotFound
+		json, _ := json.Marshal(message)
+		return http.StatusNotFound, json
+	}
+	types, errGetTypes := DB.TypesGetAllTypesOfUser(user.UserName, session)
+	if errGetTypes != nil {
+		message := OutputAPI.Message{}
+		message.Error = Words.TypeNotExit
+		json, _ := json.Marshal(message)
+		return http.StatusNotFound, json
+	}
+	for _, typeObj := range types {
+		if typeObj.Name == device.Type {
+			UserHasType = true
+		}
+
+	}
+	if !UserHasType {
+		message := OutputAPI.Message{}
+		message.Error = Words.TypeNotExit
+		json, _ := json.Marshal(message)
+		return http.StatusNotFound, json
+	}
 	//.......................We add locattionPath/DeviceType to pubsub slice..........................
 	LocationPath, err := DB.GetLocationPath(device.Location, session)
 	if err != nil {
@@ -67,7 +107,7 @@ func DeviceCreate(device *models.Device, user models.UserInDB) (int, []byte) {
 
 		message := OutputAPI.Message{}
 		message.Info = Words.DeviceCreated
-		json, _ := json.Marshal(device)
+		json, _ := json.Marshal(message)
 		return http.StatusCreated, json
 	}
 	return http.StatusInternalServerError, nil

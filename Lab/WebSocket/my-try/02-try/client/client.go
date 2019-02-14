@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"log"
 	"net/url"
@@ -51,7 +52,9 @@ func main() {
 		case <-done:
 			return
 		case t := <-ticker.C:
-			err := c.WriteMessage(websocket.TextMessage, []byte(t.String()))
+			messeag := Message{t.String()}
+			messageJson, _ := json.Marshal(messeag)
+			err := c.WriteMessage(websocket.TextMessage, messageJson)
 			if err != nil {
 				log.Println("write:", err)
 				return
@@ -73,4 +76,8 @@ func main() {
 			return
 		}
 	}
+}
+
+type Message struct {
+	Message string `json:"message"`
 }

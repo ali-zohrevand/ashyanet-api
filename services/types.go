@@ -37,7 +37,7 @@ func TypeCreate(typesObj models.Types, user models.UserInDB) (int, []byte) {
 		}
 		///..........................................
 		var message OutputAPI.Message
-		message.Error = Words.TypeCreated
+		message.Info = Words.TypeCreated
 		messageJson, _ := json.Marshal(message)
 		return http.StatusCreated, messageJson
 	}
@@ -45,13 +45,13 @@ func TypeCreate(typesObj models.Types, user models.UserInDB) (int, []byte) {
 		var message OutputAPI.Message
 		message.Error = Words.TypeExits
 		messageJson, _ := json.Marshal(message)
-		return http.StatusBadRequest, messageJson
+		return http.StatusOK, messageJson
 
 	}
 
 	return http.StatusInternalServerError, []byte("")
 }
-func TypeGetAllTypes(user models.UserInDB) (int, []byte) {
+func TypeGetAllByUsername(user models.UserInDB) (int, []byte) {
 	session, errConnectDB := DB.ConnectDB()
 	if errConnectDB != nil {
 		log.SystemErrorHappened(errConnectDB)
@@ -63,7 +63,7 @@ func TypeGetAllTypes(user models.UserInDB) (int, []byte) {
 		var message OutputAPI.Message
 		message.Error = Words.TypeNotExit
 		messageJson, _ := json.Marshal(message)
-		return http.StatusNotFound, messageJson
+		return http.StatusOK, messageJson
 	}
 	if err == nil {
 		typesJson, errJson := json.Marshal(types)
@@ -76,7 +76,7 @@ func TypeGetAllTypes(user models.UserInDB) (int, []byte) {
 
 	return http.StatusInternalServerError, []byte("")
 }
-func TypesDeleteByName(id string, user models.UserInDB) (int, []byte) {
+func TypesDeleteById(id string, user models.UserInDB) (int, []byte) {
 
 	session, errConnectDB := DB.ConnectDB()
 	if errConnectDB != nil {

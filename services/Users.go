@@ -116,30 +116,30 @@ func Login(requestUser *models.User, request *http.Request) (int, []byte) {
 	session, errConDB := DB.ConnectDB()
 	if errConDB != nil {
 		log.SystemErrorHappened(errConDB)
-		return http.StatusUnauthorized, []byte("")
+		return http.StatusInternalServerError, []byte("")
 	}
 	defer session.Close()
 	userInDB, errGetUser := DB.UserGetByUsername(requestUser.UserName, session)
 	if errGetUser != nil {
-		return http.StatusUnauthorized, []byte("")
+		return http.StatusNotFound, []byte("")
 	}
 	if !userInDB.Active {
 		message := OutputAPI.Message{}
 		message.Error = Words.UserNotActive
 		json, _ := json.Marshal(message)
-		return http.StatusNonAuthoritativeInfo, json
+		return http.StatusBadRequest, json
 	}
 	if UserDatastore.CheckUserPassCorrect(*requestUser, session) {
 		token, err := GenerateToken(requestUser.UserName)
 		if err != nil {
 			log.SystemErrorHappened(err)
-			return http.StatusUnauthorized, []byte("")
+			return http.StatusNotFound, []byte("")
 		} else {
 			//................................. Main Action is Hear .................................
 			response, err := json.Marshal(OutputAPI.TokenAuthentication{token})
 			if err != nil {
 				log.SystemErrorHappened(err)
-				return http.StatusUnauthorized, []byte("")
+				return http.StatusNotFound, []byte("")
 			}
 			sessionObj := models.JwtSession{
 				Id:            bson.NewObjectId(),
@@ -160,5 +160,5 @@ func Login(requestUser *models.User, request *http.Request) (int, []byte) {
 	} else {
 		//todo: security log Happened beacuse user and password not match
 	}
-	return http.StatusUnauthorized, []byte("")
+	return http.StatusNotFound, []byte("")
 }
