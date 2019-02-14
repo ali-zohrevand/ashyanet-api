@@ -1,7 +1,6 @@
 package services
 
 import (
-
 	"crypto/tls"
 	"crypto/x509"
 	"errors"
@@ -295,6 +294,46 @@ func MqttSubcribeRootTopic() (err error) {
 		}
 	}
 	errSubscribe := mqttObj.Subscribe("#", 0, eventFunc)
+	if errSubscribe != nil {
+		panic(err)
+		return errSubscribe
+	}
+	<-done
+	return
+}
+func MqttSubcribeTopic(topicAdd string) (err error) {
+	EmqttDeleteMqttDefaultAdmin()
+	TempUserAdminUserName, TempAdminPassword, errCreateTempAdmin := EmqttCreateTempAdminMqttUserWithDwefaultAdmin()
+	if errCreateTempAdmin != nil {
+		panic(err)
+		return errCreateTempAdmin
+	}
+	defer EmqttDeleteUser(TempUserAdminUserName)
+	done := make(chan bool)
+	mqttObj, errCreateMqttUser := NewMqtt(Words.MqttBrokerIp, TempUserAdminUserName, TempAdminPassword, "TempAdmin"+GenerateRandomString(3))
+	defer mqttObj.Client.Disconnect(50)
+	if errCreateMqttUser != nil {
+		panic(errCreateMqttUser)
+		return errCreateMqttUser
+	}
+	var eventFunc mqtt.MessageHandler = func(client mqtt.Client, message mqtt.Message) {
+		var mqttmeesage models.MqttMessage
+		mqttmeesage.Message = string(message.Payload())
+		mqttmeesage.Topic = message.Topic()
+		mqttmeesage.Time = time.Now().String()
+		mqttmeesage.Retained = message.Retained()
+		mqttmeesage.Qos = message.Qos()
+		mqttmeesage.MessageId = string(message.MessageID())
+		errAddMessage := MqttAddMessageToDb(mqttmeesage)
+		if errAddMessage != nil {
+			log.ErrorHappened(errAddMessage)
+		}
+		errEventRegister := EventMqttMessageRecived(mqttmeesage)
+		if errEventRegister != nil {
+			log.ErrorHappened(errAddMessage)
+		}
+	}
+	errSubscribe := mqttObj.Subscribe(topicAdd, 0, eventFunc)
 	if errSubscribe != nil {
 		panic(err)
 		return errSubscribe
