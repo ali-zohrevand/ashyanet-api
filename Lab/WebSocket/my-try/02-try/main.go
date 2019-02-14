@@ -31,11 +31,12 @@ type Message struct {
 }
 
 func handleConnections(w http.ResponseWriter, r *http.Request) {
-	// Upgrade initial GET request to a websocket
-	ws, err := upgrader.Upgrade(w, r, nil)
 	upgrader.CheckOrigin = func(r *http.Request) bool {
 		return true
 	}
+	// Upgrade initial GET request to a websocket
+	ws, err := upgrader.Upgrade(w, r, nil)
+
 	if err != nil {
 		log.Fatal(err)
 	}
