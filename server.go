@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/ali-zohrevand/ashyanet-api/routers"
 	"github.com/ali-zohrevand/ashyanet-api/services"
+	"github.com/ali-zohrevand/ashyanet-api/websocket"
 	"github.com/codegangsta/negroni"
 	"github.com/rs/cors"
 	"net/http"
@@ -12,6 +13,7 @@ import (
 //init
 func init() {
 	services.InitServices()
+	go websocket.CreateWebSocketServer()
 }
 func main() {
 	// Check if the cert files are available.
