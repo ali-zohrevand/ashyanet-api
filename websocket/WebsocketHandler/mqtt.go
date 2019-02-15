@@ -65,6 +65,7 @@ func MqttHandleFunc(w http.ResponseWriter, r *http.Request) {
 	}
 	defer mqttObject.Client.Unsubscribe(topic)
 	defer mqttObject.Client.Disconnect(50)
+	//TOdo: unsubscribe after disconnect
 
 }
 func ChecKwebSockerStatu(webscoketObj *websocket.Conn) {
