@@ -6,6 +6,6 @@ import (
 )
 
 func Mqtt(router *mux.Router) *mux.Router {
-	router.HandleFunc("/ws/{token}/{topic}", WebsocketHandler.MqttHandleFunc)
+	router.HandleFunc("/data/{token}/{topic}", WebsocketHandler.MqttHandleFunc)
 	return router
 }

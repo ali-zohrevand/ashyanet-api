@@ -11,6 +11,7 @@ import (
 	"github.com/ali-zohrevand/ashyanet-api/services/validation"
 	"github.com/ali-zohrevand/ashyanet-api/settings/Words"
 	"github.com/eclipse/paho.mqtt.golang"
+	"github.com/gorilla/websocket"
 	"io/ioutil"
 	"net/http"
 	"sync"
@@ -337,6 +338,47 @@ func MqttSubcribeTopic(topicAdd string) (err error) {
 	if errSubscribe != nil {
 		panic(err)
 		return errSubscribe
+	}
+	<-done
+	return
+}
+func MqttSubcribeTopicWebsocket(topicAdd string, webscoket *websocket.Conn) (mqttObj *mqttStruct, err error) {
+	EmqttDeleteMqttDefaultAdmin()
+	TempUserAdminUserName, TempAdminPassword, errCreateTempAdmin := EmqttCreateTempAdminMqttUserWithDwefaultAdmin()
+	if errCreateTempAdmin != nil {
+		return nil, errCreateTempAdmin
+	}
+	defer EmqttDeleteUser(TempUserAdminUserName)
+	done := make(chan bool)
+	mqttObj, errCreateMqttUser := NewMqtt(Words.MqttBrokerIp, TempUserAdminUserName, TempAdminPassword, "TempAdmin-subscribe-"+topicAdd+"-"+GenerateRandomString(3))
+	defer mqttObj.Client.Disconnect(50)
+	if errCreateMqttUser != nil {
+		panic(errCreateMqttUser)
+		return nil, errCreateMqttUser
+	}
+	var eventFunc mqtt.MessageHandler = func(client mqtt.Client, message mqtt.Message) {
+		var mqttmeesage models.MqttMessage
+		mqttmeesage.Message = string(message.Payload())
+		mqttmeesage.Topic = message.Topic()
+		mqttmeesage.Time = time.Now().String()
+		mqttmeesage.Retained = message.Retained()
+		mqttmeesage.Qos = message.Qos()
+		mqttmeesage.MessageId = string(message.MessageID())
+		errAddMessage := MqttAddMessageToDb(mqttmeesage)
+		if errAddMessage != nil {
+			log.ErrorHappened(errAddMessage)
+		}
+		if webscoket != nil {
+			err = webscoket.WriteJSON(mqttmeesage)
+			if err != nil {
+				log.ErrorHappened(errAddMessage)
+			}
+		}
+
+	}
+	errSubscribe := mqttObj.Subscribe(topicAdd, 0, eventFunc)
+	if errSubscribe != nil {
+		return nil, errSubscribe
 	}
 	<-done
 	return

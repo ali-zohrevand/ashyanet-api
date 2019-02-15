@@ -29,17 +29,32 @@ func MqttHandleFunc(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(""))
 	}
+	fmt.Println("connections created")
 	// Make sure we close the connection when the function returns
 	defer ws.Close()
 
 	vars := mux.Vars(r)
-	token := vars["token"]
+	var token, topic string
+	token = vars["token"]
+	topic = vars["topic"]
+	if token == "" || topic == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(""))
+	}
 	status, _ := services.IsJwtValid(token)
 	if status != http.StatusOK {
-
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte(""))
 		return
+	}
+	mqttObject, errSubscribe := services.MqttSubcribeTopicWebsocket(topic, ws)
+	if errSubscribe != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(""))
+	}
+	if mqttObject.Client != nil && errSubscribe == nil {
+		defer mqttObject.Client.Unsubscribe(topic)
+
 	}
 }
 func MqttTopicSubscribe() {
