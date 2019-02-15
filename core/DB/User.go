@@ -110,6 +110,26 @@ func UserGetAllTopic(username string, Type string, Session *mgo.Session) (TopicL
 	}
 	return
 }
+func UserHasTopic(requestTopic string, username string, Type string, Session *mgo.Session) (Has bool, err error) {
+	Has = false
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	user, err := UserGetByUsername(username, sessionCopy)
+	if err != nil {
+		return
+	}
+	topicList, err := UserGetAllTopic(user.UserName, Type, sessionCopy)
+	if err != nil {
+		return
+	}
+	for _, topic := range topicList {
+		if topic == requestTopic {
+			Has = true
+		}
+	}
+	return
+
+}
 func UserUpdateByUserObj(user models.UserInDB, Session *mgo.Session) (err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()

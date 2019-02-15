@@ -2,36 +2,21 @@ package WebsocketHandler
 
 import (
 	"fmt"
-	"github.com/ali-zohrevand/ashyanet-api/controllers"
+	"github.com/ali-zohrevand/ashyanet-api/core/DB"
 	"github.com/ali-zohrevand/ashyanet-api/services"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
-	"log"
 	"net/http"
 )
 
 var ws *websocket.Conn
 
 func MqttHandleFunc(w http.ResponseWriter, r *http.Request) {
-	userIndb, err := controllers.GetUserFromHeader(r)
-	if err != nil {
+	session, errConnectDB := DB.ConnectDB()
+	if errConnectDB != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(""))
 	}
-	fmt.Println(userIndb)
-	upgrader.CheckOrigin = func(r *http.Request) bool {
-		return true
-	}
-	// Upgrade initial GET request to a websocket
-	ws, err = upgrader.Upgrade(w, r, nil)
-
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(""))
-	}
-	fmt.Println("connections created")
-	// Make sure we close the connection when the function returns
-	defer ws.Close()
 
 	vars := mux.Vars(r)
 	var token, topic string
@@ -47,28 +32,41 @@ func MqttHandleFunc(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(""))
 		return
 	}
+	userIndb, err := DB.JwtGetUser(token, session)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(""))
+	}
+	fmt.Println(userIndb)
+	HasUser, err := DB.UserHasTopic(topic, userIndb.UserName, "sub", session)
+	if !HasUser || err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte(""))
+		return
+	}
+	upgrader.CheckOrigin = func(r *http.Request) bool {
+		return true
+	}
+	// Upgrade initial GET request to a websocket
+	ws, err := upgrader.Upgrade(w, r, nil)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(""))
+	}
+	fmt.Println("connections created")
+	// Make sure we close the connection when the function returns
+	defer ws.Close()
+	go ChecKwebSockerStatu(ws)
 	mqttObject, errSubscribe := services.MqttSubcribeTopicWebsocket(topic, ws)
 	if errSubscribe != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(""))
 	}
-	if mqttObject.Client != nil && errSubscribe == nil {
-		defer mqttObject.Client.Unsubscribe(topic)
+	defer mqttObject.Client.Unsubscribe(topic)
+	defer mqttObject.Client.Disconnect(50)
 
-	}
 }
-func MqttTopicSubscribe() {
-	for {
-		// Grab the next message from the broadcast channel
-		msg := <-broadcast
-		// Send it out to every client that is currently connected
-		for client := range clients {
-			err := client.WriteJSON(msg)
-			if err != nil {
-				log.Printf("error: %v", err)
-				client.Close()
-				delete(clients, client)
-			}
-		}
-	}
+func ChecKwebSockerStatu(webscoketObj *websocket.Conn) {
+
 }
