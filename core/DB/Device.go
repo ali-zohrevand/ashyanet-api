@@ -418,9 +418,16 @@ func DeviceGetAllTopic(deviceName string, Type string, Session *mgo.Session) (To
 		for _, topic := range device.Subscribe {
 			TopicList = append(TopicList, topic)
 		}
+		for _, command := range device.MqttCommand {
+			TopicList = append(TopicList, command.Topic)
+		}
 	case "pub":
 		for _, topic := range device.Publish {
 			TopicList = append(TopicList, topic)
+		}
+		for _, data := range device.MqttData {
+			TopicList = append(TopicList, data.Topic)
+
 		}
 	case "pubsub":
 		for _, topic := range device.Subscribe {
@@ -429,12 +436,26 @@ func DeviceGetAllTopic(deviceName string, Type string, Session *mgo.Session) (To
 		for _, topic := range device.Publish {
 			TopicList = append(TopicList, topic)
 		}
+		for _, data := range device.MqttData {
+			TopicList = append(TopicList, data.Topic)
+
+		}
+		for _, command := range device.MqttCommand {
+			TopicList = append(TopicList, command.Topic)
+		}
 	default:
 		for _, topic := range device.Subscribe {
 			TopicList = append(TopicList, topic)
 		}
 		for _, topic := range device.Publish {
 			TopicList = append(TopicList, topic)
+		}
+		for _, data := range device.MqttData {
+			TopicList = append(TopicList, data.Topic)
+
+		}
+		for _, command := range device.MqttCommand {
+			TopicList = append(TopicList, command.Topic)
 		}
 	}
 	return
