@@ -38,7 +38,7 @@ func MqttHandleFunc(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(""))
 	}
 	fmt.Println(userIndb)
-	HasUser, err := DB.UserHasTopic(topic, userIndb.UserName, "sub", session)
+	HasUser, err := DB.UserMqttHasTopic(topic, userIndb.UserName, "sub", session)
 	if !HasUser || err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte(""))

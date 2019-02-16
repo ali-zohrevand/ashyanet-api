@@ -9,5 +9,13 @@ type MqttMessage struct {
 	MessageId string        `json:"message_id" bson:"message_id"`
 	Qos       byte          `json:"qos,string" bson:"qos"`
 	Retained  bool          `json:"retained,string" bson:"retained"`
-	Time      string        `json:"time" bson:"time"`
+	Time      int64         `json:"time" bson:"time"`
+}
+
+type MqttDataRequest struct {
+	Topic string `json:"topic"`
+}
+type MqttInfo struct {
+	NumberOfTopics  string `json:"number_of_topic"`
+	NumberOfMessage string `json:"number_of_message"`
 }

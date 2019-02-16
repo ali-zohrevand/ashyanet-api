@@ -94,7 +94,7 @@ func UserActiveBuUsername(username string, Session *mgo.Session) (success bool, 
 	}
 	return true, err
 }
-func UserGetAllTopic(username string, Type string, Session *mgo.Session) (TopicList []string, err error) {
+func UserMqttGetAllTopic(username string, Type string, Session *mgo.Session) (TopicList []string, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	user, err := UserGetByUsername(username, sessionCopy)
@@ -110,7 +110,8 @@ func UserGetAllTopic(username string, Type string, Session *mgo.Session) (TopicL
 	}
 	return
 }
-func UserHasTopic(requestTopic string, username string, Type string, Session *mgo.Session) (Has bool, err error) {
+
+func UserMqttHasTopic(requestTopic string, username string, Type string, Session *mgo.Session) (Has bool, err error) {
 	Has = false
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
@@ -118,7 +119,7 @@ func UserHasTopic(requestTopic string, username string, Type string, Session *mg
 	if err != nil {
 		return
 	}
-	topicList, err := UserGetAllTopic(user.UserName, Type, sessionCopy)
+	topicList, err := UserMqttGetAllTopic(user.UserName, Type, sessionCopy)
 	if err != nil {
 		return
 	}
@@ -136,7 +137,7 @@ func UserUpdateByUserObj(user models.UserInDB, Session *mgo.Session) (err error)
 	err = sessionCopy.DB(Words.DBname).C(Words.UserCollectionName).UpdateId(user.Id, user)
 	return
 }
-func UserGetAllMqttCommand(username string, Session *mgo.Session) (CommandList []models.Command, err error) {
+func UserMqttGetAllCommand(username string, Session *mgo.Session) (CommandList []models.Command, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	user, err := UserGetByUsername(username, sessionCopy)
@@ -152,7 +153,7 @@ func UserGetAllMqttCommand(username string, Session *mgo.Session) (CommandList [
 	}
 	return
 }
-func UserGetAllMqttData(username string, Session *mgo.Session) (DataList []models.Data, err error) {
+func UserMqttGetAllData(username string, Session *mgo.Session) (DataList []models.Data, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	user, err := UserGetByUsername(username, sessionCopy)
@@ -168,11 +169,11 @@ func UserGetAllMqttData(username string, Session *mgo.Session) (DataList []model
 	}
 	return
 }
-func UserHasMqttCommand(username string, Command models.Command, Session *mgo.Session) (Has bool, err error) {
+func UserMqttHasCommand(username string, Command models.Command, Session *mgo.Session) (Has bool, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
 	Has = false
-	AllCommand, err := UserGetAllMqttCommand(username, sessionCopy)
+	AllCommand, err := UserMqttGetAllCommand(username, sessionCopy)
 	if err != nil {
 		return false, err
 	}
@@ -183,10 +184,10 @@ func UserHasMqttCommand(username string, Command models.Command, Session *mgo.Se
 	}
 	return
 }
-func UserGetMqttCommandByName(username string, CommandName string, Session *mgo.Session) (data models.Command, err error) {
+func UserMqttGetCommandByName(username string, CommandName string, Session *mgo.Session) (data models.Command, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
-	AllCommand, err := UserGetAllMqttCommand(username, sessionCopy)
+	AllCommand, err := UserMqttGetAllCommand(username, sessionCopy)
 	if err != nil {
 		return data, err
 	}
@@ -197,10 +198,10 @@ func UserGetMqttCommandByName(username string, CommandName string, Session *mgo.
 	}
 	return
 }
-func UserGetMqttDataByName(username string, DataName string, Session *mgo.Session) (data models.Data, err error) {
+func UserMqttGetDataByName(username string, DataName string, Session *mgo.Session) (data models.Data, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
-	AllData, err := UserGetAllMqttData(username, sessionCopy)
+	AllData, err := UserMqttGetAllData(username, sessionCopy)
 	if err != nil {
 		return data, err
 	}

@@ -15,7 +15,7 @@ func TestMqttAddMessage(t *testing.T) {
 	m.Qos = 2
 	m.Retained = false
 	m.Topic = "/test"
-	m.Time = time.Now().String()
+	m.Time = time.Now().Unix()
 	err := MqttAddMessageToDb(m)
 	if err != nil {
 		t.Fail()
@@ -25,12 +25,17 @@ func TestMqttAddMessage(t *testing.T) {
 }
 func TestMqttGetAllMessageByTopicName(t *testing.T) {
 	list, err := MqttGetAllMessageByTopicName("/test")
-	if err != nil {
+	if err != nil || list == nil {
 		t.Fail()
 		t.Error(err)
+	} else {
+		mesage := list[0]
+		json, _ := json.Marshal(mesage)
+		fmt.Println(string(json))
 	}
-	mesage := list[0]
-	json, _ := json.Marshal(mesage)
-	fmt.Println(string(json))
 
+}
+func TestMqttGetAllTopicsByUsername(t *testing.T) {
+	list, err := MqttGetAllTopicsByUsername("mahmood", "sub")
+	fmt.Println(list, err)
 }
