@@ -378,7 +378,7 @@ func MqttSubcribeRootTopic() (err error) {
 		mqttmeesage.Time = time.Now().Unix()
 		mqttmeesage.Retained = message.Retained()
 		mqttmeesage.Qos = message.Qos()
-		mqttmeesage.MessageId = string(message.MessageID())
+		mqttmeesage.MessageId = strconv.Itoa(int(message.MessageID()))
 		errAddMessage := MqttAddMessageToDb(mqttmeesage)
 		if errAddMessage != nil {
 			log.ErrorHappened(errAddMessage)
