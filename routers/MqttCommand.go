@@ -13,7 +13,7 @@ func MqttCommand(router *mux.Router) *mux.Router {
 		negroni.HandlerFunc(services.RequireTokenAuthentication),
 		negroni.HandlerFunc(controllers.MqttCommand),
 	)
-	router.Handle("/user/mqtt", HandleFunc).Methods("POST")
+	router.Handle("/user/command", HandleFunc).Methods("POST")
 	//.......................................................................................................
 
 	return router

@@ -69,10 +69,10 @@ func DeviceCreate(device models.Device, user models.UserInDB, Session *mgo.Sessi
 	commands, data, err := UserGetAllCommandData(user.UserName, sessionCopy)
 
 	for i, _ := range device.MqttData {
-		device.MqttData[i].Name = device.Name + "-" + device.MqttData[i].Name
+		device.MqttData[i].Name = userFetchedFromDB.UserName + "-" + device.Name + "-" + device.MqttData[i].Name
 	}
 	for i, _ := range device.MqttCommand {
-		device.MqttCommand[i].Name = device.Name + "-" + device.MqttCommand[i].Name
+		device.MqttCommand[i].Name = userFetchedFromDB.UserName + "-" + device.Name + "-" + device.MqttCommand[i].Name
 	}
 	for _, command := range device.MqttCommand {
 		for _, c := range commands {

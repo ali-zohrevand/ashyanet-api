@@ -51,7 +51,7 @@ func EventCreate(dataBinde models.DataBindCommand, user models.UserInDB) (int, [
 	}
 	//  در این تابع تمامی کامند هایی که در تمامی دستگاه های کاربر مورد نظر وجود دارد
 	//  بررسی خواهد شد و چک میشود کاربر کامندی با نام مورد نظر دارد یا خیر
-	Comamand, errGetCommand := DB.UserGetMqttCommandByName(user.UserName, dataBinde.CommandName, session)
+	Comamand, errGetCommand := DB.UserMqttGetCommandByName(user.UserName, dataBinde.CommandName, session)
 	if errGetCommand != nil {
 		message := OutputAPI.Message{}
 		message.Error = Words.CommandDataNotFOUND
@@ -60,7 +60,7 @@ func EventCreate(dataBinde models.DataBindCommand, user models.UserInDB) (int, [
 	}
 	//ر این تابع تمامی دیتا هایی که در تمامی دستگاه های کاربر مورد نظر وجود دارد
 	//  بررسی خواهد شد و چک میشود کاربر دیتایی با نام مورد نظر دارد یا خیر
-	Data, errGetDataName := DB.UserGetMqttDataByName(user.UserName, dataBinde.DataName, session)
+	Data, errGetDataName := DB.UserMqttGetDataByName(user.UserName, dataBinde.DataName, session)
 	if errGetDataName != nil {
 		message := OutputAPI.Message{}
 		message.Error = Words.CommandDataNotFOUND

@@ -3,8 +3,10 @@ package services
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/ali-zohrevand/ashyanet-api/OutputAPI"
 	"github.com/ali-zohrevand/ashyanet-api/core/DB"
 	"github.com/ali-zohrevand/ashyanet-api/models"
 	"github.com/ali-zohrevand/ashyanet-api/services/log"
@@ -14,6 +16,7 @@ import (
 	"github.com/gorilla/websocket"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -203,7 +206,7 @@ func MqttHttpCommand(command models.Command, User models.UserInDB) (int, []byte)
 		return http.StatusInternalServerError, []byte("")
 	}
 	defer session.Close()
-	Is, errCHeckuser := DB.UserHasMqttCommand(User.UserName, command, session)
+	Is, errCHeckuser := DB.UserMqttHasCommand(User.UserName, command, session)
 	if errCHeckuser != nil {
 		return http.StatusInternalServerError, []byte("")
 	}
@@ -214,7 +217,10 @@ func MqttHttpCommand(command models.Command, User models.UserInDB) (int, []byte)
 	if errPublish != nil {
 		return http.StatusInternalServerError, []byte("")
 	} else {
-		return http.StatusOK, []byte("sent")
+		message := OutputAPI.Message{}
+		message.Error = Words.MqttMessageSent
+		json, _ := json.Marshal(message)
+		return http.StatusOK, json
 
 	}
 
@@ -239,7 +245,6 @@ func MqttCommandTempAdmin(command models.Command) (err error) {
 		return errCreateMqttUser
 	}
 	errPublish := mqttObj.Publish(command.Topic, false, command.Value, 2)
-	mqttObj.Client.Disconnect(50)
 	return errPublish
 }
 func MqttAddMessageToDb(message models.MqttMessage) (err error) {
@@ -261,6 +266,97 @@ func MqttGetAllMessageByTopicName(topic string) (MessageList []models.MqttMessag
 	MessageList, err = DB.MqttGetAllMessagesByTopic(topic, session)
 	return
 }
+func MqttGetALlInfoTypeUsername(username string) (int, []byte) {
+	session, errConnectDB := DB.ConnectDB()
+	if errConnectDB != nil {
+		log.SystemErrorHappened(errConnectDB)
+		return http.StatusInternalServerError, nil
+	}
+	subTopics, _ := DB.UserMqttGetAllTopic(username, "all", session)
+	allTopics, _ := DB.UserMqttGetAllTopic(username, "all", session)
+	numberOfTopics := 0
+	if allTopics != nil {
+		numberOfTopics = len(allTopics)
+		allTopics = DeleteRepetedCell(allTopics)
+	}
+	var mqttInfo models.MqttInfo
+	mqttInfo.NumberOfTopics = strconv.Itoa(numberOfTopics)
+	numberAllMessage := 0
+	if subTopics != nil {
+		subTopics = DeleteRepetedCell(subTopics)
+		for _, topic := range subTopics {
+			message, _ := DB.MqttGetAllMessagesByTopic(topic, session)
+			if message != nil {
+				numberAllMessage = numberAllMessage + len(message)
+			}
+		}
+	}
+	mqttInfo.NumberOfMessage = strconv.Itoa(numberAllMessage)
+
+	jsonObj, _ := json.Marshal(mqttInfo)
+	return http.StatusOK, jsonObj
+
+}
+func MqttGetALlMessageByTopicTypeUsername(username string, targetTapic string) (int, []byte) {
+	session, errConnectDB := DB.ConnectDB()
+	if errConnectDB != nil {
+		log.SystemErrorHappened(errConnectDB)
+		return http.StatusInternalServerError, nil
+	}
+	topics, err := DB.UserMqttGetAllTopic(username, "all", session)
+	if err != nil || topics == nil {
+		message := OutputAPI.Message{}
+		message.Error = Words.MqttTopicNotExist
+		json, _ := json.Marshal(message)
+		return http.StatusNoContent, json
+	}
+	has := false
+	for _, topic := range topics {
+		if topic == targetTapic {
+			has = true
+		}
+	}
+	if !has {
+		message := OutputAPI.Message{}
+		message.Error = Words.MqttTopicNotExist
+		json, _ := json.Marshal(message)
+		return http.StatusNoContent, json
+	}
+	messages, err := DB.MqttGetAllMessagesByTopic(targetTapic, session)
+	if err != nil || messages == nil {
+		message := OutputAPI.Message{}
+		message.Error = Words.MqttMessageNotFound
+		json, _ := json.Marshal(message)
+		return http.StatusNoContent, json
+	}
+	if messages != nil {
+		messageJason, _ := json.Marshal(messages)
+		return http.StatusOK, messageJason
+
+	}
+	return http.StatusInternalServerError, nil
+
+}
+func MqttGetAllTopicsByUsername(username string, typeOfTopics string) (int, []byte) {
+	session, errConnectDB := DB.ConnectDB()
+	if errConnectDB != nil {
+		log.SystemErrorHappened(errConnectDB)
+		return http.StatusInternalServerError, nil
+	}
+	topics, err := DB.UserMqttGetAllTopic(username, typeOfTopics, session)
+	if err != nil || topics == nil {
+		message := OutputAPI.Message{}
+		message.Error = Words.MqttTopicNotExist
+		json, _ := json.Marshal(message)
+		return http.StatusNotFound, json
+	} else {
+		json, _ := json.Marshal(topics)
+		return http.StatusOK, json
+	}
+
+	return http.StatusInternalServerError, nil
+
+}
 
 func MqttSubcribeRootTopic() (err error) {
 	EmqttDeleteMqttDefaultAdmin()
@@ -281,10 +377,10 @@ func MqttSubcribeRootTopic() (err error) {
 		var mqttmeesage models.MqttMessage
 		mqttmeesage.Message = string(message.Payload())
 		mqttmeesage.Topic = message.Topic()
-		mqttmeesage.Time = time.Now().String()
+		mqttmeesage.Time = time.Now().Unix()
 		mqttmeesage.Retained = message.Retained()
 		mqttmeesage.Qos = message.Qos()
-		mqttmeesage.MessageId = string(message.MessageID())
+		mqttmeesage.MessageId = strconv.Itoa(int(message.MessageID()))
 		errAddMessage := MqttAddMessageToDb(mqttmeesage)
 		if errAddMessage != nil {
 			log.ErrorHappened(errAddMessage)
@@ -294,7 +390,7 @@ func MqttSubcribeRootTopic() (err error) {
 			log.ErrorHappened(errAddMessage)
 		}
 	}
-	errSubscribe := mqttObj.Subscribe("#", 0, eventFunc)
+	errSubscribe := mqttObj.Subscribe("#", 2, eventFunc)
 	if errSubscribe != nil {
 		panic(err)
 		return errSubscribe
@@ -321,7 +417,7 @@ func MqttSubcribeTopic(topicAdd string) (err error) {
 		var mqttmeesage models.MqttMessage
 		mqttmeesage.Message = string(message.Payload())
 		mqttmeesage.Topic = message.Topic()
-		mqttmeesage.Time = time.Now().String()
+		mqttmeesage.Time = time.Now().Unix()
 		mqttmeesage.Retained = message.Retained()
 		mqttmeesage.Qos = message.Qos()
 		mqttmeesage.MessageId = string(message.MessageID())
@@ -360,7 +456,7 @@ func MqttSubcribeTopicWebsocket(topicAdd string, webscoket *websocket.Conn) (mqt
 		var mqttmeesage models.MqttMessage
 		mqttmeesage.Message = string(message.Payload())
 		mqttmeesage.Topic = message.Topic()
-		mqttmeesage.Time = time.Now().String()
+		mqttmeesage.Time = time.Now().Unix()
 		mqttmeesage.Retained = message.Retained()
 		mqttmeesage.Qos = message.Qos()
 		mqttmeesage.MessageId = string(message.MessageID())
