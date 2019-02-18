@@ -301,12 +301,12 @@ func MqttGetALlMessageByTopicTypeUsername(username string, targetTapic string) (
 		log.SystemErrorHappened(errConnectDB)
 		return http.StatusInternalServerError, nil
 	}
-	topics, err := DB.UserMqttGetAllTopic(username, "sub", session)
+	topics, err := DB.UserMqttGetAllTopic(username, "all", session)
 	if err != nil || topics == nil {
 		message := OutputAPI.Message{}
 		message.Error = Words.MqttTopicNotExist
 		json, _ := json.Marshal(message)
-		return http.StatusNotFound, json
+		return http.StatusNoContent, json
 	}
 	has := false
 	for _, topic := range topics {
@@ -318,14 +318,14 @@ func MqttGetALlMessageByTopicTypeUsername(username string, targetTapic string) (
 		message := OutputAPI.Message{}
 		message.Error = Words.MqttTopicNotExist
 		json, _ := json.Marshal(message)
-		return http.StatusNotFound, json
+		return http.StatusNoContent, json
 	}
 	messages, err := DB.MqttGetAllMessagesByTopic(targetTapic, session)
 	if err != nil || messages == nil {
 		message := OutputAPI.Message{}
 		message.Error = Words.MqttMessageNotFound
 		json, _ := json.Marshal(message)
-		return http.StatusNotFound, json
+		return http.StatusNoContent, json
 	}
 	if messages != nil {
 		messageJason, _ := json.Marshal(messages)
