@@ -5,7 +5,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func Register(router *mux.Router) *mux.Router {
-	router.HandleFunc("/register", controllers.RegisterPost).Methods("POST")
+func Jwt(router *mux.Router) *mux.Router {
+	router.HandleFunc("/jwt/{jwt}", controllers.Jwt).Methods("GET")
 	return router
 }

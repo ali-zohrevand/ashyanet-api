@@ -23,16 +23,18 @@ func RequireTokenAuthentication(rw http.ResponseWriter, req *http.Request, next 
 		rw.WriteHeader(http.StatusUnauthorized)
 	} else {
 		jwtToken := authArr[1]
-		isValid := ValidateToken(jwtToken)
+		user, errGetUser := DB.JwtGetUser(jwtToken, session)
+		if errGetUser != nil {
+			rw.WriteHeader(http.StatusUnauthorized)
+		}
+		isValid := ValidateToken(jwtToken, user.UserName)
+
 		if !isValid {
 			rw.WriteHeader(http.StatusUnauthorized)
 		} else {
 			Action := req.Method
 			Route := req.URL.Path
-			user, errGetUser := DB.GetUserOfSession(jwtToken, session)
-			if errGetUser != nil {
-				rw.WriteHeader(http.StatusUnauthorized)
-			}
+
 			role := user.Role
 			if role == "" {
 				role = "user"

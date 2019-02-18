@@ -11,7 +11,7 @@ type DataBindCommand struct {
 
 type Event struct {
 	Id             bson.ObjectId `json:"id,string" bson:"_id"`
-	UserOwner	   string		 `json:"user_owner" bson:"user_owner"`
+	UserOwner      string        `json:"user_owner" bson:"user_owner"`
 	EventName      string        `json:"event_name" bson:"event_name"`
 	EventAddress   string        `json:"event_address" bson:"event_address"`
 	EventType      EventType     `json:"event_type" bson:"event_type"`
@@ -25,6 +25,7 @@ const (
 	SmsEvent  EventType = 1
 	MailEvent EventType = 2
 )
+
 /*
 //Simple grater than event
 {
@@ -40,4 +41,4 @@ const (
 	"comand_type":0
 
 }
- */
+*/

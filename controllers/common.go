@@ -18,7 +18,7 @@ func GetUserFromHeader(req *http.Request) (User models.UserInDB, err error) {
 		return
 	} else {
 		jwtToken := authArr[1]
-		user, err := DB.GetUserOfSession(jwtToken, session)
+		user, err := DB.JwtGetUser(jwtToken, session)
 		return user, err
 	}
 	return

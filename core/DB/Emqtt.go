@@ -81,3 +81,11 @@ func EmqttCreateAcl(acl models.MqttAcl, Session *mgo.Session) (err error) {
 
 	return
 }
+func EmqttDeleteByUsername(username string, Session *mgo.Session) (err error) {
+	sessionCopy := Session.Copy()
+	defer sessionCopy.Close()
+	err = sessionCopy.DB(Words.EmqttDBName).C(Words.EmqttUserColletionName).Remove(bson.M{Words.MqttUserName: username})
+	err = sessionCopy.DB(Words.EmqttDBName).C(Words.EmqttAclColectionName).Remove(bson.M{Words.MqttUserName: username})
+
+	return
+}

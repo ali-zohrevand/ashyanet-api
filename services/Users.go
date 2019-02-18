@@ -26,7 +26,7 @@ func AddInitUser() {
 	user, _ := DB.UserGetByUsername(Words.DeafualtAdmminUserName, session)
 	if user.Role != Words.DeafualtAdmminRole {
 		//کاربر ادمین را ایجاد می نماییم.
-		DefaultAdmin := models.User{"", Words.DeafualtAdmminUserName, Words.DeafualtAdmminFirstName, Words.DeafualtAdmminLastName, Words.DeafualtAdmminEmail, Words.DeafualtAdmminPassword, Words.DeafualtAdmminRole, nil, nil, true, "", time.Now().Unix()}
+		DefaultAdmin := models.User{"", Words.DeafualtAdmminUserName, Words.DeafualtAdmminFirstName, Words.DeafualtAdmminLastName, Words.DeafualtAdmminEmail, Words.DeafualtAdmminPassword, Words.DeafualtAdmminRole, nil, nil, true, "", time.Now().Unix(), nil}
 		// کاربر ادمیت را به سمت پایگاه داده ارسال میکنیم.
 		errCreateUser := UserDatastore.CreateUser(DefaultAdmin, session)
 		if errCreateUser != nil && errCreateUser.Error() != Words.UserExist {
@@ -116,12 +116,12 @@ func Login(requestUser *models.User, request *http.Request) (int, []byte) {
 	session, errConDB := DB.ConnectDB()
 	if errConDB != nil {
 		log.SystemErrorHappened(errConDB)
-		return http.StatusUnauthorized, []byte("")
+		return http.StatusInternalServerError, []byte("")
 	}
 	defer session.Close()
 	userInDB, errGetUser := DB.UserGetByUsername(requestUser.UserName, session)
 	if errGetUser != nil {
-		return http.StatusUnauthorized, []byte("")
+		return http.StatusNotFound, []byte("")
 	}
 	if !userInDB.Active {
 		message := OutputAPI.Message{}
@@ -133,13 +133,13 @@ func Login(requestUser *models.User, request *http.Request) (int, []byte) {
 		token, err := GenerateToken(requestUser.UserName)
 		if err != nil {
 			log.SystemErrorHappened(err)
-			return http.StatusUnauthorized, []byte("")
+			return http.StatusNotFound, []byte("")
 		} else {
 			//................................. Main Action is Hear .................................
 			response, err := json.Marshal(OutputAPI.TokenAuthentication{token})
 			if err != nil {
 				log.SystemErrorHappened(err)
-				return http.StatusUnauthorized, []byte("")
+				return http.StatusNotFound, []byte("")
 			}
 			sessionObj := models.JwtSession{
 				Id:            bson.NewObjectId(),
@@ -149,7 +149,7 @@ func Login(requestUser *models.User, request *http.Request) (int, []byte) {
 				Ip:            Tools.GetIpOfRequest(request),
 			}
 			var jwtSessionDataStore = DB.JwtSessionDataStore{}
-			errAddToSessionDB := jwtSessionDataStore.CreateJwtSession(sessionObj, session)
+			errAddToSessionDB := jwtSessionDataStore.JwtCreate(sessionObj, session)
 			if errAddToSessionDB != nil {
 				log.SystemErrorHappened(errConnectDB)
 				return http.StatusInternalServerError, []byte("")
@@ -160,5 +160,5 @@ func Login(requestUser *models.User, request *http.Request) (int, []byte) {
 	} else {
 		//todo: security log Happened beacuse user and password not match
 	}
-	return http.StatusUnauthorized, []byte("")
+	return http.StatusNotFound, []byte("")
 }

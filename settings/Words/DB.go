@@ -10,6 +10,8 @@ var DeviceKeyLocationName = "Keys"
 var SettingsCollectiName = "settings"
 var DBNotConnectet = "DB PROBLEM"
 
+var TypesCollectionName = "Types"
+
 type WorldsDB struct {
 	DBname                   string
 	UserCollectionName       string

@@ -4,6 +4,7 @@ import "gopkg.in/mgo.v2/bson"
 
 type Location struct {
 	Id          string   `json:"id" bson:"_id"`
+	DisplayName string   `json:"display_name" bson:"display_name" valid:"required"`
 	Name        string   `json:"locationname" bson:"locationname" valid:"required~Location Could not be empty,runelength(1|30),blacklist~Bad Char"`
 	Parent      string   `json:"parent" bson:"parent" valid:"runelength(1|30),blacklist~Bad Char"`
 	Devices     []string `json:"devices" bson:"devices"`
@@ -14,6 +15,7 @@ type Location struct {
 }
 type LocationInDB struct {
 	Id          bson.ObjectId `json:"id" bson:"_id"`
+	DisplayName string        `json:"display_name" bson:"display_name"`
 	Name        string        `json:"locationname" bson:"locationname"`
 	Parent      string        `json:"parent" bson:"parent"`
 	Devices     []string      `json:"devices" bson:"devices"`

@@ -3,14 +3,13 @@ package Words
 var FirstNameNeeded = "First name Could not be empty"
 var UserExist = "User Exist"
 var UserCreated = "User Created"
-var UserVerifyMailProblem="Verify mail did not sent, tray again."
-var VerifyMailSent= "Verify Mail sent, please check your mail."
+var UserVerifyMailProblem = "Verify mail did not sent, tray again."
+var VerifyMailSent = "Verify Mail sent, please check your mail."
 var UserNotExist = "User Not Exist"
 var TimeExpired = "Time Expired."
 var UserActivated = "User Activated."
 var UserNotActive = "User Not Active."
-var DeviceNotExist = "Device Not Exist"
-var DeviceExist = "Device Exist"
+
 var LocationExist = "Location Exist"
 var DeviceCreated = "Device Created"
 var LocationCreated = "Location Created"
@@ -35,9 +34,9 @@ type WordsValidation struct {
 	LocationNotFound       string
 	UserOrLocationNotFound string
 	UserAddedToLocation    string
-	UserActivated string
-	TimeExpired string
-	UserNotActive string
-	VerifyMailSent string
-	UserVerifyMailProblem string
+	UserActivated          string
+	TimeExpired            string
+	UserNotActive          string
+	VerifyMailSent         string
+	UserVerifyMailProblem  string
 }
