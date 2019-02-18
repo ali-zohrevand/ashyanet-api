@@ -270,7 +270,7 @@ func MqttGetALlInfoTypeUsername(username string) (int, []byte) {
 		log.SystemErrorHappened(errConnectDB)
 		return http.StatusInternalServerError, nil
 	}
-	subTopics, _ := DB.UserMqttGetAllTopic(username, "sub", session)
+	subTopics, _ := DB.UserMqttGetAllTopic(username, "all", session)
 	allTopics, _ := DB.UserMqttGetAllTopic(username, "all", session)
 	numberOfTopics := 0
 	if allTopics != nil {
