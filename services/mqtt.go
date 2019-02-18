@@ -217,7 +217,10 @@ func MqttHttpCommand(command models.Command, User models.UserInDB) (int, []byte)
 	if errPublish != nil {
 		return http.StatusInternalServerError, []byte("")
 	} else {
-		return http.StatusOK, []byte("sent")
+		message := OutputAPI.Message{}
+		message.Error = Words.MqttMessageSent
+		json, _ := json.Marshal(message)
+		return http.StatusOK, json
 
 	}
 
@@ -242,7 +245,6 @@ func MqttCommandTempAdmin(command models.Command) (err error) {
 		return errCreateMqttUser
 	}
 	errPublish := mqttObj.Publish(command.Topic, false, command.Value, 2)
-	mqttObj.Client.Disconnect(50)
 	return errPublish
 }
 func MqttAddMessageToDb(message models.MqttMessage) (err error) {

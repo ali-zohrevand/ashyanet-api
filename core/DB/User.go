@@ -121,7 +121,7 @@ func UserMqttHasTopic(requestTopic string, username string, Type string, Session
 	}
 	topicList, err := UserMqttGetAllTopic(user.UserName, Type, sessionCopy)
 	if err != nil {
-		return
+		return false, err
 	}
 	for _, topic := range topicList {
 		if topic == requestTopic {
@@ -176,6 +176,15 @@ func UserMqttHasCommand(username string, Command models.Command, Session *mgo.Se
 	AllCommand, err := UserMqttGetAllCommand(username, sessionCopy)
 	if err != nil {
 		return false, err
+	}
+	Has, err = UserMqttHasTopic(Command.Topic, username, "all", sessionCopy)
+	if !Has {
+		return false, err
+
+	}
+	if err != nil {
+		return false, err
+
 	}
 	for _, cm := range AllCommand {
 		if cm.Topic == Command.Topic && cm.Value == Command.Value {
