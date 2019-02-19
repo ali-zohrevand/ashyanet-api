@@ -60,15 +60,15 @@ func EventCreate(dataBinde models.DataBindCommand, user models.UserInDB) (int, [
 	}
 	//ر این تابع تمامی دیتا هایی که در تمامی دستگاه های کاربر مورد نظر وجود دارد
 	//  بررسی خواهد شد و چک میشود کاربر دیتایی با نام مورد نظر دارد یا خیر
-	Data, errGetDataName := DB.UserMqttGetDataByName(user.UserName, dataBinde.DataName, session)
-	if errGetDataName != nil {
+	Has, errGetDataName := DB.UserMqttHasTopic(dataBinde.AddressTopicName, user.UserName, "all", session)
+	if !Has || errGetDataName != nil {
 		message := OutputAPI.Message{}
 		message.Error = Words.CommandDataNotFOUND
 		json, _ := json.Marshal(message)
 		return http.StatusInternalServerError, []byte(json)
 	}
 	// برای بررسی دوباره صحت کامند و دیتا را بررسی می نماییم.
-	if Comamand.Name == "" || Data.Name == "" {
+	if Comamand.Name == "" {
 		message := OutputAPI.Message{}
 		message.Info = Words.CommandDataNotFOUND
 		json, _ := json.Marshal(message)
@@ -85,10 +85,10 @@ func EventCreate(dataBinde models.DataBindCommand, user models.UserInDB) (int, [
 	// در نهایت میخواهیم رخ داد (event) را ایجاد و در پایگاه داده ذخیره نماییم.
 	var event models.Event
 	event.UserOwner = user.UserName
-	event.EventName = user.UserName + "-" + dataBinde.DataName + "-" + dataBinde.CommandName + "-" + GenerateRandomString(5)
+	event.EventName = user.UserName + "-" + dataBinde.CommandName + "-" + GenerateRandomString(5)
 	event.EventFunction = Comamand
 	event.EventCondition = dataBinde.ConditionSet
-	event.EventAddress = Data.Topic
+	event.EventAddress = dataBinde.AddressTopicName
 	event.EventType = dataBinde.ComandType
 	errCreatedEventDB := DB.EventCreate(event, session)
 	if errCreatedEventDB != nil {

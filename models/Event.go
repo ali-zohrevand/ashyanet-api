@@ -3,10 +3,10 @@ package models
 import "gopkg.in/mgo.v2/bson"
 
 type DataBindCommand struct {
-	DataName     string    `json:"data_name" bson:"data_name"`
-	CommandName  string    `json:"command_name" bson:"command_name"`
-	ConditionSet Condition `json:"condition" bson:"condition"`
-	ComandType   EventType `json:"comand_type" bson:"comand_type"`
+	AddressTopicName string    `json:"address_topic_name"`
+	CommandName      string    `json:"command_name" bson:"command_name"`
+	ConditionSet     Condition `json:"condition" bson:"condition"`
+	ComandType       EventType `json:"comand_type" bson:"comand_type"`
 }
 
 type Event struct {
