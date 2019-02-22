@@ -12,6 +12,7 @@ import (
 )
 
 func DeviceCreate(device models.Device, user models.UserInDB, Session *mgo.Session) (err error) {
+	device.Name = user.UserName + "-" + device.Name
 	err, exist := CheckExist("devicename", device.Name, models.Device{}, DBname, DeviceCollectionName, DeviceExist, Session)
 	if exist {
 		return
