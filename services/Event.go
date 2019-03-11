@@ -2,6 +2,7 @@ package services
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/ali-zohrevand/ashyanet-api/OutputAPI"
 	"github.com/ali-zohrevand/ashyanet-api/core/DB"
 	"github.com/ali-zohrevand/ashyanet-api/models"
@@ -17,27 +18,26 @@ func EventMqttMessageRecived(message models.MqttMessage) (err error) {
 		return errConnectDB
 	}
 	TopicAddress := message.Topic
-	event, errGetAdd := DB.EventGetAddress(TopicAddress, session)
+	events, errGetAdd := DB.EventGetAddress(TopicAddress, session)
 	if errGetAdd != nil {
 		return errGetAdd
 	}
-	switch event.EventType {
-	case models.MqttEvent:
-		IsHappened, err := event.EventCondition.Happened(message.Message)
-		if IsHappened && err == nil {
-			errRunCOmmand := MqttCommandTempAdmin(event.EventFunction)
-			if errRunCOmmand != nil {
-				log.ErrorHappened(errRunCOmmand)
+	for i, event := range events {
+		fmt.Println(i)
+		switch event.EventType {
+		case models.MqttEvent:
+			IsHappened, err := event.EventCondition.Happened(message.Message)
+			if IsHappened && err == nil {
+				 go MqttCommandTempAdmin(event.EventFunction)
 
-				return errRunCOmmand
+			} else {
+				log.ErrorHappened(err)
 			}
-		} else {
-			log.ErrorHappened(err)
-			return err
+		case models.SmsEvent:
+		default:
 		}
-	case models.SmsEvent:
-	default:
 	}
+
 	return
 }
 func EventCreate(dataBinde models.DataBindCommand, user models.UserInDB) (int, []byte) {

@@ -14,10 +14,10 @@ func EventCreate(Event models.Event, Session *mgo.Session) (err error) {
 	err = sessionCopy.DB(Words.DBname).C(Words.EventCollectionName).Insert(Event)
 	return
 }
-func EventGetAddress(EvenaAddress string, Session *mgo.Session) (event models.Event, err error) {
+func EventGetAddress(EvenaAddress string, Session *mgo.Session) (event []models.Event, err error) {
 	sessionCopy := Session.Copy()
 	defer sessionCopy.Close()
-	err = sessionCopy.DB(Words.DBname).C(Words.EventCollectionName).Find(bson.M{"event_address": EvenaAddress}).One(&event)
+	err = sessionCopy.DB(Words.DBname).C(Words.EventCollectionName).Find(bson.M{"event_address": EvenaAddress}).All(&event)
 	return
 }
 func EventUpdate(eventName models.Event, Session *mgo.Session) (err error) {
