@@ -23,7 +23,6 @@ func main() {
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
 		AllowCredentials: true,
-
 		AllowedHeaders: []string{"Authorization", "Content-Type", "Access-Control-Allow-Origin"},
 		// Enable Debugging for testing, consider disabling in production
 		AllowedMethods: []string{"GET", "UPDATE", "PUT", "POST", "DELETE"},
@@ -32,7 +31,7 @@ func main() {
 	n := negroni.Classic()
 	n.Use(c)
 	n.UseHandler(router)
-	err := http.ListenAndServeTLS(":5000", "cert.pem", "key.pem", n)
-	//err := http.ListenAndServe(":5000",  n)
+	//err := http.ListenAndServeTLS(":5000", "cert.pem", "key.pem", n)
+	err := http.ListenAndServe(":5000",  n)
 	fmt.Println(err)
 }
