@@ -16,6 +16,7 @@ func init() {
 	go websocket.CreateWebSocketServer()
 }
 func main() {
+	fmt.Println("Start")
 	// Check if the cert files are available.
 	services.GeneratTls()
 	router := routers.InitRoutes()

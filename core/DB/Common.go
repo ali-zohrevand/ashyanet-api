@@ -6,6 +6,7 @@ import (
 	"github.com/ali-zohrevand/ashyanet-api/settings/Words"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"os"
 )
 
 func CheckExist(ObjectName string, whatWeSearchFor string, Object interface{}, DbNameString string, ColloctionName string, errorString string, Session *mgo.Session) (err error, Exist bool) {
@@ -27,8 +28,17 @@ func addPath(path string, New string) string {
 }
 func ConnectDB() (session *mgo.Session, err error) {
 	// Connect to our local mongo
-	s, err := mgo.Dial("mongodb://localhost")
-	return s, err
+	ip:=os.Getenv(Words.EnvMongoIp)
+	if len(ip)>6{
+		s, err := mgo.Dial("mongodb://"+ip)
+		return s, err
+
+	}else {
+		s, err := mgo.Dial("mongodb://localhost")
+		return s, err
+
+
+	}
 }
 func IsCollectionEmptty(DbName string, CollName string, Session *mgo.Session) (Is bool) {
 	sessionCopy := Session.Copy()

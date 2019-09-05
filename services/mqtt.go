@@ -359,20 +359,37 @@ func MqttGetAllTopicsByUsername(username string, typeOfTopics string) (int, []by
 }
 
 func MqttSubcribeRootTopic() (err error) {
+	time.Sleep(5*time.Second)
 	EmqttDeleteMqttDefaultAdmin()
 	TempUserAdminUserName, TempAdminPassword, errCreateTempAdmin := EmqttCreateTempAdminMqttUserWithDwefaultAdmin()
-	if errCreateTempAdmin != nil {
-		panic(err)
-		return errCreateTempAdmin
+	for ;errCreateTempAdmin != nil ;  {
+		fmt.Println(err)
+		time.Sleep(5000)
+		TempUserAdminUserName, TempAdminPassword, errCreateTempAdmin = EmqttCreateTempAdminMqttUserWithDwefaultAdmin()
+
+		//panic(err)
 	}
 	defer EmqttDeleteUser(TempUserAdminUserName)
 	done := make(chan bool)
 	mqttObj, errCreateMqttUser := NewMqtt(Words.MqttBrokerIp, TempUserAdminUserName, TempAdminPassword, "TempAdmin"+GenerateRandomString(3))
-	defer mqttObj.Client.Disconnect(50)
-	if errCreateMqttUser != nil {
-		panic(errCreateMqttUser)
-		return errCreateMqttUser
+
+	defer func() {
+		if mqttObj!=nil{
+			mqttObj.Client.Disconnect(50)
+
+		}
+	}()
+	for  {
+		fmt.Println(errCreateMqttUser)
+		time.Sleep(5*time.Second)
+		mqttObj, errCreateMqttUser = NewMqtt(Words.MqttBrokerIp, TempUserAdminUserName, TempAdminPassword, "TempAdmin"+GenerateRandomString(3))
+		fmt.Println("Try connect emqtt.")
+		if errCreateMqttUser == nil{
+			break
+		}
+
 	}
+	fmt.Println("===========Connected to emqtt=================")
 	var eventFunc mqtt.MessageHandler = func(client mqtt.Client, message mqtt.Message) {
 		var mqttmeesage models.MqttMessage
 		mqttmeesage.Message = string(message.Payload())

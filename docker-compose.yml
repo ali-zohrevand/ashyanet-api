@@ -1,10 +1,25 @@
 version: '3'
 services:
+  mongo-server:
+    build:
+      context: dependency-services/mongo
   emqx-server:
-    image: "emqx/emqx"
+    build:
+      context: dependency-services/emqx
+    ports:
+      - "18083:18083"
+      - "8083:8083"
+      - "1883:1883"
   node-app:
     build: .
+    depends_on:
+      - emqx-server
+      - mongo-server
     ports:
       - "4000:4000"
+    environment:
+      MqttBrokerIp : emqx-server
+      MongoIP: mongo-server
+
 volumes:
   mysql-data:

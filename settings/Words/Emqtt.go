@@ -1,5 +1,16 @@
 package Words
 
+import (
+	"os"
+)
+
+func init() {
+	ip:=os.Getenv("MqttBrokerIp")
+	if len(ip)>6{
+		MqttBrokerIp = ip
+	}
+
+}
 var EmqttDBName = "mqtt"
 var EmqttUserColletionName = "mqtt_user"
 var EmqttAclColectionName = "mqtt_acl"
